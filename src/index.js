@@ -11,9 +11,9 @@ RT.TJShack =
     {
         "f.all_clear_check=(sf.sakuya_clear && sf.ruri_clear && sf.sana_clear && sf.aoi_clear && sf.mahiro_clear && sf.yukari_clear)": 1,
         "!(f.sak_flag == 5 || f.all_clear_check)": true,
+        "!kag.isRecollection": true
     };
 RT.TJSvar["f.all_clear_check"] = true;
-RT.TJSvar["!kag.isRecollection"] = true;
 RT.TJSvar["f.sak_flag"] = 0;
 RT.TJSvar["f.san_flag"] = 0;
 RT.TJSvar["f.aoi_flag"] = 0;

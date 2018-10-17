@@ -68,15 +68,18 @@ export class KSParser {
         }
 
         for (let index = 0; index < k.length; index++) {
-            const key = k[index];
-            const value = v[index];
+            var key = k[index];
+            var value = v[index];
 
             // key = value
             if (key && value) {
+                key = key.trim();
+                value = value.trim();
                 ret.param[key] = value;
             }
             // key
             else if (key) {
+                key = key.trim();
                 ret.option.push(key);
             }
         }

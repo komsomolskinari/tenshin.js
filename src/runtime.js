@@ -10,7 +10,7 @@ export class Runtime {
         // key: input string
         // value: return value
         this.TJShack = {};
-        this.MapSelectData = {};
+        this.MapSelectData = [];
         this.SelectData = [];
         window.TJSvar = this.TJSvar;
     }
@@ -21,19 +21,41 @@ export class Runtime {
 
     // add map select option
     MapSelectAdd(cmd) {
-
+        this.MapSelectData.push([
+            cmd.param.name,
+            cmd.param.target,
+            cmd.param.cond,
+            cmd.param.storage,
+            cmd.param.place,
+        ]);
     }
 
     // raise a map select
     MapSelect() {
-
+        var s = "Map:\n";
+        var n = 0;
+        for (const d of this.MapSelectData) {
+            s += n;
+            s += d[0];
+            s += '\n';
+            n++;
+        }
+        var r = prompt(s, 0);
+        var ro = this.MapSelectData[r];
+        /*
+        if (ro[2] !== undefined)
+            this.TJSeval(ro[2]);
+            */
+        this.MapSelectData = [];
+        return [ro[1], ro[3]];
     }
 
     SelectAdd(cmd) {
         this.SelectData.push([
             cmd.param.text,
             cmd.param.target,
-            cmd.param.exp
+            cmd.param.exp,
+            cmd.param.storage,
         ]);
     }
 
@@ -52,7 +74,7 @@ export class Runtime {
         if (ro[2] !== undefined)
             this.TJSeval(ro[2]);
         this.SelectData = [];
-        return ro[1];
+        return [ro[1], ro[3]];
     }
 
     // fake eval
@@ -63,6 +85,10 @@ export class Runtime {
     // will be eval
     TJSeval(str) {
         console.log("Eval", str);
+        if (Object.keys(this.TJShack).includes(str)) {
+            console.log('hacked');
+            return this.TJShack[str];
+        }
 
         // hack for opr1,opr2
         let commaindex = str.indexOf(',');
@@ -97,7 +123,7 @@ export class Runtime {
 
         var rvalue = null;
         // cacluate rvalue
-        rexp = rexp.trim().replace(/[+\-\*\/]/g, " $0 ").split(/ +/g);
+        rexp = rexp.trim().replace(/([+\-\*\/])/g, " $1 ").split(/ +/g);
         if (rexp.length == 1) {
             // a == b or a = b
             if (rexp[0][0] == '"') rvalue = rexp[0].substr(1, rexp[0].length - 2);
@@ -135,10 +161,8 @@ export class Runtime {
                     break;
             }
         }
-        console.log(lvalue, rexp);
-        if (rexp.length > 3 || str[0] == '!') {
-            return this.TJShack[str];
-        }
+        //console.log(lvalue, rexp);
+
         if (returnBool) {
             var lv;
             if (lvalue[0] == '"') lv = lvalue.substr(1, lvalue.length - 2);

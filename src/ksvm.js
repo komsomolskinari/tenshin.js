@@ -34,11 +34,23 @@ export class KSVM {
         // scan tags
         var lineno = 0;
         for (const s of script) {
-            lineno++;
             if (s.type == "entry") {
-                this.tags[s.name] = { "script": name, "line": lineno };
+                if (this.tags[s.name] === undefined) this.tags[s.name] = [];
+                this.tags[s.name].push({ "script": name, "line": lineno });
+            }
+            lineno++;
+        }
+    }
+
+    LocateTag(tag, script) {
+        const ts = this.tags[tag.substr(1)];
+        if (script === undefined) return ts[0];
+        else {
+            for (const t of ts) {
+                if (t.script == script.split('.')[0]) return t;
             }
         }
+        return undefined;
     }
 
     // .
@@ -135,20 +147,32 @@ export class KSVM {
                                 this.currentpos = { "script": cmd.param.storage.split('.')[0], "line": 0 };
                             }
                             else {
-                                this.currentpos = this.tags[cmd.param.target.substr(1)];
+                                this.currentpos = this.LocateTag(cmd.param.target, cmd.param.storage);
                             }
-                            this.currentpos.line--;
                             console.log('To', this.currentpos, this.CurrentCmd());
+                            break;
+                        case "mseladd":
+                            this.runtime.MapSelectAdd(cmd);
                             break;
                         case "seladd":
                             this.runtime.SelectAdd(cmd);
                             break;
-                        case "select":
-                            let next = this.runtime.Select();
+                        case "mselect":
+                            var next = this.runtime.MapSelect();
+                            console.log("Map select, then jump to", next);
                             if (next !== undefined) {
-                                this.currentpos = this.tags[next.substr(1)];
-                                this.currentpos.line--;
-                                console.log("Select, then jump to", this.currentpos);
+                                if (next[0] !== undefined) {
+                                    this.currentpos = this.LocateTag(next[0], next[1]);
+                                }
+                            }
+                            break;
+                        case "select":
+                            var next = this.runtime.Select();
+                            console.log("Select, then jump to", this.currentpos);
+                            if (next !== undefined) {
+                                if (next[0] !== undefined) {
+                                    this.currentpos = this.LocateTag(next[0], next[1]);
+                                }
                             }
                             break;
                         case "sysjump":
@@ -180,7 +204,7 @@ export class KSVM {
 
     // run from *tag, used for playback
     RunFrom(tag) {
-        this.currentpos = this.tags[tag];
+        this.currentpos = this.tags[tag][0];
         this.Run();
     }
 
