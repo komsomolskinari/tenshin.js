@@ -2,3 +2,4 @@ game/
 node_modules/
 src/.data/
 .vs/
+index.js
