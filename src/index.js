@@ -28,10 +28,10 @@ window.VM = VM;
 window.Mapper = Mapper;
 
 $(document).ready(() => {
-    $.get("game/main/envinit.tjs", (d, s, x) => { 
+    $.get("game/main/envinit.tjs", (d, s, x) => {
         var o = TJSON.Parse(d);
         Mapper.LoadObject(o);
-     });
+    });
     $.get("game/scenario/", (d, s, x) => {
         for (const key in d) {
             if (d.hasOwnProperty(key)) {
@@ -42,10 +42,18 @@ $(document).ready(() => {
             }
         }
 
+        var tasks = 0;
         for (const s of scenes) {
+            tasks++;
             $.get("game/scenario/" + s + ".ks", (d, st, x) => {
                 var spt = KSParser.Parse(d);
-                VM.AddScript(s, spt)
+                VM.AddScript(s, spt);
+                tasks--;
+                if (tasks == 0) {
+                    $(document).on('click', () => VM.Next());
+                    VM.RunFrom('start');
+
+                }
             });
         }
     });
