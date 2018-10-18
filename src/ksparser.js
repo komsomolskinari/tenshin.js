@@ -1,7 +1,29 @@
-// KAG Script virtual machine
+// KAG Script parser
+/*
+FAKE!!
+
+grammar ks;
+
+ks: (commands)*;
+commands: command | LINE;
+command: '[' identifier (arg)? ']';
+arg: SP identifier (SP? '=' SP? value)?;
+identifier: IDENTCH*;
+value: STRING | identifier;
+
+SP: '\p{Z}';
+LINE: '[~\r\n]'+;
+IDENTCH: '\p{L}';
+STRING: '"' .? '"' | '\'' .? '\'';
+
+*/
+
+
 export class KSParser {
     static Parse(str) {
         this.cmd = [];
+        // seperate function to multiple line
+        // [func1][func2] => [func1]\n[func2] 
         str = str.replace(/\](.)/g, ']\n$1');
         var lines = str.split('\n');
         parseline:
@@ -16,8 +38,9 @@ export class KSParser {
                     this.cmd.push(this._func(element));
                     break;
                 case '*':
-                    var n = element.substr(1).trim();
-                    this.cmd.push({ "type": "entry", "name": n.split('|')[0] });
+                    var tag = element.substr(1).trim().split('|')[0];
+                    if (tag)
+                        this.cmd.push({ "type": "entry", "name": tag });
                     break;
                 default: // direct output to tty
                     if (element)
@@ -86,6 +109,7 @@ export class KSParser {
         return ret;
     }
 
+    // parse key=value
     static _kv() {
         var ret = [];
         ret.push(this._ident());
@@ -111,6 +135,7 @@ export class KSParser {
         return ret;
     }
 
+    // parse string
     static _str(sep) {
         var b = '';
         while (true) {
@@ -124,6 +149,7 @@ export class KSParser {
         }
     }
 
+    // parse identifier
     static _ident() {
         var b = '';
         while (true) {

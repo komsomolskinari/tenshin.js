@@ -1,4 +1,5 @@
 // runtime libs
+import { ObjectMapper } from './objmapper';
 
 export class Runtime {
     constructor() {
@@ -12,7 +13,11 @@ export class Runtime {
         this.TJShack = {};
         this.MapSelectData = [];
         this.SelectData = [];
+        this.mapper = null;
         window.TJSvar = this.TJSvar;
+
+        this.inTrans = false;
+        this.transSeq = [];
     }
 
     Text(cmd) {
@@ -42,10 +47,6 @@ export class Runtime {
         }
         var r = prompt(s, 0);
         var ro = this.MapSelectData[r];
-        /*
-        if (ro[2] !== undefined)
-            this.TJSeval(ro[2]);
-            */
         this.MapSelectData = [];
         return [ro[1], ro[3]];
     }
@@ -77,18 +78,73 @@ export class Runtime {
         return [ro[1], ro[3]];
     }
 
+    AddTrans(cmd) {
+
+    }
+
+    CompileTrans(cmd) {
+        this.inTrans = false;
+    }
+
+    Call(cmd) {
+        switch (cmd.name) {
+            case "mselinit":
+                this.MapSelectData = [];
+                break;
+            case "mseladd":
+                this.MapSelectAdd(cmd);
+                break;
+            case "seladd":
+                this.SelectAdd(cmd);
+                break;
+            case "sysjump":
+                console.log("finished");
+                break;
+            case "eval":
+                this.TJSeval(cmd.param.exp);
+                break;
+            case "begintrans":
+                this.inTrans = true;
+                break;
+            case "endtrans":
+                this.CompileTrans(cmd);
+                break;
+            case "newlay":
+                this.mapper.NewLay(cmd);
+                break;
+            case "dellay":
+                this.mapper.DelLay(cmd);
+                break;
+            case "EV":
+            case "bgm":
+            case "msgoff":
+            case "msgon":
+            case "se":
+            case "env":
+            case "date":
+            case "wait":
+            case "stage":
+
+                // stateless call
+                break;
+            default:
+                if (this.inTrans) {
+                    this.AddTrans(cmd);
+                }
+                if (!this.mapper.HaveObject(cmd.name))
+                    console.log(cmd);
+                break;
+        }
+    }
+
     // fake eval
-    // FAKE! HAVE SAFETY ISSUE!
+    // FAKE! MAGIC INCLUDED!
     // only a = b + c
     // a = "b"
     // and a == b
     // will be eval
     TJSeval(str) {
-        console.log("Eval", str);
-        if (Object.keys(this.TJShack).includes(str)) {
-            console.log('hacked');
-            return this.TJShack[str];
-        }
+        if (Object.keys(this.TJShack).includes(str)) return this.TJShack[str];
 
         // hack for opr1,opr2
         let commaindex = str.indexOf(',');
@@ -143,6 +199,7 @@ export class Runtime {
                 else if ("0123456789".includes(rexp[2][0])) rv2 = parseInt(rexp[2]);
                 else rv2 = this.TJSvar[rexp[2]];
             }
+            // +-*/ switch
             switch (rexp[1][0]) {
                 case '+':
                     rvalue = rv1 + rv2;
@@ -161,7 +218,6 @@ export class Runtime {
                     break;
             }
         }
-        //console.log(lvalue, rexp);
 
         if (returnBool) {
             var lv;

@@ -42,6 +42,10 @@ export class KSVM {
         }
     }
 
+    AddMacros(script) {
+
+    }
+
     LocateTag(tag, script) {
         const ts = this.tags[tag.substr(1)];
         if (script === undefined) return ts[0];
@@ -120,46 +124,33 @@ export class KSVM {
                 return;
             }
             const cmd = this.CurrentCmd();
+            // NOTE: macro is not implement, use native implement instead
             switch (cmd.type) {
+                // skip entry
                 case "entry":
                     break;
-                // begintrans = start transframe compile
-                // about transframe mechanism:
-                // begintrans
-                // animation sequence
-                // endtrans
-                // text (play animation here)
-                // let rtlib handle them
+                // exec functions
                 case "func":
                     switch (cmd.name) {
                         case "next":
-                            console.log('Try jump from', this.currentpos);
                             if (cmd.param.eval != undefined) {
                                 // tjs eval
                                 var r = this.runtime.TJSeval(cmd.param.eval);
-                                if (!r) {
-                                    console.log('Cancelled');
-                                    break;
-                                }
-                                console.log('Confirmed');
+                                // eval false, cancel jump
+                                if (!r) break;
                             }
+                            // no target tag defined, directly load script
                             if (cmd.param.target == undefined) {
                                 this.currentpos = { "script": cmd.param.storage.split('.')[0], "line": 0 };
                             }
+                            // or locate the tag
                             else {
                                 this.currentpos = this.LocateTag(cmd.param.target, cmd.param.storage);
                             }
-                            console.log('To', this.currentpos, this.CurrentCmd());
-                            break;
-                        case "mseladd":
-                            this.runtime.MapSelectAdd(cmd);
-                            break;
-                        case "seladd":
-                            this.runtime.SelectAdd(cmd);
                             break;
                         case "mselect":
                             var next = this.runtime.MapSelect();
-                            console.log("Map select, then jump to", next);
+                            //console.log("Map select, then jump to", next);
                             if (next !== undefined) {
                                 if (next[0] !== undefined) {
                                     this.currentpos = this.LocateTag(next[0], next[1]);
@@ -168,27 +159,21 @@ export class KSVM {
                             break;
                         case "select":
                             var next = this.runtime.Select();
-                            console.log("Select, then jump to", this.currentpos);
+                            //console.log("Select, then jump to", this.currentpos);
                             if (next !== undefined) {
                                 if (next[0] !== undefined) {
                                     this.currentpos = this.LocateTag(next[0], next[1]);
                                 }
                             }
                             break;
-                        case "sysjump":
-                            // special handling
-                            console.log("finished");
-                            break;
-                        case "eval":
-                            this.runtime.TJSeval(cmd.param.exp);
-                            break;
                         default:
+                            this.runtime.Call(cmd);
                             //console.log(this.currentpos, cmd);
                             break;
                     }
                     break;
+                // output text
                 case "text":
-                    // console.log(cmd);
                     this.runtime.Text(cmd);
                     if (this.runmode == VM_SCENE) this.hang = true;
                     break;
@@ -205,6 +190,7 @@ export class KSVM {
     // run from *tag, used for playback
     RunFrom(tag) {
         this.currentpos = this.tags[tag][0];
+        this.runlock = false;
         this.Run();
     }
 
