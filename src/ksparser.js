@@ -43,6 +43,7 @@ export class KSParser {
                         this.cmd.push({ "type": "entry", "name": tag });
                     break;
                 default: // direct output to tty
+                    // TODO: add voice sequence info (maybe gui info and animation) at compile time
                     if (element)
                         this.cmd.push({ "type": "text", "name": element });
                     break;

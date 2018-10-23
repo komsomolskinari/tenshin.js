@@ -16,12 +16,68 @@ export class Runtime {
         this.mapper = null;
         window.TJSvar = this.TJSvar;
 
+        // key voicebase,name
+        this.voicecounter = {};
         this.inTrans = false;
         this.transSeq = [];
     }
 
     Text(cmd) {
         $('#chartxt').html(cmd.name);
+        var text = cmd.name;
+        var name = null;
+        var dispname = null;
+        var voicebase = this.TJSvar['f.voiceBase'];
+        var voicefile = null;
+        var voiceseq = null;
+        if (cmd.name.indexOf('【') == 0) {
+            // 【神様/？？？】「んっ……んっ」 -> 神様/？？？
+            name = cmd.name.split('】')[0].replace('【', '').trim();
+            // -> 「んっ……んっ」
+            text = cmd.name.split('】')[1].trim();
+            if (name.indexOf('/') >= 0) {
+                // watchout seq
+                dispname = name.split('/')[1];
+                name = name.split('/')[0];
+            }
+            // rewrite name at ks
+            var name_info = this.mapper.GetNameInfo(name);
+            if (dispname == null) {
+                // rewrite at evtinit
+                if (name_info.name != null)
+                    dispname = name_info.name;
+                // no rewrite
+                else dispname = name;
+            }
+            voicefile = name_info.voicefile;
+        }
+
+        if (!Object.keys(this.voicecounter).includes(voicebase)) {
+            this.voicecounter[voicebase] = {};
+        }
+        if (!Object.keys(this.voicecounter[voicebase]).includes(name)) {
+            this.voicecounter[voicebase][name] = 1;
+        }
+        voiceseq = this.voicecounter[voicebase][name];
+        this.voicecounter[voicebase][name]++;
+        //console.log(dispname, text, name, voicebase, voicefile, voiceseq);
+        var _vf = this.PlayVoice(voicefile, voicebase, voiceseq)
+        console.log(dispname, text, _vf);
+    }
+
+    // kam%s_%03d.ogg, 001, 1 -> kam001_001.ogg
+    // not a full printf, magic included
+    PlayVoice(file, base, seq) {
+        if(file == null) return null;
+        var seqtxt = seq + "";
+        while (seqtxt.length < 3) {
+            seqtxt = '0' + seqtxt;
+        }
+        file = file.replace('%s', base);
+        file = file.replace('%03d', seqtxt);
+
+        return file;
+
     }
 
     // add map select option
