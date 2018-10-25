@@ -30,27 +30,7 @@ export class Runtime {
         var voicebase = this.TJSvar['f.voiceBase'];
         var voicefile = null;
         var voiceseq = null;
-        if (cmd.name.indexOf('【') == 0) {
-            // 【神様/？？？】「んっ……んっ」 -> 神様/？？？
-            name = cmd.name.split('】')[0].replace('【', '').trim();
-            // -> 「んっ……んっ」
-            text = cmd.name.split('】')[1].trim();
-            if (name.indexOf('/') >= 0) {
-                // watchout seq
-                dispname = name.split('/')[1];
-                name = name.split('/')[0];
-            }
-            // rewrite name at ks
-            var name_info = this.mapper.GetNameInfo(name);
-            if (dispname == null) {
-                // rewrite at evtinit
-                if (name_info.name != null)
-                    dispname = name_info.name;
-                // no rewrite
-                else dispname = name;
-            }
-            voicefile = name_info.voicefile;
-        }
+
 
         if (!Object.keys(this.voicecounter).includes(voicebase)) {
             this.voicecounter[voicebase] = {};

@@ -26,30 +26,70 @@ export class KSParser {
         // [func1][func2] => [func1]\n[func2] 
         str = str.replace(/\](.)/g, ']\n$1');
         var lines = str.split('\n');
-        parseline:
-        for (let index = 0; index < lines.length; index++) {
-            var element = lines[index];
-            element = element.trim();
+        // scan1: text -> token
+        this.cmd = lines.map(c => {
+            c = c.trim();
+            switch (c[0]) {
+                case ';': // ignore comment line
+                    return null;
+                case '[': // type:func
+                    return this._func(c);
+                case '*': // type:entry *tag|comment
+                    var tag = c.substr(1).trim().split('|')[0];
+                    if (tag) return { type: "entry", name: tag };
+                    else return null;
+                default: // type:text
+                    if (c) return this._text(c);
+                    else return null;
+            }
+        }).filter(c => c !== null);
 
-            switch (element[0]) {
-                case ';': // ignore line
-                    continue parseline;
-                case '[': // parse function
-                    this.cmd.push(this._func(element));
-                    break;
-                case '*':
-                    var tag = element.substr(1).trim().split('|')[0];
-                    if (tag)
-                        this.cmd.push({ "type": "entry", "name": tag });
-                    break;
-                default: // direct output to tty
-                    // TODO: add voice sequence info (maybe gui info and animation) at compile time
-                    if (element)
-                        this.cmd.push({ "type": "text", "name": element });
-                    break;
+        // scan2: generate voice no.
+        // key: charaname, value: curvoiceid
+        var mid = {}
+        this.cmd = this.cmd.map(c => {
+            if (c.type != "text") return c;
+            if (c.name == null) return c;
+            if (mid[c.name] === undefined) {
+                mid[c.name] = 0;
+            }
+            mid[c.name]++;
+            c.voice = mid[c.name];
+            return c;
+        });
+
+        return this.cmd;
+    }
+
+    // 【chara/disp】txt
+    // {type:text,name:charaname,disp:dispname,text:txt,voice:(null)1}
+    static _text(str) {
+        var ret = {
+            type: "text",
+            name: null,
+            display: null,
+            text: null,
+            voice: null
+        }
+
+        // have name
+        if (str.indexOf('【') == 0) {
+            var fname = str.split('】')[0].replace('【', '').trim();
+            ret.text = str.split('】')[1].trim();
+
+            // need rewrite name
+            if (fname.indexOf('/') >= 0) {
+                ret.name = fname.split('/')[0];
+                ret.dispname = name.split('/')[1];
+            }
+            else {
+                ret.name = fname;
             }
         }
-        return this.cmd;
+        else {
+            ret.text = str;
+        }
+        return ret;
     }
 
     // function line parser
@@ -66,6 +106,7 @@ export class KSParser {
 
     //  [funcname param1 param2=value]
     //  {
+    //      "type": "func",
     //      "name": funcname,
     //      "option": ["param1"],
     //      "param": { // or {}
@@ -75,12 +116,12 @@ export class KSParser {
     static _func(str) {
         this._fstr = str.substr(1, str.length - 2).trim();
         this._fp = 0;
-        var ret = {};
-        ret["type"] = "func";
-        ret["name"] = this._ident();
-        ret["option"] = [];
-        ret["param"] = {};
-
+        var ret = {
+            type: "func",
+            name: this._ident(),
+            option: [],
+            param: {}
+        };
         var k = [];
         var v = [];
         this._nextch();
