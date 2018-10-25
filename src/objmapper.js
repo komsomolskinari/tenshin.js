@@ -35,12 +35,16 @@ export class ObjectMapper {
     // - name: 姫
     // - voicefile: kam%s_%03d.ogg
     GetNameInfo(txt) {
-        var ret = {};
+        var ret = {
+            name: null,
+            voicefile: null
+        };
+        if (txt == null) return ret;
         var c = this.innerobj.characters[txt];
         if (c.nameAlias !== undefined) ret['name'] = c.nameAlias;
-        else  ret['name'] = null;
+        else ret['name'] = null;
         if (c.voiceFile !== undefined) ret['voicefile'] = c.voiceFile;
-        else  ret['voicefile'] = null;
+        else ret['voicefile'] = null;
 
         return ret;
 

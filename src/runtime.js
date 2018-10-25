@@ -23,32 +23,30 @@ export class Runtime {
     }
 
     Text(cmd) {
-        $('#chartxt').html(cmd.name);
-        var text = cmd.name;
-        var name = null;
-        var dispname = null;
+        var text = cmd.text;
+        var name = cmd.name;
+        var dispname = cmd.display;
         var voicebase = this.TJSvar['f.voiceBase'];
-        var voicefile = null;
-        var voiceseq = null;
+        var info = this.mapper.GetNameInfo(name);
 
+        // display name havent rewrite, need set
+        if (dispname == null) {
+            if (info.name != null) dispname = info.name;
+            else dispname = cmd.name;
+        }
+        var voicefile = info.voicefile;
 
-        if (!Object.keys(this.voicecounter).includes(voicebase)) {
-            this.voicecounter[voicebase] = {};
-        }
-        if (!Object.keys(this.voicecounter[voicebase]).includes(name)) {
-            this.voicecounter[voicebase][name] = 1;
-        }
-        voiceseq = this.voicecounter[voicebase][name];
-        this.voicecounter[voicebase][name]++;
-        //console.log(dispname, text, name, voicebase, voicefile, voiceseq);
-        var _vf = this.PlayVoice(voicefile, voicebase, voiceseq)
+        //{type:text,name:charaname,display:dispname,text:txt,voice:(null)1}
+        var _vf = this.PlayVoice(voicefile, voicebase, cmd.voice)
         console.log(dispname, text, _vf);
+        $('#charname').html(dispname);
+        $('#chartxt').html(text);
     }
 
     // kam%s_%03d.ogg, 001, 1 -> kam001_001.ogg
     // not a full printf, magic included
     PlayVoice(file, base, seq) {
-        if(file == null) return null;
+        if (file == null) return null;
         var seqtxt = seq + "";
         while (seqtxt.length < 3) {
             seqtxt = '0' + seqtxt;

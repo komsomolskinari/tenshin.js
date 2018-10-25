@@ -22,10 +22,34 @@ STRING: '"' .? '"' | '\'' .? '\'';
 export class KSParser {
     static Parse(str) {
         this.cmd = [];
-        // seperate function to multiple line
-        // [func1][func2] => [func1]\n[func2] 
-        str = str.replace(/\](.)/g, ']\n$1');
-        var lines = str.split('\n');
+        // scan0 to recognize line type and seperate
+        // scan1 to fill the data
+        // scan2 generate static data
+        var _lines = str.split('\n');
+        var lines = [];
+        _lines.forEach(l => {
+            l = l.trim();
+            switch (l[0]) {
+                case ';':
+                    // pass
+                    return;
+                case '[':
+                    // cut to multiple function token
+                    l = l.replace(/\](.)/g, ']\n$1');
+                    var ls = l.split('\n');
+                    ls.forEach(s => lines.push(s));
+                    return;
+                case '*':
+                    // tag, direct
+                    lines.push(l);
+                    return;
+                default:
+                    // text, direct
+                    lines.push(l);
+                    return;
+            }
+        });
+        
         // scan1: text -> token
         this.cmd = lines.map(c => {
             c = c.trim();
@@ -46,6 +70,7 @@ export class KSParser {
 
         // scan2: generate voice no.
         // key: charaname, value: curvoiceid
+        // watchout 1.ks line 1841
         var mid = {}
         this.cmd = this.cmd.map(c => {
             if (c.type != "text") return c;
@@ -80,7 +105,7 @@ export class KSParser {
             // need rewrite name
             if (fname.indexOf('/') >= 0) {
                 ret.name = fname.split('/')[0];
-                ret.dispname = name.split('/')[1];
+                ret.display = fname.split('/')[1];
             }
             else {
                 ret.name = fname;
