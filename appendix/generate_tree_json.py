@@ -7,6 +7,8 @@ def gen_dir(path):
     ret = []
     ds = os.listdir()
     for d in ds:
+        if d[0] == '.':
+            continue
         j = {"name":d,"type":"file","sub":None}
         if os.path.isdir(d):
             j["type"] = "directory"
