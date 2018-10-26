@@ -36,8 +36,8 @@ export class Runtime {
         }
         var voicefile = info.voicefile;
 
-        //{type:text,name:charaname,display:dispname,text:txt,voice:(null)1}
-        var _vf = this.PlayVoice(voicefile, voicebase, cmd.voice)
+        //{type:text,name:charaname,display:dispname,text:txt}
+        var _vf = this.PlayVoice(voicefile, voicebase, 1)
         console.log(dispname, text, _vf);
         $('#charname').html(dispname);
         $('#chartxt').html(text);

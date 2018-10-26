@@ -68,6 +68,8 @@ export class KSParser {
             }
         }).filter(c => c !== null);
 
+
+        /*
         // scan2: generate voice no.
         // key: charaname, value: curvoiceid
         // watchout 1.ks line 1841
@@ -81,20 +83,19 @@ export class KSParser {
             mid[c.name]++;
             c.voice = mid[c.name];
             return c;
-        });
+        });*/
 
         return this.cmd;
     }
 
     // 【chara/disp】txt
-    // {type:text,name:charaname,disp:dispname,text:txt,voice:(null)1}
+    // {type:text,name:charaname,disp:dispname,text:txt}
     static _text(str) {
         var ret = {
             type: "text",
             name: null,
             display: null,
-            text: null,
-            voice: null
+            text: null
         }
 
         // have name

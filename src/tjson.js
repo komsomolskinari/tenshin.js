@@ -1,16 +1,5 @@
 // Kirikiri TPV JavaScript Object Notation to JSON
-
-/*
-json: value;
-pair: STRING ('=>' | ':') value;
-obj: '%[' ((pair ',')* pair ','?)? ']';
-array: '[' ((value ',')* value ','?)? ']';
-value: STRING | obj | array;
-STRING: STRINGD | STRINGS | SPSTRING;
-STRINGD: '"' .? '"';
-STRINGS: '\'' .? '\'';
-SPSTRING: ' ' .+ ' ';
-*/
+// TJSON: JSON of TJS, TJS is JavaScript™ like language, like JavaScript, it has JSON.
 export class TJSON {
     // get next not empty char
     static _nextnechar(step) {
