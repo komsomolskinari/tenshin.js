@@ -1,5 +1,6 @@
 // runtime libs
 import { ObjectMapper } from './objmapper';
+import { FilePath } from './filepath';
 
 export class Runtime {
     constructor() {
@@ -62,7 +63,15 @@ export class Runtime {
         else {
             file = seq;
         }
+        $('#voice').attr('src', 'game/' + FilePath.find(file)[0]);
         return file;
+    }
+
+    BGM(cmd) {
+        if (cmd.param.storage) {
+            $('#bgm').attr('src', 'game/' + FilePath.find(cmd.param.storage.toUpperCase() + '.ogg')[0]);
+            console.log('game/' + FilePath.find(cmd.param.storage.toUpperCase() + '.ogg')[0]);
+        }
     }
 
     // add map select option
@@ -156,8 +165,10 @@ export class Runtime {
             case "dellay":
                 this.mapper.DelLay(cmd);
                 break;
-            case "EV":
             case "bgm":
+                this.BGM(cmd);
+                break;
+            case "EV":
             case "msgoff":
             case "msgon":
             case "se":

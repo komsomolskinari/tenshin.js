@@ -29,7 +29,7 @@ This project is a experiment about running Galgame in modern browser, it's origi
 - [x] 解析KS脚本 Parse .ks Script
 - [x] 按顺序执行 Execute By Order
 - [x] 选择支 Select Case
-- [ ] 语音支持 Voice
+- [x] 语音支持 Voice
 - [ ] 图片支持 Image
 - [ ] 视频支持 Video
 - [ ] 基本动画 Basic Animation
