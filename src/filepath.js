@@ -1,21 +1,33 @@
-
-
 export class FilePath {
-
-    // load file tree from system
-    static async Read() {
-        if (_reading == true || _finished == true) return;
-        _reading = true;
-
-        _urls = ['/'];
-
-
-
+    static loading = false;
+    static ready = false;
+    static async Load() {
+        var mode = "json"
+        var path = "tree.json"
+        this.loading = true;
+        this.tree = [];
+        // nginx json mode
+        if (mode == "nginx") {
+            this.tree = await this._loaddir(path)
+        }
+        // direct json mode
+        else if (mode == "json") {
+            this.tree = await $.ajax(path)
+        }
+        this.loading = false
+        this.ready = true;
     }
 
-    static async _readdir(url) {
-        var json = await $.ajax(url).promise();
-        var dirs = json.filter(d => d.type == "directory").map(d => url + d.name + '/');
-        var files = json.filter(d => d.type == "file").map(d => url + d.name);
+    static async _loaddir(url) {
+        var ls = await $.ajax(url);
+        var ps = [];
+        for (const l of ls) {
+            if (l.type == "directory") {
+                ps.push(loaddir(url + l.name + '/').then((arg) => l.sub = arg));
+            }
+            else l["sub"] = null;
+        }
+        Promise.all(ps)
+        return ls;
     }
 }
