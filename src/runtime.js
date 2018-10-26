@@ -55,7 +55,6 @@ export class Runtime {
         file = file.replace('%03d', seqtxt);
 
         return file;
-
     }
 
     // add map select option
