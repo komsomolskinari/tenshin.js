@@ -16,7 +16,7 @@ export class Runtime {
         this.mapper = null;
         window.TJSvar = this.TJSvar;
 
-        // key voicebase,name
+        // key: chara name
         this.voicecounter = {};
         this.inTrans = false;
         this.transSeq = [];
@@ -37,8 +37,11 @@ export class Runtime {
         var voicefile = info.voicefile;
 
         //{type:text,name:charaname,display:dispname,text:txt}
-        var _vf = this.PlayVoice(voicefile, voicebase, 1)
+        var _vf = this.PlayVoice(voicefile, voicebase, this.voicecounter[cmd.name]);
         console.log(dispname, text, _vf);
+        if (parseInt(this.voicecounter[cmd.name])) {
+            this.voicecounter[cmd.name]++;
+        }
         $('#charname').html(dispname);
         $('#chartxt').html(text);
     }
@@ -47,13 +50,18 @@ export class Runtime {
     // not a full printf, magic included
     PlayVoice(file, base, seq) {
         if (file == null) return null;
-        var seqtxt = seq + "";
-        while (seqtxt.length < 3) {
-            seqtxt = '0' + seqtxt;
+        var seqtxt;
+        if (parseInt(seq)) {
+            seqtxt = seq + "";
+            while (seqtxt.length < 3) {
+                seqtxt = '0' + seqtxt;
+            }
+            file = file.replace('%s', base);
+            file = file.replace('%03d', seqtxt);
         }
-        file = file.replace('%s', base);
-        file = file.replace('%03d', seqtxt);
-
+        else {
+            file = seq;
+        }
         return file;
     }
 
@@ -161,6 +169,16 @@ export class Runtime {
                 // stateless call
                 break;
             default:
+                // intercept [chara]
+                if (this.mapper.HaveObject(cmd.name)) {
+                    //  voice=seq
+                    if (cmd.param.voice !== undefined) {
+                        this.voicecounter[cmd.name] = cmd.param.voice
+                    }
+                }
+
+
+
                 if (this.inTrans) {
                     this.AddTrans(cmd);
                 }

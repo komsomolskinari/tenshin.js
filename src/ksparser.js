@@ -67,24 +67,6 @@ export class KSParser {
                     else return null;
             }
         }).filter(c => c !== null);
-
-
-        /*
-        // scan2: generate voice no.
-        // key: charaname, value: curvoiceid
-        // watchout 1.ks line 1841
-        var mid = {}
-        this.cmd = this.cmd.map(c => {
-            if (c.type != "text") return c;
-            if (c.name == null) return c;
-            if (mid[c.name] === undefined) {
-                mid[c.name] = 0;
-            }
-            mid[c.name]++;
-            c.voice = mid[c.name];
-            return c;
-        });*/
-
         return this.cmd;
     }
 
@@ -178,6 +160,7 @@ export class KSParser {
     }
 
     // parse key=value
+    // TODO: support [func key=]
     static _kv() {
         var ret = [];
         ret.push(this._ident());
