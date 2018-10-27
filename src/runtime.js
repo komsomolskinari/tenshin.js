@@ -1,6 +1,7 @@
 // runtime libs
 import { ObjectMapper } from './objmapper';
 import { FilePath } from './filepath';
+import { KSParser } from './ksparser';
 
 export class Runtime {
     constructor() {
@@ -19,6 +20,10 @@ export class Runtime {
 
         // key: chara name
         this.voicecounter = {};
+        // 'immediately' mode voice, only when voice not int
+        // only trigged one time per cmd, not change ctr
+        this.immvoice = {};
+
         this.inTrans = false;
         this.transSeq = [];
     }
@@ -27,7 +32,6 @@ export class Runtime {
         var text = cmd.text;
         var name = cmd.name;
         var dispname = cmd.display;
-        var voicebase = this.TJSvar['f.voiceBase'];
         var info = this.mapper.GetNameInfo(name);
 
         // display name havent rewrite, need set
@@ -35,16 +39,24 @@ export class Runtime {
             if (info.name != null) dispname = info.name;
             else dispname = cmd.name;
         }
-        var voicefile = info.voicefile;
+        // convert ruby text
 
-        //{type:text,name:charaname,display:dispname,text:txt}
-        var _vf = this.PlayVoice(voicefile, voicebase, this.voicecounter[cmd.name]);
-        console.log(dispname, text, _vf);
-        if (parseInt(this.voicecounter[cmd.name])) {
+        // calculate voice file name
+        var voiceseq;
+        if (this.immvoice[cmd.name]) {
+            voiceseq = this.immvoice[cmd.name];
+            this.immvoice[cmd.name] = null;
+        }
+        else {
+            voiceseq = this.voicecounter[cmd.name];
             this.voicecounter[cmd.name]++;
         }
+        //{type:text,name:charaname,display:dispname,text:txt}
+        var _vf = this.PlayVoice(info.voicefile, this.TJSvar['f.voiceBase'], voiceseq);
+        console.log(dispname, text, _vf);
+
         $('#charname').html(dispname);
-        $('#chartxt').html(text);
+        $('#chartxt').html(this.TextHTML(text));
     }
 
     // kam%s_%03d.ogg, 001, 1 -> kam001_001.ogg
@@ -61,16 +73,58 @@ export class Runtime {
             file = file.replace('%03d', seqtxt);
         }
         else {
-            file = seq;
+            file = (seq + '.ogg').replace(/(\.ogg)+/, '.ogg');
         }
         $('#voice').attr('src', FilePath.find(file));
         return file;
     }
 
+    // convert text with ks format cmd to html
+    TextHTML(txt) {
+        if (txt.indexOf('[') < 0) return txt;
+        // first, cut to lines: text\n[cmd]\ntext
+        const t = txt
+            .replace(/\[/g, '\n[')
+            .replace(/\]/g, ']\n')
+            .split('\n');
+        // generate raw text and cmd position
+        let rs = "";
+        // [[pos,cmd,opt,arg],...] use KSParser to parse function
+        let c = [];
+        t.forEach(e => {
+            if (e[0] == '[') {
+                let f = KSParser.Parse(e)[0];
+                c.push([rs.length, f.name, f.option, f.param])
+            }
+            else {
+                rs += e;
+            }
+        })
+        let p = 0;
+        let ret = "";
+        c.forEach(t => {
+            // append unformatted txt
+            ret += rs.substr(p, t[0] - p);
+            p = t[0];
+            if (t[1] == 'ruby') {
+                ret += '<ruby>';
+                ret += rs[p];
+                p++;
+                ret += '<rt>';
+                ret += t[3].text;
+                ret += '</rt></ruby>';
+            }
+            else console.log(t);
+        });
+        ret += rs.substr(p);
+        console.log(ret);
+        return ret;
+    }
+
     BGM(cmd) {
         if (cmd.param.storage) {
             $('#bgm').attr('src', FilePath.find(cmd.param.storage.toUpperCase() + '.ogg'));
-            console.log( FilePath.find(cmd.param.storage.toUpperCase() + '.ogg'));
+            console.log(FilePath.find(cmd.param.storage.toUpperCase() + '.ogg'));
         }
     }
 
@@ -184,7 +238,10 @@ export class Runtime {
                 if (this.mapper.HaveObject(cmd.name)) {
                     //  voice=seq
                     if (cmd.param.voice !== undefined) {
-                        this.voicecounter[cmd.name] = cmd.param.voice
+                        if (parseInt(cmd.param.voice))
+                            this.voicecounter[cmd.name] = parseInt(cmd.param.voice);
+                        else
+                            this.immvoice[cmd.name] = cmd.param.voice;
                     }
                 }
 
