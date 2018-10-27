@@ -38,9 +38,10 @@ export class FilePath {
         return p;
     }
 
-    static find(file) {
+    static find(file, relative) {
         if (!this.ready) return undefined;
-        return this.findtree[file];
+        if (relative === true) return this.findtree[file];
+        return (this.root + '/' + this.findtree[file][0]).replace(/\/+/g, '/');
     }
 
     static _genindex(tree) {

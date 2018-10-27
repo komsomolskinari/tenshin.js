@@ -40,7 +40,7 @@ async function LoadVMData() {
     ScriptLoadSeq.forEach(s => {
         var sn = s.split('.')[0];
         preloadps.push(
-            $.get('game/' + FilePath.find(s)[0]).promise()
+            $.get(FilePath.find(s)).promise()
                 .then(sc => KSParser.Parse(sc))
                 .then(sp => VM.AddScript(sn, sp))
         )
@@ -57,7 +57,7 @@ $(document).ready(() => {
         scripts.forEach(s => {
             var sn = s.split('.')[0];
             preloadps.push(
-                $.get('game/' + FilePath.find(s)[0]).promise()
+                $.get(FilePath.find(s)).promise()
                     .then(sc => KSParser.Parse(sc))
                     .then(sp => VM.AddScript(sn, sp))
             )

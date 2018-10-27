@@ -63,14 +63,14 @@ export class Runtime {
         else {
             file = seq;
         }
-        $('#voice').attr('src', 'game/' + FilePath.find(file)[0]);
+        $('#voice').attr('src', FilePath.find(file));
         return file;
     }
 
     BGM(cmd) {
         if (cmd.param.storage) {
-            $('#bgm').attr('src', 'game/' + FilePath.find(cmd.param.storage.toUpperCase() + '.ogg')[0]);
-            console.log('game/' + FilePath.find(cmd.param.storage.toUpperCase() + '.ogg')[0]);
+            $('#bgm').attr('src', FilePath.find(cmd.param.storage.toUpperCase() + '.ogg'));
+            console.log( FilePath.find(cmd.param.storage.toUpperCase() + '.ogg'));
         }
     }
 
