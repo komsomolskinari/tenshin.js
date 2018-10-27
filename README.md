@@ -27,24 +27,57 @@ This project is a experiment about running Galgame in modern browser, it's origi
 
 ## 计划 Projects
 ### 完成 Finished
-- [x] 解析KS脚本 Parse .ks Script
-- [x] 按顺序执行 Execute By Order
-- [x] 选择支 Select Case
-- [x] 语音支持 Voice
-- [x] 背景音乐 BGM
-- [x] 文件系统 File System
+- [x] 解析KS脚本    Parse .ks Script
+- [x] 按顺序执行    Execute By Order
+- [x] 选择支    Select Case
+- [x] 语音支持    Voice
+- [x] 背景音乐    BGM
+- [x] 文件系统    File System
 ### 正在工作 WIP
-- [ ] 图片支持 Image
-- [ ] 视频支持 Video
+- [ ] 图片支持    Image
+- [ ] 视频支持    Video
 ### 近期 Soon 
-- [ ] 基本动画 Basic Animation
-- [ ] 图片特效 Image Effect
-- [ ] 改进的选择支 Improved Select
-- [ ] 存档 Save And Load
-- [ ] 自动播放 Auto Play
+- [ ] 基本动画    Basic Animation
+- [ ] 图片特效    Image Effect
+- [ ] 改进的选择支    Improved Select
+- [ ] 存档    Save And Load
+- [ ] 自动播放    Auto Play
 ### 可能要鸽 Sooo......oon
-- [ ] 支持更多Web服务器 Support More Web Server
-- [ ] 支持千恋万花 Support Senren Banka
-- [ ] 封装成Electron程序 Pack With Electron
-- [ ] CG观赏与回想 CG And Scene Viewer
-- [ ] TJS编译器 .tjs Compiler
+- [ ] 支持更多Web服务器    Support More Web Server
+- [ ] 支持千恋万花    Support Senren Banka
+- [ ] 封装成Electron程序    Pack With Electron
+- [ ] CG观赏与回想    CG And Scene Viewer
+- [ ] TJS编译器    .tjs Compiler
+
+## 更新日志 Changelog
+
+### v0.2.1
+2018-10-27
+- 加入了语音和背景音乐    Add voice and BGM
+- 文件系统拥有列目录，自动搜索文件的功能    Filesystem now can ls and find
+- 文件系统不再依赖nginx    Filesystem nolonger require nginx
+- 格式化文本输出    Text output now handle format string
+- VM启动时的资源是异步加载的了    Now load resource asynchonize when VM start
+
+### v0.2
+2018-10-25
+- 试图加入语音    Try to add voice
+- 正确识别文本中名字    Now can display name in text correctly
+
+### v0.1
+2018-10-18
+- 添加对象映射机制    Add object mapper
+- VM现在可以处理同名的多个tag    VM now handling nultiple tag with same name
+- 自启动    Self boot
+- 能够正常按流程完整执行    Now run the game in coret order
+- 整理文件夹    Clear directory
+- 顺手送了个图标    Add icon
+
+### Initial Commit
+2018-10-17
+- 文本输出 Output text
+- 在控制台手动执行 Run from browser console
+- 提示框式选择支 Select case using prompt()
+
+### 开工 Create folder
+2018-10-10
