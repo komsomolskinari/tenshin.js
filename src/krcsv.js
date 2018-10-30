@@ -1,18 +1,19 @@
 // csv & tab-seprate txt parser
-/*
-[
-    ,
-    {0:data0, 1:data1},
-]
-*/
+
 export class KRCSV {
+    /**
+     * Krirkiri specified CSV and tab table parser
+     * @static
+     * @param {String} txt Source string
+     * @param {String} mode Seprator char
+     */
     static Parse(txt, mode) {
         let lines = txt.split('\n').filter(l => l.length > 0);
         if (mode === undefined) mode = this.GuessMode(lines);
         if (mode != ',') lines = lines.map(l => l.replace(new RegExp(mode, 'g'), ','));
         if (lines.length == 0) return [];
 
-        // hack
+        // hack for krkr txt table
         if (lines[0][0] == '#') lines[0] = lines[0].substr(1);
         const title = this.ParseLine(lines[0]);
 
@@ -34,7 +35,10 @@ export class KRCSV {
         return parsedLines;
     }
 
-    // csv or 'tsv'
+    /**
+     * Guess a line array is Tab-CSV or normal CSV
+     * @param {[String]} lines Line array
+     */
     static GuessMode(lines) {
         if (lines.every(l => l.indexOf('\t') >= 0)) return '\t';
         else return ',';

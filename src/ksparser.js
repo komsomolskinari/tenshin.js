@@ -18,20 +18,26 @@ STRING: '"' .? '"' | '\'' .? '\'';
 
 */
 
-
+/**
+ * @class KSParser
+ */
 export class KSParser {
+    /**
+     * KS script to KS 'AST'
+     * @public @static
+     * @param {String} str KS script string to parse
+     * @return {Object} KS AST
+     * @see _text
+     * @see _func
+     */
     static Parse(str) {
-        this.cmd = [];
-        // scan0 to recognize line type and seperate
-        // scan1 to fill the data
-        // scan2 generate static data
-        var _lines = str.split('\n');
         var lines = [];
-        _lines.forEach(l => {
+        // scan1, check line type
+        str.split('\n').forEach(l => {
             l = l.trim();
             switch (l[0]) {
                 case ';':
-                    // pass
+                    // ignore coments
                     return;
                 case '[':
                     // cut to multiple function token
@@ -40,17 +46,17 @@ export class KSParser {
                     ls.forEach(s => lines.push(s));
                     return;
                 case '*':
-                    // tag, direct
+                    // tag, direct pass
                     lines.push(l);
                     return;
                 default:
-                    // text, direct
+                    // text, direct pass
                     lines.push(l);
                     return;
             }
         });
-        
-        // scan1: text -> token
+
+        // scan2, generate objects
         this.cmd = lines.map(c => {
             c = c.trim();
             switch (c[0]) {
@@ -70,8 +76,12 @@ export class KSParser {
         return this.cmd;
     }
 
-    // 【chara/disp】txt
-    // {type:text,name:charaname,disp:dispname,text:txt}
+    /**
+     * Parse text line
+     * @private @static
+     * @param {String} str
+     * @returns {{type:string,name:string,display:string,text:string}}
+     */
     static _text(str) {
         var ret = {
             type: "text",
@@ -100,10 +110,11 @@ export class KSParser {
         return ret;
     }
 
-    // function line parser
-    // _fstr;
-    // _fp;
-
+    /**
+     * Get next char
+     * @static @private
+     * @param {Boolean} inc Step to next
+     */
     static _nextch(inc) {
         while (this._fstr[this._fp] == ' ') this._fp++;
         var ret = this._fstr[this._fp];
@@ -112,15 +123,14 @@ export class KSParser {
         return ret;
     }
 
-    //  [funcname param1 param2=value]
-    //  {
-    //      "type": "func",
-    //      "name": funcname,
-    //      "option": ["param1"],
-    //      "param": { // or {}
-    //          "param2": value
-    //      }
-    //  }
+    /**
+     * Parse function line
+     * @private @static
+     * @param {String} str
+     * @returns {{type:String,name:String,option:[String],param:{}}}
+     * @see _kv
+     * @see _ident
+     */
     static _func(str) {
         this._fstr = str.substr(1, str.length - 2).trim();
         this._fp = 0;
@@ -159,7 +169,11 @@ export class KSParser {
         return ret;
     }
 
-    // parse key=value
+    /**
+     * Get key-value pair
+     * @see _str
+     * @see _ident
+     */
     // TODO: support [func key=]
     static _kv() {
         var ret = [];
@@ -186,7 +200,11 @@ export class KSParser {
         return ret;
     }
 
-    // parse string
+    /**
+     * Parse string
+     * @private @static
+     * @param {String} sep Separators
+     */
     static _str(sep) {
         var b = '';
         while (true) {
@@ -200,7 +218,10 @@ export class KSParser {
         }
     }
 
-    // parse identifier
+    /**
+     * Parse identifier
+     * @private @static
+     */
     static _ident() {
         var b = '';
         while (true) {

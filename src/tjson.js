@@ -1,7 +1,15 @@
 // Kirikiri TPV JavaScript Object Notation to JSON
 // TJSON: JSON of TJS, TJS is JavaScript™ like language, like JavaScript, it has JSON.
+/**
+ * @class TJSON Parser, 
+ */
 export class TJSON {
-    // get next not empty char
+    /**
+     * Get next non-empty char
+     * @private @static
+     * @param {Boolean} step Step to next char
+     * @returns {String}
+     */
     static _nextnechar(step) {
         var ret = null;
         for (; this.ptr < this.str.length; this.ptr++) {
@@ -14,6 +22,12 @@ export class TJSON {
         return ret;
     }
 
+    /**
+     * Parse TJSON to object, just like JSON.Parse
+     * @public @static
+     * @param {String} str TJSON string
+     * @returns {Object}
+     */
     static Parse(str) {
         this.str = ''
         this.ptr = 0;
@@ -33,6 +47,10 @@ export class TJSON {
         return this.obj;
     }
 
+    /**
+     * Get next 'value', map to _obj() _array() _string()
+     * @private @static
+     */
     static _value() {
         var r;
         switch (this._nextnechar()) {
@@ -51,6 +69,10 @@ export class TJSON {
         return r;
     }
 
+    /**
+     * Get next 'Object' (%[key1=>value1,...])
+     * @private @static
+     */
     static _obj() {
         var r = {};
         if (this._nextnechar(true) != '%') throw "fail";
@@ -79,6 +101,10 @@ export class TJSON {
         return r;
     }
 
+    /**
+     * Get next 'Array' ([value1,...])
+     * @private @static
+     */
     static _array() {
         var r = [];
         if (this._nextnechar(true) != '[') throw "fail";
@@ -103,7 +129,11 @@ export class TJSON {
         }
         return r;
     }
-    // return [key,value]
+    
+    /**
+     * Get next 'key-value pair' (key1=>value1)
+     * @private @static
+     */
     static _pair() {
         var r = [];
         r.push(this._string());
@@ -128,6 +158,10 @@ export class TJSON {
         return r;
     }
 
+    /**
+     * Get next 'String', have some hack to work with non standard tjson
+     * @private @static
+     */
     static _string() {
         var r = '';
         var type = this._nextnechar();

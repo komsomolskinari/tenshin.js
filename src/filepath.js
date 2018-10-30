@@ -1,4 +1,8 @@
 export class FilePath {
+    /**
+     * Load filesystem 
+     * Only JSON mode works
+     */
     static async Load() {
         if (this.loading) return;
         this.loading = true;
@@ -26,7 +30,11 @@ export class FilePath {
         this.ready = true;
     }
 
-    // only ls from /
+    /**
+     * List directory
+     * @param {String} dir String, target directory
+     * @returns {*} FileTree
+     */
     static ls(dir) {
         if (!this.ready) return undefined;
         if (dir === undefined) dir = '';
@@ -38,6 +46,12 @@ export class FilePath {
         return p;
     }
 
+    /**
+     * Find file
+     * @param {String} file file to find, with extension
+     * @param {Boolean} relative return path without root directory
+     * @returns {String} path
+     */
     static find(file, relative) {
         if (!this.ready) return undefined;
         if (relative === true) return this.findtree[file];
