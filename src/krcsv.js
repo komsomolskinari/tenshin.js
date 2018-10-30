@@ -6,18 +6,26 @@ export class KRCSV {
      * @static
      * @param {String} txt Source string
      * @param {String} mode Seprator char
+     * @param {*} title Title line, when null, no title
      */
-    static Parse(txt, mode) {
+    static Parse(txt, mode, title) {
         let lines = txt.split('\n').filter(l => l.length > 0);
         if (mode === undefined) mode = this.GuessMode(lines);
         if (mode != ',') lines = lines.map(l => l.replace(new RegExp(mode, 'g'), ','));
         if (lines.length == 0) return [];
 
+        let body;
         // hack for krkr txt table
-        if (lines[0][0] == '#') lines[0] = lines[0].substr(1);
-        const title = this.ParseLine(lines[0]);
+        if (title === undefined) {
+            if (lines[0][0] == '#') lines[0] = lines[0].substr(1);
+            body = lines.slice(1);
+        }
+        else body = lines;
+        let titleline = this.ParseLine(lines[0]);
 
-        let parsedLines = lines.slice(1).map(l => {
+
+
+        let parsedLines = body.map(l => {
             // Parse line, and type convert
             let pl = this.ParseLine(l).map(u => {
                 u = parseInt(u) != NaN ? parseInt(u) : u;  // try int
@@ -27,12 +35,14 @@ export class KRCSV {
             });
 
             // fill text index
-            for (let index = 0; index < pl.length; index++) {
-                pl[title[index]] = pl[index];
+            if (title) {
+                for (let index = 0; index < pl.length; index++) {
+                    pl[titleline[index]] = pl[index];
+                }
             }
             return pl;
         });
-        return parsedLines;
+        return parsedLines.filter(l => l.length > 0);
     }
 
     /**
