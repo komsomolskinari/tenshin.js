@@ -36,6 +36,8 @@ async function LoadVMData() {
     var ScriptLoadSeq = ['start.ks', '１.ks', '２.ks']
     await FilePath.Load();
     window.ImageInfo = new ImageInfo('fgimage');
+    window.Mapper.ImageInfo = window.ImageInfo;
+
     Mapper.LoadObject(TJSON.Parse(await $.get("game/main/envinit.tjs")));
     // TODO: let vm cache module load others
     var preloadps = [];
