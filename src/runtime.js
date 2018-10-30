@@ -123,12 +123,12 @@ export class Runtime {
         return ret;
     }
 
-
     // [bgm]
     BGM(cmd) {
         if (cmd.param.storage) {
-            $('#bgm').attr('src', FilePath.find(cmd.param.storage.toUpperCase() + '.ogg'));
-            console.log(FilePath.find(cmd.param.storage.toUpperCase() + '.ogg'));
+            let realname = cmd.param.storage.replace(/bgm/g, 'BGM') + '.ogg';
+            $('#bgm').attr('src', FilePath.find(realname));
+            console.log(FilePath.find(realname));
         }
     }
 
