@@ -40,7 +40,14 @@ export class ImageInfo {
             this.data[charname].dress[l[1]][l[3]] = l[4];
         })
         fdata.filter(l => l.length == 4).forEach(l => {
-            this.data[charname].face[l[1]] = l[3];
+            if (this.data[charname].face[l[1]] == undefined) this.data[charname].face[l[1]] = [];
+            this.data[charname].face[l[1]].push(l[3]);
         })
+    }
+
+    // get image info from cmd (unessary info filtered)
+    // dress will be cached
+    GetImageInfo(cmd) {
+
     }
 }
