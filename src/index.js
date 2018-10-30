@@ -66,6 +66,6 @@ $(document).ready(() => {
                     .then(sp => VM.AddScript(sn, sp))
             )
         })
-        Promise.all(preloadps).then(() => console.log("cache ok"));
+        Promise.all(preloadps).then(() => console.debug("cache ok"));
     });
 });

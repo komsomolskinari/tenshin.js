@@ -65,7 +65,7 @@ export class KSVM {
             if (this.currentpos.line >= this.scripts[this.currentpos.script].length) {
                 // too far
                 this.hang = true;
-                console.log("EOF");
+                console.debug("EOF");
                 return;
             }
             const cmd = this.CurrentCmd();
@@ -95,8 +95,8 @@ export class KSVM {
                             }
                             break;
 
-                            // mselect & select should have same entry?
-                            // make runtime do these too?
+                        // mselect & select should have same entry?
+                        // make runtime do these too?
                         case "mselect":
                             var next = this.runtime.MapSelect();
                             if (next !== undefined) {

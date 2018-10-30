@@ -55,7 +55,7 @@ export class Runtime {
         }
         //{type:text,name:charaname,display:dispname,text:txt}
         var _vf = this.PlayVoice(info.voicefile, this.TJSvar['f.voiceBase'], voiceseq);
-        console.log(dispname, text, _vf);
+        console.debug(dispname, text, _vf);
 
         $('#charname').html(dispname);
         $('#chartxt').html(this.TextHTML(text));
@@ -116,10 +116,9 @@ export class Runtime {
                 ret += t[3].text;
                 ret += '</rt></ruby>';
             }
-            else console.log(t);
+            else console.warn("Unimplied inline tag", t);
         });
         ret += rs.substr(p);
-        console.log(ret);
         return ret;
     }
 
@@ -128,7 +127,6 @@ export class Runtime {
         if (cmd.param.storage) {
             let realname = cmd.param.storage.replace(/bgm/g, 'BGM') + '.ogg';
             $('#bgm').attr('src', FilePath.find(realname));
-            console.log(FilePath.find(realname));
         }
     }
 
@@ -206,7 +204,7 @@ export class Runtime {
                 this.SelectAdd(cmd);
                 break;
             case "sysjump":
-                console.log("finished");
+                console.debug("Sysjump, EOF?", cmd);
                 break;
             case "eval":
                 this.TJSeval(cmd.param.exp);
@@ -247,17 +245,14 @@ export class Runtime {
                         else
                             this.immvoice[cmd.name] = cmd.param.voice;
                     }
-
                     this.mapper.MapObject(cmd);
                 }
-
-
 
                 if (this.inTrans) {
                     this.AddTrans(cmd);
                 }
                 if (!this.mapper.HaveObject(cmd.name))
-                    console.log(cmd);
+                    console.warn("Unmapped cmd", cmd);
                 break;
         }
     }

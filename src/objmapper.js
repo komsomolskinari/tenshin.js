@@ -36,9 +36,8 @@ export class ObjectMapper {
         // handle registered opions here
         // then pass name & image id to imageinfo
         cmd.option.filter(o => this.objs.includes(o)).forEach(o => {
-            console.log(o, this.name2type[o], this.innerobj[this.name2type[o]][o]);
+            console.debug("Mapped",o, this.name2type[o], this.innerobj[this.name2type[o]][o]);
         });
-        console.log(cmd.option.filter(o => !this.objs.includes(o)));
         let newcmd = JSON.parse(JSON.stringify(cmd));
         newcmd.option = cmd.option
             .filter(o => !this.objs.includes(o))
