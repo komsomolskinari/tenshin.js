@@ -28,8 +28,8 @@ export class KRCSV {
         let parsedLines = body.map(l => {
             // Parse line, and type convert
             let pl = this.ParseLine(l).map(u => {
-                u = parseInt(u) != NaN ? parseInt(u) : u;  // try int
-                u = parseFloat(u) != NaN ? parseFloat(u) : u;  // try float
+                u = !isNaN(parseInt(u)) ? parseInt(u) : u;  // try int
+                u = !isNaN(parseFloat(u)) ? parseFloat(u) : u;  // try float
                 u = u ? u : null;   // check null
                 return u;
             });
