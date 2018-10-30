@@ -28,6 +28,8 @@ export class Runtime {
         this.transSeq = [];
     }
 
+    // Text related commands
+    // 
     Text(cmd) {
         var text = cmd.text;
         var name = cmd.name;
@@ -121,6 +123,8 @@ export class Runtime {
         return ret;
     }
 
+
+    // [bgm]
     BGM(cmd) {
         if (cmd.param.storage) {
             $('#bgm').attr('src', FilePath.find(cmd.param.storage.toUpperCase() + '.ogg'));
@@ -243,6 +247,8 @@ export class Runtime {
                         else
                             this.immvoice[cmd.name] = cmd.param.voice;
                     }
+
+                    this.mapper.MapObject(cmd);
                 }
 
 

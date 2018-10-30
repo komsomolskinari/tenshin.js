@@ -1,16 +1,19 @@
 export class ObjectMapper {
     constructor() {
+        // key name value type
         this.objs = []
+        this.name2type = {}
         this.innerobj = null;
     }
 
     LoadObject(obj) {
-        this.objs = this.objs.concat(Object.keys(obj.characters));
-        this.objs = this.objs.concat(Object.keys(obj.stages));
-        this.objs = this.objs.concat(Object.keys(obj.times));
-        this.objs = this.objs.concat(Object.keys(obj.actions));
         this.innerobj = obj;
+        for (const i of ["times", "stages", "positions", "actions", "transitions", "characters", "emotions"]) {
+            Object.keys(obj[i]).forEach(k => this.name2type[k] = i);
+        }
+        this.objs = Object.keys(this.name2type);
     }
+
     HaveObject(obj) {
         return this.objs.includes(obj);
     }
@@ -26,8 +29,15 @@ export class ObjectMapper {
         if (idx != -1) this.objs.splice(idx);
     }
 
-    MapObject(obj) {
-
+    MapObject(cmd) {
+        // handle registered opions here
+        // then pass name & image id to imageinfo
+        console.log(cmd);
+        var name = cmd.name;
+        cmd.option.filter(o => this.objs.includes(o)).forEach(o => {
+            console.log(o, this.name2type[o], this.innerobj[this.name2type[o]][o]);
+        });
+        console.log(cmd.option.filter(o => !this.objs.includes(o)))
     }
 
     // e.g:神様
