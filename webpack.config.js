@@ -6,13 +6,7 @@ module.exports = {
     output: {
         filename: 'index.js',
         path: '/mnt/c/Users/User/Desktop/YUZUSOFT/tenshin_js'
-    },/*
-    plugins: [
-        new webpack.ProvidePlugin({
-            $: "jquery",
-            jQuery: "jquery"
-        })
-    ],*/
+    },
     module: {
         rules: [
             {

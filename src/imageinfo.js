@@ -6,7 +6,9 @@ export class ImageInfo {
     constructor(basedir) {
         const ls = FilePath.ls(basedir);
         this.files = [];
-        this.data = {};
+        this.chunkdata = {};
+        this.coorddata = {};
+
         this.chardress = {};
         Object.keys(ls).forEach(key => {
             let subdir = ls[key];
@@ -17,9 +19,9 @@ export class ImageInfo {
             })
         });
         // load info file
-        this.files.filter(f => f.match(/info\.txt$/g)).forEach(f => this.LoadFile(f));
+        this.files.filter(f => f.match(/info\.txt$/g)).forEach(f => this.LoadChunkDef(f));
     }
-    /* this.data   char->dg1->1->02
+    /* this.chunkdata   char->dg1->1->02
     {
         char:{
             dress:{
@@ -40,7 +42,7 @@ export class ImageInfo {
             }
         }
     }*/
-    async LoadFile(file) {
+    async LoadChunkDef(file) {
         // 朋花_私服夏_ポーズa_info.txt
         // char_packprefix_info.txt (chunk info)
         // 朋花_私服夏_ポーズa_3.txt
@@ -56,8 +58,8 @@ export class ImageInfo {
 
 
         // load chunk data
-        if (this.data[charname] === undefined)
-            this.data[charname] = {
+        if (this.chunkdata[charname] === undefined)
+            this.chunkdata[charname] = {
                 dress: {},
                 face: {}
             };
@@ -65,18 +67,52 @@ export class ImageInfo {
             let dname = l[1];
             let dno = l[3];
             let dvstr = l[4];
-            if (this.data[charname].dress[dname] === undefined)
-                this.data[charname].dress[dname] = {};
-            this.data[charname].dress[dname][dno] = [dvstr, pfx];
+            if (this.chunkdata[charname].dress[dname] === undefined)
+                this.chunkdata[charname].dress[dname] = {};
+            this.chunkdata[charname].dress[dname][dno] = [dvstr, pfx];
         })
         fdata.filter(l => l.length == 4).forEach(l => {
             let fno = l[1];
             let fvstr = l[3];
-            if (this.data[charname].face[pfx] == undefined)
-                this.data[charname].face[pfx] = {};
-            if (this.data[charname].face[pfx][fno] == undefined)
-                this.data[charname].face[pfx][fno] = [];
-            this.data[charname].face[pfx][fno].push(fvstr);
+            if (this.chunkdata[charname].face[pfx] == undefined)
+                this.chunkdata[charname].face[pfx] = {};
+            if (this.chunkdata[charname].face[pfx][fno] == undefined)
+                this.chunkdata[charname].face[pfx][fno] = [];
+            this.chunkdata[charname].face[pfx][fno].push(fvstr);
+        })
+    }
+
+    /*
+    {
+        char:{
+            a_1:{
+                name1:{
+                    coord:[x,y]
+                    size:[x,y]
+                    layerno:1234
+                }
+            }
+        }
+    }
+    */
+    async LoadCoordData(file) {
+        let fdata = KRCSV.Parse(await $.get(FilePath.find(file)), '\t', false)
+        const fvar = parseInt(file.match(/_([0-9])\./)[0]);
+        const charname = file.split('_')[0];
+        if (this.coorddata[charname] === undefined)
+            this.coorddata[charname] = {};
+        if (this.coorddata[charname][fvar] === undefined)
+            this.coorddata[charname][fvar] = {};
+        fdata.forEach(l => {
+            const lname = l[1];
+            const loffset = [l[2], l[3]];
+            const lsize = [l[4], l[5]];
+            const lid = l[10];
+            this.coorddata[charname][fvar][lname] = {
+                offset: loffset,
+                size: lsize,
+                layer: lid
+            };
         })
     }
 
@@ -112,12 +148,12 @@ export class ImageInfo {
                 return;
             }
             base = niOption[0]; // optional base
-            this.chardress[cmd.name] = this.data[cmd.name].dress[base];
+            this.chardress[cmd.name] = this.chunkdata[cmd.name].dress[base];
         }
         if (this.chardress[cmd.name] === undefined) {
             // guess one 
-            base = Object.keys(this.data[cmd.name].dress)[0];
-            this.chardress[cmd.name] = this.data[cmd.name].dress[base];
+            base = Object.keys(this.chunkdata[cmd.name].dress)[0];
+            this.chardress[cmd.name] = this.chunkdata[cmd.name].dress[base];
         }
         var mainImgId = parseInt(variant.substr(0, 1));
         var varImgId = parseInt(variant.substr(1, 2));
@@ -128,7 +164,7 @@ export class ImageInfo {
         }
         let mainImg = this.chardress[cmd.name][mainImgId][0];
         let pfx = this.chardress[cmd.name][mainImgId][1];
-        let varImgs = this.data[cmd.name].face[pfx][varImgId];
+        let varImgs = this.chunkdata[cmd.name].face[pfx][varImgId];
 
         console.log(mainImg, pfx, varImgs);
     }

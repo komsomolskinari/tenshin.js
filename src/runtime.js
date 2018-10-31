@@ -36,13 +36,11 @@ export class Runtime {
         var dispname = cmd.display;
         var info = this.mapper.GetNameInfo(name);
 
-        // display name havent rewrite, need set
+        // display name haven't been rewrite, need set
         if (dispname == null) {
             if (info.name != null) dispname = info.name;
             else dispname = cmd.name;
         }
-        // convert ruby text
-
         // calculate voice file name
         var voiceseq;
         if (this.immvoice[cmd.name]) {
@@ -130,6 +128,7 @@ export class Runtime {
         }
     }
 
+    // TODO: mselect is Tenshin Ranman only command?
     // add map select option
     MapSelectAdd(cmd) {
         this.MapSelectData.push([
@@ -236,9 +235,9 @@ export class Runtime {
                 // stateless call
                 break;
             default:
-                // intercept [chara]
+                // TODO: Use ObjectMapper to compile command
+                // And send an UI frontend
                 if (this.mapper.HaveObject(cmd.name)) {
-                    //  voice=seq
                     if (cmd.param.voice !== undefined) {
                         if (parseInt(cmd.param.voice))
                             this.voicecounter[cmd.name] = parseInt(cmd.param.voice);
