@@ -1,4 +1,5 @@
 import { Runtime } from "./runtime";
+import { TJSeval } from './tjseval';
 
 // when to hang up vm
 let VM_STEP = 0;
@@ -81,7 +82,7 @@ export class KSVM {
                             // Let runtime handle these logic?
                             if (cmd.param.eval != undefined) {
                                 // tjs eval
-                                var r = this.runtime.TJSeval(cmd.param.eval);
+                                var r = TJSeval(cmd.param.eval,this.runtime);
                                 // eval false, cancel jump
                                 if (!r) break;
                             }
