@@ -244,7 +244,8 @@ export class Runtime {
                         else
                             this.immvoice[cmd.name] = cmd.param.voice;
                     }
-                    this.mapper.MapObject(cmd);
+                    let mapped = this.mapper.MapObject(cmd);
+                    this.DrawObject(mapped);
                 }
 
                 if (this.inTrans) {
@@ -255,6 +256,59 @@ export class Runtime {
                 break;
         }
     }
+
+    DrawObject(mobj) {
+        if (mobj.image) {
+            // <div id='chara'>
+            // <img 1><img 2>
+            // just a test here
+            if ($('#fg_' + mobj.name).length == 0) {
+                $('#imagediv').append('<div id="fg_' + mobj.name + '"></div>');
+                $('#fg_' + mobj.name)
+                    .html('')
+                    .css('position', 'absolute')
+                    .css('top', '-1000px');
+            }
+            else {
+                $('#fg_' + mobj.name)
+                    .html('')
+                    .css('position', 'absolute')
+                    .css('top', '-1000px');
+            }
+            mobj.image.forEach(i => {
+                $('#fg_' + mobj.name)
+                    .append(
+                        '<img src="' + FilePath.find(i.layer + '.png') + '" style="position:absolute;left:' + i.offset[0] + 'px;top:' + i.offset[1] + 'px" />'
+                    )
+            })
+        }
+
+        if (mobj.objdata.positions) {
+            let xposs = mobj.objdata.positions.filter(p => p.type == "KAGEnvironment.XPOSITION")
+            if (xposs && xposs.length > 0) {
+                let cxoff = xposs[0].xpos;
+                $('#fg_' + mobj.name).css('left', (cxoff - 400) + 'px');
+            }
+            mobj.objdata.positions.filter(p => p.type == "KAGEnvironment.DISPPOSITION").forEach(p => {
+                switch (p.disp) {
+                    case "KAGEnvImage.BOTH":
+                    case "KAGEnvImage.BU":
+                        break;
+                    case "KAGEnvImage.CLEAR":
+                    case "KAGEnvImage.FACE":
+                    case "KAGEnvImage.INVISIBLE":
+                        $('#fg_' + mobj.name).remove();
+                        break;
+                    default:
+                        console.warn('Unknown KAGEnviroment.DISPPOSITION', p.disp);
+                        break;
+                }
+            })
+        }
+    }
+
+
+
 
     // fake eval
     // FAKE! MAGIC INCLUDED!

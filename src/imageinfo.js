@@ -82,11 +82,13 @@ export class ImageInfo {
     /*
     {
         char:{
-            a_1:{
-                name1:{
-                    coord:[x,y]
-                    size:[x,y]
-                    layerno:1234
+            pfx1:{
+                a_1:{
+                    name1:{
+                        coord:[x,y]
+                        size:[x,y]
+                        layerno:1234
+                    }
                 }
             }
         }
@@ -95,17 +97,21 @@ export class ImageInfo {
     async LoadCoordData(file) {
         let fdata = KRCSV.Parse(await $.get(FilePath.find(file)), '\t', false)
         const fvar = file.match(/_([0-9])\./)[1];
-        const charname = file.split('_')[0];
+        const fsp = file.split('_');
+        const pfx = fsp.slice(1, fsp.length - 1).join('_');
+        const charname = fsp[0];
         if (this.coorddata[charname] === undefined)
             this.coorddata[charname] = {};
-        if (this.coorddata[charname][fvar] === undefined)
-            this.coorddata[charname][fvar] = {};
+        if (this.coorddata[charname][pfx] === undefined)
+            this.coorddata[charname][pfx] = {};
+        if (this.coorddata[charname][pfx][fvar] === undefined)
+            this.coorddata[charname][pfx][fvar] = {};
         fdata.forEach(l => {
             const lname = l[1];
             const loffset = [l[2], l[3]];
             const lsize = [l[4], l[5]];
             const lid = l[9];
-            this.coorddata[charname][fvar][lname] = {
+            this.coorddata[charname][pfx][fvar][lname] = {
                 offset: loffset,
                 size: lsize,
                 layer: lid
@@ -204,8 +210,8 @@ export class ImageInfo {
 
         let raw = [];
         let usedVer = levelConvMap[level];
-        raw.push(this.coorddata[cmd.name][usedVer][mainImg]);
-        varImgs.forEach(v => raw.push(this.coorddata[cmd.name][usedVer][v]));
+        raw.push(this.coorddata[cmd.name][pfx][usedVer][mainImg]);
+        varImgs.forEach(v => raw.push(this.coorddata[cmd.name][pfx][usedVer][v]));
 
         let nameConverted = raw.map(v => {
             return {
