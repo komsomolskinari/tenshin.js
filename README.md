@@ -51,6 +51,12 @@ This project is a experiment about running Galgame in modern browser, it's origi
 
 ## 更新日志 Changelog
 
+### v0.3
+2018-11-01
+- 试图加入立绘    Try to add foreground image
+- 现在使用Babel    Now depends Babel
+- 文本输出支持换行标识     Text output support 'newline' tag.
+
 ### v0.2.1
 2018-10-27
 - 加入了语音和背景音乐    Add voice and BGM
