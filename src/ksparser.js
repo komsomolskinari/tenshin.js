@@ -116,7 +116,7 @@ export class KSParser {
      * @param {Boolean} inc Step to next
      */
     static _nextch(inc) {
-        while (this._fstr[this._fp] == ' ') this._fp++;
+        while (" \f\n\r\t\v".includes(this._fstr[this._fp])) this._fp++;
         var ret = this._fstr[this._fp];
         if (this._fp >= this._fstr.length) ret = null;
         if (inc == true) this._fp++;
