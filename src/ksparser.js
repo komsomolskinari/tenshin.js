@@ -227,7 +227,7 @@ export class KSParser {
         while (true) {
             var nc = this._fstr[this._fp];
             this._fp++;
-            if (!" []=".includes(nc) && nc != null) {
+            if (!" \t[]=".includes(nc) && nc != null) {
                 b += nc;
             }
             else {

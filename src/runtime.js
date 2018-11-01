@@ -106,15 +106,22 @@ export class Runtime {
             // append unformatted txt
             ret += rs.substr(p, t[0] - p);
             p = t[0];
-            if (t[1] == 'ruby') {
-                ret += '<ruby>';
-                ret += rs[p];
-                p++;
-                ret += '<rt>';
-                ret += t[3].text;
-                ret += '</rt></ruby>';
+            switch (t[1]) {
+                case 'ruby':
+                    ret += '<ruby>';
+                    ret += rs[p];
+                    p++;
+                    ret += '<rt>';
+                    ret += t[3].text;
+                    ret += '</rt></ruby>';
+                    break;
+                case 'r':
+                    ret += '<br />';
+                    break;
+                default:
+                    console.warn("TextHTML, Unimplied inline tag", t);
+                    break;
             }
-            else console.warn("Unimplied inline tag", t);
         });
         ret += rs.substr(p);
         return ret;
@@ -223,18 +230,11 @@ export class Runtime {
             case "bgm":
                 this.BGM(cmd);
                 break;
-            case "EV":
-            case "msgoff":
-            case "msgon":
-            case "se":
-            case "env":
-            case "date":
-            case "wait":
-            case "stage":
-
-                // stateless call
-                break;
             default:
+                // Jump unimpliement cmd
+                if (["ev", "msgoff", "msgon", "se", "env", "date", "wait", "stage",
+                    "beginskip", "endskip", "fadepausebgm", "fadebgm", "pausebgm", "resumebgm", "opmovie", "edmovie",
+                    "initscene", "day_full", "ano_view", "ret_view", "playbgm", "delaydone", "white_ball", "white_ball_hide", "particle"].includes(cmd.name.toLowerCase())) break;
                 // TODO: Use ObjectMapper to compile command
                 // And send an UI frontend
                 if (this.mapper.HaveObject(cmd.name)) {
@@ -251,7 +251,7 @@ export class Runtime {
                     this.AddTrans(cmd);
                 }
                 if (!this.mapper.HaveObject(cmd.name))
-                    console.warn("Unmapped cmd", cmd);
+                    console.warn("RuntimeCall, unimpliement cmd", cmd);
                 break;
         }
     }
