@@ -19,7 +19,9 @@ export class ImageInfo {
             })
         });
         // load info file
-        this.files.filter(f => f.match(/info\.txt$/g)).forEach(f => this.LoadChunkDef(f));
+        this.files.filter(f => f.match(/info\.txt$/)).forEach(f => this.LoadChunkDef(f));
+
+        this.files.filter(f => f.match(/[0-9]\.txt$/)).forEach(f => this.LoadCoordData(f));
     }
     /* this.chunkdata   char->dg1->1->02
     {
@@ -54,8 +56,6 @@ export class ImageInfo {
         const fsp = file.split('_')
         const charname = fsp[0];
         const pfx = fsp.slice(1, fsp.length - 1).join('_');
-        console.log(pfx);
-
 
         // load chunk data
         if (this.chunkdata[charname] === undefined)
@@ -97,7 +97,7 @@ export class ImageInfo {
     */
     async LoadCoordData(file) {
         let fdata = KRCSV.Parse(await $.get(FilePath.find(file)), '\t', false)
-        const fvar = parseInt(file.match(/_([0-9])\./)[0]);
+        const fvar = file.match(/_([0-9])\./)[1];
         const charname = file.split('_')[0];
         if (this.coorddata[charname] === undefined)
             this.coorddata[charname] = {};
@@ -107,7 +107,7 @@ export class ImageInfo {
             const lname = l[1];
             const loffset = [l[2], l[3]];
             const lsize = [l[4], l[5]];
-            const lid = l[10];
+            const lid = l[9];
             this.coorddata[charname][fvar][lname] = {
                 offset: loffset,
                 size: lsize,
@@ -166,6 +166,15 @@ export class ImageInfo {
         let pfx = this.chardress[cmd.name][mainImgId][1];
         let varImgs = this.chunkdata[cmd.name].face[pfx][varImgId];
 
-        console.log(mainImg, pfx, varImgs);
+        /*return [
+            [fileno1,[coordx,coordy],[sizex,sizey]]
+            ...
+        ]
+         */
+        // forced use ver 1 for dbg
+        let ret = [];
+        ret.push(this.coorddata[cmd.name][1][mainImg]);
+        varImgs.forEach(v => ret.push(this.coorddata[cmd.name][1][v]));
+        return ret;
     }
 }
