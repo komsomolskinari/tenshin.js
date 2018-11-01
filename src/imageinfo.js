@@ -115,6 +115,12 @@ export class ImageInfo {
 
     // get image info from cmd (unessary info filtered)
     // dress will be cached
+
+    /**
+     * 
+     * @param {*} cmd 
+     * @return {[{offset:[number,number],size:[number,number],layer:string}]};
+     */
     GetImageInfo(cmd) {
         // HACK: rewrite 'unusual' name as a workaround
         // will fix after v1.0
@@ -131,7 +137,6 @@ export class ImageInfo {
                     level = null;
                 }
                 else {
-                    console.log("Level", level[0])
                     level = level[0].level;
                 }
             }
@@ -197,23 +202,19 @@ export class ImageInfo {
             return;
         }
 
-        /*return [
-            [fileno1,[coordx,coordy],[sizex,sizey]]
-            ...
-        ]
-         */
-        // forced use ver 1 for dbg
-        let ret = [];
+        let raw = [];
         let usedVer = levelConvMap[level];
-        ret.push(this.coorddata[cmd.name][usedVer][mainImg]);
-        varImgs.forEach(v => ret.push(this.coorddata[cmd.name][usedVer][v]));
+        raw.push(this.coorddata[cmd.name][usedVer][mainImg]);
+        varImgs.forEach(v => raw.push(this.coorddata[cmd.name][usedVer][v]));
 
-        return ret.map(v => {
+        let nameConverted = raw.map(v => {
             return {
-                layer: ([cmd.name, pfx, v.layer].join('_')),
+                layer: ([cmd.name, pfx, usedVer, v.layer].join('_')),
                 offset: v.offset,
                 size: v.size
             }
         });
+
+        return nameConverted;
     }
 }

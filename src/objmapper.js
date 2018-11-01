@@ -1,4 +1,5 @@
 import { ImageInfo } from "./imageinfo";
+import { FilePath } from "./filepath";
 
 export class ObjectMapper {
     constructor() {
@@ -58,6 +59,27 @@ export class ObjectMapper {
         if (this.name2type[cmd.name] == "characters") {
             newcmd.name = this.GetNameInfo(cmd.name).standname;
             let img = this.ImageInfo.GetImageInfo(newcmd);
+            if (img) {
+                // <div id='chara'>
+                // <img 1><img 2>
+                // just a test here
+                if ($('#fg_' + cmd.name).length == 0) {
+                    $('#imagediv').append('<div id="fg_' + cmd.name + '"></div>');
+                }
+                else {
+                    $('#fg_' + cmd.name)
+                        .html('')
+                        .css('position', 'absolute')
+                        .css('left', '-400px')
+                        .css('top', '-1000px');
+                }
+                img.forEach(i => {
+                    $('#fg_' + cmd.name)
+                        .append(
+                            '<img src="' + FilePath.find(i.layer + '.png') + '" style="position:absolute;left:' + i.offset[0] + 'px;top:' + i.offset[1] + 'px" />'
+                        )
+                })
+            }
         }
     }
 
