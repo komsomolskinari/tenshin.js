@@ -33,19 +33,31 @@ export class ObjectMapper {
     }
 
     MapObject(cmd) {
+        let objdata = {}
         // handle registered opions here
         // then pass name & image id to imageinfo
         cmd.option.filter(o => this.objs.includes(o)).forEach(o => {
-            console.debug("Mapped",o, this.name2type[o], this.innerobj[this.name2type[o]][o]);
+            if (objdata[this.name2type[o]] === undefined) objdata[this.name2type[o]] = [];
+            let mo = this.innerobj[this.name2type[o]][o];
+            if (mo.length === undefined) {
+                objdata[this.name2type[o]].push(mo);
+            }
+            else {
+                for (const i of mo) {
+                    objdata[this.name2type[o]].push(i);
+                }
+            }
         });
+        cmd.objdata = objdata;
         let newcmd = JSON.parse(JSON.stringify(cmd));
         newcmd.option = cmd.option
             .filter(o => !this.objs.includes(o))
-            .filter(o => !["sync", "nosync", "back", "front", "grayscale"].includes(o));
+            .filter(o => !["sync", "nosync", "back", "front", "grayscale", "bvoice", "nextvoice", "resetcolor", "stopvoice", "hideemotion"].includes(o));
+        newcmd.param = {}
 
         if (this.name2type[cmd.name] == "characters") {
             newcmd.name = this.GetNameInfo(cmd.name).standname;
-            this.ImageInfo.GetImageInfo(newcmd);
+            let img = this.ImageInfo.GetImageInfo(newcmd);
         }
     }
 

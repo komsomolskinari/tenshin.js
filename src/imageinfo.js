@@ -10,6 +10,10 @@ export class ImageInfo {
         this.coorddata = {};
 
         this.chardress = {};
+        // image size selection cache
+        // image size info caculated by Objmapper
+        // and passed in cmd.objdata.size
+        this.charlevel = {};
         Object.keys(ls).forEach(key => {
             let subdir = ls[key];
             Object.keys(subdir).forEach(name => {
@@ -45,13 +49,6 @@ export class ImageInfo {
         }
     }*/
     async LoadChunkDef(file) {
-        // 朋花_私服夏_ポーズa_info.txt
-        // char_packprefix_info.txt (chunk info)
-        // 朋花_私服夏_ポーズa_3.txt
-        // char_packprefix_variant.txt (coord data)
-        // 朋花_私服夏_ポーズa_3_373.png
-        // char_packprefix_variant_id.png (real image)
-
         let fdata = KRCSV.Parse(await $.get(FilePath.find(file)), '\t', false)
         const fsp = file.split('_')
         const charname = fsp[0];
@@ -123,6 +120,37 @@ export class ImageInfo {
         // will fix after v1.0
         if (cmd.name == "老竹") cmd.name = "幹雄";
 
+        let level = null;
+        if (cmd.objdata !== undefined) {
+            if (cmd.objdata.positions !== undefined) {
+                level = cmd.objdata.positions.filter(p => p.type == "KAGEnvironment.LEVEL");
+                if (level.length > 1) {
+                    console.warn("GetImageInfo, multiple LEVEL", cmd);
+                }
+                if (level.length == 0) {
+                    level = null;
+                }
+                else {
+                    console.log("Level", level[0])
+                    level = level[0].level;
+                }
+            }
+        }
+        if (level == null) {
+            level = this.charlevel[cmd.name];
+        }
+        else {
+            this.charlevel[cmd.name] = level;
+        }
+
+        if (level == null) {
+            level = 1;
+            this.charlevel[cmd.name] = level;
+        }
+
+        // 35 50 75 100 120 140 bgexpand original
+        let levelConvMap = [1, 1, 3, 3, 3, 5, 3]
+
         // 佐奈 制服春 110
         // 佐奈->制服春->1->10
 
@@ -138,18 +166,16 @@ export class ImageInfo {
             console.warn("GetImageInfo, multiple iOptions, direct return", cmd);
             return;
         }
-        //console.assert(iOption.length < 2, "Multiple iOptions", iOption);
 
         let base;
         let variant = iOption[0]; // always have variant info
         if (niOption.length > 0) {
-            if (iOption.length == 0) {
-                console.warn("GetImageInfo, niOpt with no iOpt, direct return", cmd);
-                return;
-            }
+
             base = niOption[0]; // optional base
             this.chardress[cmd.name] = this.chunkdata[cmd.name].dress[base];
+            if (iOption.length == 0) return;
         }
+
         if (this.chardress[cmd.name] === undefined) {
             // guess one 
             base = Object.keys(this.chunkdata[cmd.name].dress)[0];
@@ -166,6 +192,11 @@ export class ImageInfo {
         let pfx = this.chardress[cmd.name][mainImgId][1];
         let varImgs = this.chunkdata[cmd.name].face[pfx][varImgId];
 
+        if (varImgs === undefined) {
+            console.warn("GetImageInfo, varImgs not found, direct return", [varImgId], cmd);
+            return;
+        }
+
         /*return [
             [fileno1,[coordx,coordy],[sizex,sizey]]
             ...
@@ -173,8 +204,16 @@ export class ImageInfo {
          */
         // forced use ver 1 for dbg
         let ret = [];
-        ret.push(this.coorddata[cmd.name][1][mainImg]);
-        varImgs.forEach(v => ret.push(this.coorddata[cmd.name][1][v]));
-        return ret;
+        let usedVer = levelConvMap[level];
+        ret.push(this.coorddata[cmd.name][usedVer][mainImg]);
+        varImgs.forEach(v => ret.push(this.coorddata[cmd.name][usedVer][v]));
+
+        return ret.map(v => {
+            return {
+                layer: ([cmd.name, pfx, v.layer].join('_')),
+                offset: v.offset,
+                size: v.size
+            }
+        });
     }
 }
