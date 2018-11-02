@@ -95,7 +95,7 @@ export class ImageInfo {
     }
     */
     async LoadCoordData(file) {
-        let fdata = KRCSV.Parse(await $.get(FilePath.find(file)), '\t', false)
+        let fdata = KRCSV.Parse(await $.get(FilePath.find(file)), '\t')
         const fvar = file.match(/_([0-9])\./)[1];
         const fsp = file.split('_');
         const pfx = fsp.slice(1, fsp.length - 1).join('_');
@@ -125,7 +125,7 @@ export class ImageInfo {
     /**
      * 
      * @param {*} cmd 
-     * @return {[{offset:[number,number],size:[number,number],layer:string}]};
+     * @return {{base:[number,number],layer:[{offset:[number,number],size:[number,number],layer:string}]}};
      */
     GetImageInfo(cmd) {
         // HACK: rewrite 'unusual' name as a workaround
@@ -192,8 +192,8 @@ export class ImageInfo {
             base = Object.keys(this.chunkdata[cmd.name].dress)[0];
             this.chardress[cmd.name] = this.chunkdata[cmd.name].dress[base];
         }
-        var mainImgId = parseInt(variant.substr(0, 1));
-        var varImgId = parseInt(variant.substr(1, 2));
+        let mainImgId = parseInt(variant.substr(0, 1));
+        let varImgId = parseInt(variant.substr(1, 2));
 
         if (this.chardress[cmd.name][mainImgId] === undefined) {
             console.warn("GetImageInfo, chardress lost status, direct return", this.chardress[cmd.name], cmd);
@@ -209,18 +209,21 @@ export class ImageInfo {
         }
 
         let raw = [];
-        let usedVer = levelConvMap[level];
+        const usedVer = levelConvMap[level];
         raw.push(this.coorddata[cmd.name][pfx][usedVer][mainImg]);
         varImgs.forEach(v => raw.push(this.coorddata[cmd.name][pfx][usedVer][v]));
 
-        let nameConverted = raw.map(v => {
+        const nameConverted = raw.map(v => {
             return {
                 layer: ([cmd.name, pfx, usedVer, v.layer].join('_')),
                 offset: v.offset,
                 size: v.size
             }
         });
-
-        return nameConverted;
+        const baseSize = this.coorddata[cmd.name][pfx][usedVer]['null'].size;
+        return {
+            size: baseSize,
+            layer: nameConverted
+        }
     }
 }

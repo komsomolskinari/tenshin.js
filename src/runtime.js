@@ -257,8 +257,74 @@ export class Runtime {
         }
     }
 
+    /*mobj.image
+    {
+        size:[number,number],
+        layer:[
+            {
+                offset:[number,number],
+                size:[number,number],
+                layer:string
+            }
+        ]
+    }*/
+    CalcImageCoord(mobj) {
+        if (!(mobj.image && mobj.image.layer)) return;
+        let layer = mobj.image.layer;
+
+        let scale = mobj.objdata.positions
+            .filter(p => p.type == "KAGEnvironment.LEVEL")[0]
+            .level;
+        scale = parseInt(scale);
+        /*{
+            "zoom": "200", // wtf? yoffset?
+            "imgzoom": "140", // they use this
+            "stretch": "stFastLinear" // needn't, browser will do it
+        },*/
+        scale = this.mapper.innerobj.levels[scale];
+        let zoom = scale.imgzoom / 100;
+
+        let ret = {};
+        ret['null'] = {
+            size: mobj.image.size,
+            offset: [(mobj.image.size[0] - 1280) / 2, (mobj.image.size[1] - 960) / 2]
+        }
+        layer.forEach(l => {
+            ret[l.layer] = {
+                offset: l.offset,
+                size: l.size
+            }
+        })
+
+        let rr = {}
+        for (const ln in ret) {
+            if (ret.hasOwnProperty(ln)) {
+                const e = ret[ln];
+                rr[ln] = {
+                    offset: [e.offset[0] * zoom, e.offset[1] * zoom],
+                    size: [e.size[0] * zoom, e.size[1] * zoom]
+                }
+            }
+        }
+        return rr;
+        /*
+        {
+            null:{
+                offset:[x,y]
+                size:[x,y]
+            }:
+            img1:{
+                ...
+            }
+        }
+        */
+    }
+
     DrawObject(mobj) {
-        if (mobj.image) {
+
+        console.log(this.CalcImageCoord(mobj));
+
+        if (mobj.image && mobj.image.layer) {
             // <div id='chara'>
             // <img 1><img 2>
             // just a test here
@@ -275,7 +341,7 @@ export class Runtime {
                     .css('position', 'absolute')
                     .css('top', '-1000px');
             }
-            mobj.image.forEach(i => {
+            mobj.image.layer.forEach(i => {
                 $('#fg_' + mobj.name)
                     .append(
                         '<img src="' + FilePath.find(i.layer + '.png') + '" style="position:absolute;left:' + i.offset[0] + 'px;top:' + i.offset[1] + 'px" />'
