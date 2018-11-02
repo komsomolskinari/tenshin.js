@@ -1,8 +1,8 @@
 // runtime libs
 import { ObjectMapper } from './objmapper';
-import { FilePath } from './filepath';
-import { KSParser } from './ksparser';
-import { TJSeval } from './tjseval';
+import { FilePath } from './utils/filepath';
+import { KSParser } from './utils/ksparser';
+import { TJSeval } from './utils/tjseval';
 import { ImageInfo } from './imageinfo';
 export class Runtime {
     constructor() {

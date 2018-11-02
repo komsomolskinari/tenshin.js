@@ -1,5 +1,5 @@
 import { ImageInfo } from "./imageinfo";
-import { FilePath } from "./filepath";
+import { FilePath } from "./utils/filepath";
 
 export class ObjectMapper {
     constructor() {
