@@ -13,7 +13,6 @@ export class ImageInfo {
         // image size selection cache
         // image size info caculated by Objmapper
         // and passed in cmd.objdata.size
-        this.charlevel = {};
         Object.keys(ls).forEach(key => {
             let subdir = ls[key];
             Object.keys(subdir).forEach(name => {
@@ -148,15 +147,7 @@ export class ImageInfo {
             }
         }
         if (level == null) {
-            level = this.charlevel[cmd.name];
-        }
-        else {
-            this.charlevel[cmd.name] = level;
-        }
-
-        if (level == null) {
             level = 1;
-            this.charlevel[cmd.name] = level;
         }
 
         // 35 50 75 100 120 140 bgexpand original

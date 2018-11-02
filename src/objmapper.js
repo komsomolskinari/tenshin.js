@@ -3,11 +3,13 @@ import { FilePath } from "./filepath";
 
 export class ObjectMapper {
     constructor() {
-        // key name value type
         this.objs = []
         this.name2type = {}
         this.innerobj = null;
         this.ImageInfo = null;
+
+        // Object data cache
+        this.odatacache = {};
     }
 
     LoadObject(obj) {
@@ -35,6 +37,7 @@ export class ObjectMapper {
 
     MapObject(cmd) {
         let objdata = {}
+        if (this.odatacache[cmd.name] === undefined) this.odatacache[cmd.name] = {};
         // handle registered opions here
         // then pass name & image id to imageinfo
         cmd.option.filter(o => this.objs.includes(o)).forEach(o => {
@@ -49,14 +52,21 @@ export class ObjectMapper {
                 }
             }
         });
-        cmd.objdata = objdata;
+        for (const key in objdata) {
+            if (objdata.hasOwnProperty(key)) {
+                const value = objdata[key];
+                this.odatacache[cmd.name][key] = value;
+            }
+        }
+
+        cmd.objdata = this.odatacache[cmd.name];
         let newcmd = JSON.parse(JSON.stringify(cmd));
         newcmd.option = cmd.option
             .filter(o => !this.objs.includes(o))
             .filter(o => !["sync", "nosync", "back", "front", "grayscale", "bvoice", "nextvoice", "resetcolor", "stopvoice", "hideemotion"].includes(o));
         newcmd.param = {}
         let ret = {};
-        ret.objdata = objdata;
+        ret.objdata = cmd.objdata;
         ret.name = cmd.name;
 
         if (this.name2type[cmd.name] == "characters") {

@@ -272,21 +272,25 @@ export class Runtime {
     CalcImageCoord(mobj) {
         if (!(mobj.image && mobj.image.layer)) return;
         let layer = mobj.image.layer;
+        let level = 1;
+        if (mobj.objdata.positions) {
+            let lvcmd = mobj.objdata.positions.filter(p => p.type == "KAGEnvironment.LEVEL");
+            if (lvcmd.length) level = parseInt(lvcmd[0].level);
+        }
 
-        let scale = window.ImageInfo.charlevel[mobj.name];
-        scale = parseInt(scale);
         /*{
             "zoom": "200", // wtf? yoffset?
             "imgzoom": "140", // they use this
             "stretch": "stFastLinear" // needn't, browser will do it
         },*/
-        scale = this.mapper.innerobj.levels[scale];
-        let zoom = scale.imgzoom / 100;
-
+        let scaleo = this.mapper.innerobj.levels[level];
+        let zoom = scaleo.imgzoom / 100;
+        // scale < 2, * 1.33 : all magic number
+        if (level < 2) zoom = scaleo.zoom * 1.33 / 100;
         let ret = {};
         ret['null'] = {
             size: mobj.image.size,
-            offset: [(mobj.image.size[0] - 1280) / -2, (mobj.image.size[1] - 960) / -2]
+            offset: [0, 0]
         }
         layer.forEach(l => {
             ret[l.layer] = {
@@ -294,7 +298,6 @@ export class Runtime {
                 size: l.size
             }
         })
-
         let rr = {}
         for (const ln in ret) {
             if (ret.hasOwnProperty(ln)) {
@@ -305,25 +308,27 @@ export class Runtime {
                 }
             }
         }
-        return rr;
-        /*
-        {
-            null:{
-                offset:[x,y]
-                size:[x,y]
-            }:
-            img1:{
-                ...
-            }
+
+        let rnsz = rr['null'].size;
+        rr['null'].offset = [(1280 - rnsz[0]) / 2, (960 - rnsz[1]) / 2];
+
+        let xoff = null;
+        if (mobj.objdata.positions) {
+            let xoffcmd = mobj.objdata.positions.filter(p => p.type == "KAGEnvironment.XPOSITION");
+            if (xoffcmd.length) xoff = parseInt(xoffcmd[0].xpos);
         }
-        */
+        console.log(ret, level, zoom, xoff);
+        if (xoff !== null)
+            rr['null'].offset[0] += xoff;
+
+        // another magic
+        if (level > 1) rr['null'].offset[1] -= (300 + parseInt(scaleo.zoom));
+        return rr;
     }
 
     DrawObject(mobj) {
-
-        console.log(mobj);
         let ic = this.CalcImageCoord(mobj);
-
+        console.log(ic);
         if (ic) {
             let name = mobj.name;
             // remove unused img
@@ -340,7 +345,6 @@ export class Runtime {
                         .attr('id', 'fg_' + name)
                 )
             }
-
 
             for (const lname in ic) {
                 if (ic.hasOwnProperty(lname)) {
