@@ -3,6 +3,7 @@ import { ObjectMapper } from './objmapper';
 import { FilePath } from './filepath';
 import { KSParser } from './ksparser';
 import { TJSeval } from './tjseval';
+import { ImageInfo } from './imageinfo';
 export class Runtime {
     constructor() {
         this.vm = null;
@@ -272,9 +273,7 @@ export class Runtime {
         if (!(mobj.image && mobj.image.layer)) return;
         let layer = mobj.image.layer;
 
-        let scale = mobj.objdata.positions
-            .filter(p => p.type == "KAGEnvironment.LEVEL")[0]
-            .level;
+        let scale = window.ImageInfo.charlevel[mobj.name];
         scale = parseInt(scale);
         /*{
             "zoom": "200", // wtf? yoffset?
@@ -287,7 +286,7 @@ export class Runtime {
         let ret = {};
         ret['null'] = {
             size: mobj.image.size,
-            offset: [(mobj.image.size[0] - 1280) / 2, (mobj.image.size[1] - 960) / 2]
+            offset: [(mobj.image.size[0] - 1280) / -2, (mobj.image.size[1] - 960) / -2]
         }
         layer.forEach(l => {
             ret[l.layer] = {
@@ -322,39 +321,63 @@ export class Runtime {
 
     DrawObject(mobj) {
 
-        console.log(this.CalcImageCoord(mobj));
+        console.log(mobj);
+        let ic = this.CalcImageCoord(mobj);
 
-        if (mobj.image && mobj.image.layer) {
-            // <div id='chara'>
-            // <img 1><img 2>
-            // just a test here
-            if ($('#fg_' + mobj.name).length == 0) {
-                $('#imagediv').append('<div id="fg_' + mobj.name + '"></div>');
-                $('#fg_' + mobj.name)
-                    .html('')
-                    .css('position', 'absolute')
-                    .css('top', '-1000px');
+        if (ic) {
+            let name = mobj.name;
+            // remove unused img
+            let fgs = $('#fg_' + name + ' img');
+            for (var f of fgs) {
+                let i = f.id.split('_').slice(1).join('_')
+                if (!Object.keys(ic).includes(i)) {
+                    $('#' + f.id).remove()
+                }
             }
-            else {
-                $('#fg_' + mobj.name)
-                    .html('')
-                    .css('position', 'absolute')
-                    .css('top', '-1000px');
+            if (!$('#fg_' + name).length) {
+                $('#imagediv').append(
+                    $('<div>')
+                        .attr('id', 'fg_' + name)
+                )
             }
-            mobj.image.layer.forEach(i => {
-                $('#fg_' + mobj.name)
-                    .append(
-                        '<img src="' + FilePath.find(i.layer + '.png') + '" style="position:absolute;left:' + i.offset[0] + 'px;top:' + i.offset[1] + 'px" />'
-                    )
-            })
+
+
+            for (const lname in ic) {
+                if (ic.hasOwnProperty(lname)) {
+                    const ldata = ic[lname];
+                    if (lname == 'null') {
+                        // set base div
+                        $('#fg_' + name)
+                            .css('position', 'absolute')
+                            .css('display', 'block')
+                            .css('left', ldata.offset[0])
+                            .css('top', ldata.offset[1])
+                            .css('width', ldata.size[0])
+                            .css('height', ldata.size[1])
+                    }
+                    else {
+                        if (!$('#fgl_' + lname).length) {
+                            // add image
+                            $('#fg_' + name).append(
+                                $('<img>')
+                                    .attr('id', 'fgl_' + lname)
+                                    .attr('src', FilePath.find(lname + '.png'))
+                            )
+                        }
+                        // set image
+                        $('#fgl_' + lname)
+                            .css('position', 'absolute')
+                            .css('display', 'block')
+                            .css('left', ldata.offset[0])
+                            .css('top', ldata.offset[1])
+                            .css('width', ldata.size[0])
+                            .css('height', ldata.size[1])
+                    }
+                }
+            }
         }
 
         if (mobj.objdata.positions) {
-            let xposs = mobj.objdata.positions.filter(p => p.type == "KAGEnvironment.XPOSITION")
-            if (xposs && xposs.length > 0) {
-                let cxoff = xposs[0].xpos;
-                $('#fg_' + mobj.name).css('left', (cxoff - 400) + 'px');
-            }
             mobj.objdata.positions.filter(p => p.type == "KAGEnvironment.DISPPOSITION").forEach(p => {
                 switch (p.disp) {
                     case "KAGEnvImage.BOTH":
