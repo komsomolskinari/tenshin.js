@@ -175,3 +175,4 @@ export default class TJSON {
         return r;
     }
 }
+window.TJSON = TJSON;

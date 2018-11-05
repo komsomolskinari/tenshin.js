@@ -1,13 +1,13 @@
 // runtime libs
-import { ObjectMapper } from './objmapper';
+import ObjectMapper from './objmapper';
 import KSParser from './utils/ksparser';
 import TJSeval from './utils/tjseval';
 
 import YZSound from './ui/sound';
 import YZFgImg from './ui/fgimg';
 
-export class Runtime {
-    constructor() {
+export default class Runtime {
+    static Init() {
         this.vm = null;
         // key: var name
         this.TJSvar = {};
@@ -18,7 +18,6 @@ export class Runtime {
         this.TJShack = {};
         this.MapSelectData = [];
         this.SelectData = [];
-        this.mapper = null;
         window.TJSvar = this.TJSvar;
 
         this.inTrans = false;
@@ -27,11 +26,11 @@ export class Runtime {
 
     // Text related commands
     // 
-    Text(cmd) {
+    static Text(cmd) {
         var text = cmd.text;
         var name = cmd.name;
         var dispname = cmd.display;
-        var info = this.mapper.GetNameInfo(name);
+        var info = ObjectMapper.GetNameInfo(name);
 
         // display name haven't been rewrite, need set
         if (dispname == null) {
@@ -44,7 +43,7 @@ export class Runtime {
     }
 
     // convert text with ks format cmd to html
-    TextHTML(txt) {
+    static TextHTML(txt) {
         if (txt.indexOf('[') < 0) return txt;
         // first, cut to lines: text\n[cmd]\ntext
         const t = txt
@@ -93,7 +92,7 @@ export class Runtime {
 
     // TODO: mselect is Tenshin Ranman only command?
     // add map select option
-    MapSelectAdd(cmd) {
+    static MapSelectAdd(cmd) {
         this.MapSelectData.push([
             cmd.param.name,
             cmd.param.target,
@@ -104,7 +103,7 @@ export class Runtime {
     }
 
     // raise a map select
-    MapSelect() {
+    static MapSelect() {
         var s = "Map:\n";
         var n = 0;
         for (const d of this.MapSelectData) {
@@ -119,7 +118,7 @@ export class Runtime {
         return [ro[1], ro[3]];
     }
 
-    SelectAdd(cmd) {
+    static SelectAdd(cmd) {
         this.SelectData.push([
             cmd.param.text,
             cmd.param.target,
@@ -129,7 +128,7 @@ export class Runtime {
     }
 
     // raise a normal select
-    Select() {
+    static Select() {
         var s = "";
         var n = 0;
         for (const d of this.SelectData) {
@@ -146,15 +145,15 @@ export class Runtime {
         return [ro[1], ro[3]];
     }
 
-    AddTrans(cmd) {
+    static AddTrans(cmd) {
 
     }
 
-    CompileTrans(cmd) {
+    static CompileTrans(cmd) {
         this.inTrans = false;
     }
 
-    Call(cmd) {
+    static Call(cmd) {
         switch (cmd.name) {
             case "mselinit":
                 this.MapSelectData = [];
@@ -178,10 +177,10 @@ export class Runtime {
                 this.CompileTrans(cmd);
                 break;
             case "newlay":
-                this.mapper.NewLay(cmd);
+                ObjectMapper.NewLay(cmd);
                 break;
             case "dellay":
-                this.mapper.DelLay(cmd);
+                ObjectMapper.DelLay(cmd);
                 break;
             case "bgm":
                 YZSound.BGM(cmd);
@@ -193,8 +192,8 @@ export class Runtime {
                     "initscene", "day_full", "ano_view", "ret_view", "playbgm", "delaydone", "white_ball", "white_ball_hide", "particle"].includes(cmd.name.toLowerCase())) break;
                 // TODO: Use ObjectMapper to compile command
                 // And send an UI frontend
-                if (this.mapper.HaveObject(cmd.name)) {
-                    let mapped = this.mapper.MapObject(cmd);
+                if (ObjectMapper.HaveObject(cmd.name)) {
+                    let mapped = ObjectMapper.MapObject(cmd);
                     //this.DrawObject(mapped);
                     YZFgImg.DrawChara(mapped);
                 }
@@ -202,9 +201,10 @@ export class Runtime {
                 if (this.inTrans) {
                     this.AddTrans(cmd);
                 }
-                if (!this.mapper.HaveObject(cmd.name))
+                if (!ObjectMapper.HaveObject(cmd.name))
                     console.warn("RuntimeCall, unimpliement cmd", cmd);
                 break;
         }
     }
 }
+Runtime.Init();

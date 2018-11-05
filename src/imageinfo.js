@@ -2,8 +2,8 @@ import FilePath from "./utils/filepath";
 import KRCSV from './utils/krcsv';
 // image info loader
 
-export class ImageInfo {
-    constructor(basedir) {
+export default class ImageInfo {
+    static Init(basedir) {
         const ls = FilePath.ls(basedir);
         this.files = [];
         this.chunkdata = {};
@@ -47,7 +47,7 @@ export class ImageInfo {
             }
         }
     }*/
-    async LoadChunkDef(file) {
+    static async LoadChunkDef(file) {
         let fdata = KRCSV.Parse(await $.get(FilePath.find(file)), '\t', false)
         const fsp = file.split('_')
         const charname = fsp[0];
@@ -93,7 +93,7 @@ export class ImageInfo {
         }
     }
     */
-    async LoadCoordData(file) {
+    static async LoadCoordData(file) {
         let fdata = KRCSV.Parse(await $.get(FilePath.find(file)), '\t')
         const fvar = file.match(/_([0-9])\./)[1];
         const fsp = file.split('_');
@@ -126,7 +126,7 @@ export class ImageInfo {
      * @param {*} cmd 
      * @return {{base:[number,number],layer:[{offset:[number,number],size:[number,number],layer:string}]}};
      */
-    GetImageInfo(cmd) {
+    static GetImageInfo(cmd) {
         // HACK: rewrite 'unusual' name as a workaround
         // will fix after v1.0
         if (cmd.name == "老竹") cmd.name = "幹雄";

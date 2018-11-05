@@ -1,4 +1,4 @@
-import { Runtime } from "./runtime";
+import Runtime from "./runtime";
 import TJSeval from './utils/tjseval';
 
 // when to hang up vm
@@ -12,11 +12,8 @@ let VM_AUTO = 1; // wait for voice end
 let VM_QUICK = 2; // fixed interval
 let VM_NONE = 3; // no output
 
-export class KSVM {
-
-    constructor(runtime) {
-        this.runtime = runtime;
-        runtime.vm = this;
+export default class KSVM {
+    static Init() {
         this.runmode = VM_SCENE;
         this.dispmode = VM_NORMAL;
         this.hang = false;
@@ -25,12 +22,11 @@ export class KSVM {
         this.tags = {};
         // [script name, line#]
         this.currentpos = { "script": null, "line": 1 };
-
         this.posstack = [];
         this.runlock = false;
     }
 
-    AddScript(name, script) {
+    static AddScript(name, script) {
         this.scripts[name] = script;
         // scan tags
         var lineno = 0;
@@ -43,7 +39,7 @@ export class KSVM {
         }
     }
 
-    LocateTag(tag, script) {
+    static LocateTag(tag, script) {
         const ts = this.tags[tag.substr(1)];
         if (script === undefined) return ts[0];
         else {
@@ -54,12 +50,12 @@ export class KSVM {
         return undefined;
     }
 
-    CurrentCmd() {
+    static CurrentCmd() {
         return this.scripts[this.currentpos.script][this.currentpos.line]
     }
 
     // main entry
-    Run() {
+    static Run() {
         if (this.runlock) return;
         this.runlock = true;
         while (!this.hang) {
@@ -82,7 +78,7 @@ export class KSVM {
                             // Let runtime handle these logic?
                             if (cmd.param.eval != undefined) {
                                 // tjs eval
-                                var r = TJSeval(cmd.param.eval,this.runtime);
+                                var r = TJSeval(cmd.param.eval, Runtime);
                                 // eval false, cancel jump
                                 if (!r) break;
                             }
@@ -99,7 +95,7 @@ export class KSVM {
                         // mselect & select should have same entry?
                         // make runtime do these too?
                         case "mselect":
-                            var next = this.runtime.MapSelect();
+                            var next = Runtime.MapSelect();
                             if (next !== undefined) {
                                 if (next[0] !== undefined) {
                                     this.currentpos = this.LocateTag(next[0], next[1]);
@@ -107,7 +103,7 @@ export class KSVM {
                             }
                             break;
                         case "select":
-                            var next = this.runtime.Select();
+                            var next = Runtime.Select();
                             if (next !== undefined) {
                                 if (next[0] !== undefined) {
                                     this.currentpos = this.LocateTag(next[0], next[1]);
@@ -115,13 +111,13 @@ export class KSVM {
                             }
                             break;
                         default:
-                            this.runtime.Call(cmd);
+                            Runtime.Call(cmd);
                             break;
                     }
                     break;
                 // output text
                 case "text":
-                    this.runtime.Text(cmd);
+                    Runtime.Text(cmd);
                     if (this.runmode == VM_SCENE) this.hang = true;
                     break;
             }
@@ -131,7 +127,7 @@ export class KSVM {
     }
 
     // run from *tag, used for playback
-    RunFrom(tag) {
+    static RunFrom(tag) {
         this.currentpos = this.tags[tag][0];
         this.runlock = false;
         this.Run();
@@ -139,7 +135,7 @@ export class KSVM {
 
     // VM Control Functions
     // .
-    Next() {
+    static Next() {
         this.runmode = VM_SCENE;
         this.dispmode = VM_NORMAL;
         this.hang = false;
@@ -147,7 +143,7 @@ export class KSVM {
     }
 
     // >
-    Auto() {
+    static Auto() {
         this.runmode = VM_SELECT;
         this.dispmode = VM_AUTO;
         this.hang = false;
@@ -155,7 +151,7 @@ export class KSVM {
     }
 
     // debug only
-    Step() {
+    static Step() {
         this.runmode = VM_STEP;
         this.dispmode = VM_NORMAL;
         this.hang = false;
@@ -163,7 +159,7 @@ export class KSVM {
     }
 
     // >> 
-    Jump() {
+    static Jump() {
         this.runmode = VM_NEVER;
         this.dispmode = VM_QUICK;
         this.hang = false;
@@ -171,7 +167,7 @@ export class KSVM {
     }
 
     // >|
-    NextSelect() {
+    static NextSelect() {
         this.runmode = VM_SCENE;
         this.dispmode = VM_NONE;
         this.hang = false;
@@ -179,28 +175,29 @@ export class KSVM {
     }
 
     // <
-    BackLog() {
+    static BackLog() {
 
     }
 
     // <<
-    Back() {
+    static Back() {
 
     }
 
     // |<
-    LastSelect() {
+    static LastSelect() {
 
     }
 
     // VM Save and load
     // save internal status
-    Save() {
+    static Save() {
 
     }
 
     // load
-    Load(status) {
+    static Load(status) {
 
     }
 }
+KSVM.Init();

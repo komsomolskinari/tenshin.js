@@ -76,3 +76,4 @@ export default class KRCSV {
         return a;
     };
 }
+window.KRCSV = KRCSV;

@@ -1,3 +1,5 @@
+import ObjectMapper from "../objmapper";
+import FilePath from "../utils/filepath";
 
 export default class YZFgImg {
     static Init() {
@@ -27,7 +29,7 @@ export default class YZFgImg {
             "imgzoom": "140", // they use this
             "stretch": "stFastLinear" // needn't, browser will do it
         },*/
-        let scaleo = window.Mapper.innerobj.levels[level];
+        let scaleo = ObjectMapper.innerobj.levels[level];
         let zoom = scaleo.imgzoom / 100;
         // scale < 2, * 1.33 : all magic number
         if (level < 2) zoom = scaleo.zoom * 1.33 / 100;
@@ -73,9 +75,9 @@ export default class YZFgImg {
 
     static DrawChara(mcmd) {
         let ic = this.CalcImageCoord(mcmd);
-        console.log(ic);
+        let name = mcmd.name;
+        let fd = $('#fg_' + name);
         if (ic) {
-            let name = mcmd.name;
             // remove unused img
             let fgs = $('#fg_' + name + ' img');
             for (var f of fgs) {
@@ -84,7 +86,7 @@ export default class YZFgImg {
                     $('#' + f.id).remove()
                 }
             }
-            if (!$('#fg_' + name).length) {
+            if (!fd.length) {
                 $('#imagediv').append(
                     $('<div>')
                         .attr('id', 'fg_' + name)
@@ -96,7 +98,7 @@ export default class YZFgImg {
                     const ldata = ic[lname];
                     if (lname == 'null') {
                         // set base div
-                        $('#fg_' + name)
+                        fd
                             .css('position', 'absolute')
                             .css('display', 'block')
                             .css('left', ldata.offset[0])
@@ -107,7 +109,7 @@ export default class YZFgImg {
                     else {
                         if (!$('#fgl_' + lname).length) {
                             // add image
-                            $('#fg_' + name).append(
+                            fd.append(
                                 $('<img>')
                                     .attr('id', 'fgl_' + lname)
                                     .attr('src', FilePath.find(lname + '.png'))
@@ -135,7 +137,7 @@ export default class YZFgImg {
                     case this.KAGLiterial.Clear:
                     case this.KAGLiterial.Face:
                     case this.KAGLiterial.Invisible:
-                        $('#fg_' + mobj.name).remove();
+                        fd.remove();
                         break;
                     default:
                         console.warn('Unknown KAGEnviroment.DISPPOSITION', p.disp);
@@ -145,5 +147,4 @@ export default class YZFgImg {
         }
     }
 }
-
 YZFgImg.Init();

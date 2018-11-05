@@ -237,3 +237,4 @@ export default class KSParser {
         }
     }
 }
+window.KSParser = KSParser;

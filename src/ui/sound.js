@@ -1,4 +1,5 @@
 import FilePath from '../utils/filepath'
+import ObjectMapper from '../objmapper'
 
 export default class YZSound {
     static Init() {
@@ -56,8 +57,7 @@ export default class YZSound {
             seq = this.charsq[char];
             this.charsq[char]++;
         }
-        // TODO: Global Variable Dependecy
-        let fmt = window.Mapper.GetNameInfo(char).voicefile;
+        let fmt = ObjectMapper.GetNameInfo(char).voicefile;
         if (fmt == null) return null;
         if (parseInt(seq)) {
             let seqtxt = String(seq).padStart(3, '0')
@@ -87,7 +87,6 @@ export default class YZSound {
      * @param {*} playctl Play Control
      */
     static AudioChannelCtl(channel, aname, playctl) {
-        console.log(arguments);
         let ch = $(this.channels[channel]);
         let s = ch.attr('src');
         let asrc = null;

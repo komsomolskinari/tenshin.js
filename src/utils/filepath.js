@@ -96,3 +96,4 @@ export default class FilePath {
         return ls;
     }
 }
+//window.FilePath = FilePath

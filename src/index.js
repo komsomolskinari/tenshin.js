@@ -1,23 +1,19 @@
 import TJSON from "./utils/tjson";
 import KSParser from "./utils/ksparser";
-import { KSVM } from "./ksvm";
-import { Runtime } from "./runtime";
-import { ObjectMapper } from './objmapper';
+import KSVM from "./ksvm";
+import Runtime from "./runtime";
+import ObjectMapper from './objmapper';
 import FilePath from './utils/filepath';
-import { ImageInfo } from './imageinfo';
+import ImageInfo from './imageinfo';
 
 var scenes = [];
-var RT = new Runtime();
-var VM = new KSVM(RT);
-var Mapper = new ObjectMapper();
 
-RT.mapper = Mapper;
-RT.TJShack = {
+Runtime.TJShack = {
     "f.all_clear_check=(sf.sakuya_clear && sf.ruri_clear && sf.sana_clear && sf.aoi_clear && sf.mahiro_clear && sf.yukari_clear)": 1,
     "!(f.sak_flag == 5 || f.all_clear_check)": true,
     "!kag.isRecollection": true
 };
-RT.TJSvar = {
+Runtime.TJSvar = {
     "f.all_clear_check": true,
     "f.sak_flag": 0,
     "f.san_flag": 0,
@@ -27,18 +23,11 @@ RT.TJSvar = {
     "f.yuk_flag": 0,
 };
 
-window.RT = RT;
-window.VM = VM;
-window.Mapper = Mapper;
-window.FilePath = FilePath;
-
 async function LoadVMData() {
     var ScriptLoadSeq = ['start.ks', '１.ks', '２.ks']
     await FilePath.Load();
-    window.ImageInfo = new ImageInfo('fgimage');
-    window.Mapper.ImageInfo = window.ImageInfo;
-
-    Mapper.LoadObject(TJSON.Parse(await $.get("game/main/envinit.tjs")));
+    ImageInfo.Init('fgimage');
+    ObjectMapper.LoadObject(TJSON.Parse(await $.get("game/main/envinit.tjs")));
     // TODO: let vm cache module load others
     var preloadps = [];
     ScriptLoadSeq.forEach(s => {
@@ -46,16 +35,16 @@ async function LoadVMData() {
         preloadps.push(
             $.get(FilePath.find(s)).promise()
                 .then(sc => KSParser.Parse(sc))
-                .then(sp => VM.AddScript(sn, sp))
+                .then(sp => KSVM.AddScript(sn, sp))
         )
     })
     return Promise.all(preloadps);
 }
 
 $(document).ready(() => {
-    $(document).click(() => VM.Next());
+    $(document).click(() => KSVM.Next());
     LoadVMData().then(() => {
-        VM.RunFrom('start');
+        KSVM.RunFrom('start');
         var preloadps = [];
         var scripts = Object.keys(FilePath.ls('scenario'));
         scripts.forEach(s => {
@@ -63,7 +52,7 @@ $(document).ready(() => {
             preloadps.push(
                 $.get(FilePath.find(s)).promise()
                     .then(sc => KSParser.Parse(sc))
-                    .then(sp => VM.AddScript(sn, sp))
+                    .then(sp => KSVM.AddScript(sn, sp))
             )
         })
         Promise.all(preloadps).then(() => console.debug("cache ok"));
