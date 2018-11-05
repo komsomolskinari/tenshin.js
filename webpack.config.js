@@ -6,7 +6,7 @@ module.exports = {
     output: {
         filename: 'index.js',
         path: '/mnt/c/Users/User/Desktop/YUZUSOFT/tenshin_js'
-    },
+    },/*
     module: {
         rules: [
             {
@@ -15,11 +15,11 @@ module.exports = {
                 use: {
                     loader: 'babel-loader',
                     options: {
-                        presets: ['es2015']
+                        presets: ['env']
                     }
                 }
             }
         ]
-    },
+    },*/
     mode: 'none',
 };
