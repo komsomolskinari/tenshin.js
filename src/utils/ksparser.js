@@ -21,7 +21,7 @@ STRING: '"' .? '"' | '\'' .? '\'';
 /**
  * @class KSParser
  */
-export class KSParser {
+export default class KSParser {
     /**
      * KS script to KS 'AST'
      * @public @static
@@ -237,3 +237,4 @@ export class KSParser {
         }
     }
 }
+window.KSParser = KSParser;

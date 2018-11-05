@@ -1,8 +1,7 @@
-import { ImageInfo } from "./imageinfo";
-import { FilePath } from "./utils/filepath";
+import YZFgImg from "./ui/fgimg";
 
-export class ObjectMapper {
-    constructor() {
+export default class ObjectMapper {
+    static Init() {
         this.objs = []
         this.name2type = {}
         this.innerobj = null;
@@ -12,7 +11,7 @@ export class ObjectMapper {
         this.odatacache = {};
     }
 
-    LoadObject(obj) {
+    static LoadObject(obj) {
         this.innerobj = obj;
         for (const i of ["times", "stages", "positions", "actions", "transitions", "characters", "emotions"]) {
             Object.keys(obj[i]).forEach(k => this.name2type[k] = i);
@@ -20,22 +19,22 @@ export class ObjectMapper {
         this.objs = Object.keys(this.name2type);
     }
 
-    HaveObject(obj) {
+    static HaveObject(obj) {
         return this.objs.includes(obj);
     }
 
-    NewLay(cmd) {
+    static NewLay(cmd) {
         var name = cmd.param.name;
         this.objs.push(name);
     }
 
-    DelLay(cmd) {
+    static DelLay(cmd) {
         var name = cmd.param.name;
         var idx = this.objs.indexOf(name);
         if (idx != -1) this.objs.splice(idx);
     }
 
-    MapObject(cmd) {
+    static MapObject(cmd) {
         let objdata = {}
         if (this.odatacache[cmd.name] === undefined) this.odatacache[cmd.name] = {};
         // handle registered opions here
@@ -71,7 +70,7 @@ export class ObjectMapper {
 
         if (this.name2type[cmd.name] == "characters") {
             newcmd.name = this.GetNameInfo(cmd.name).standname;
-            let img = this.ImageInfo.GetImageInfo(newcmd);
+            let img = YZFgImg.GetImageInfo(newcmd);
             if (img) {
                 ret.image = img;
             }
@@ -79,19 +78,24 @@ export class ObjectMapper {
         return ret;
     }
 
+    static TypeOf(cmd) {
+        if (!cmd.param) return this.name2type[cmd];
+        return this.name2type[cmd.name];
+    }
+
     // e.g:神様
     // return:
     // - name: 姫
     // - voicefile: kam%s_%03d.ogg
     // - standname:
-    GetNameInfo(name) {
-        var ret = {
+    static GetNameInfo(name) {
+        let ret = {
             name: null,
             voicefile: null,
             standname: null
         };
         if (name == null) return ret;
-        var c = this.innerobj.characters[name];
+        let c = this.innerobj.characters[name];
         if (c.nameAlias !== undefined) ret.name = c.nameAlias;
         if (c.voiceFile !== undefined) ret.voicefile = c.voiceFile;
         if (c.standName !== undefined) ret.standname = c.standName;
@@ -100,3 +104,4 @@ export class ObjectMapper {
 
     }
 }
+ObjectMapper.Init();

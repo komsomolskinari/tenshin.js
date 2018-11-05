@@ -1,4 +1,4 @@
-export class FilePath {
+export default class FilePath {
     /**
      * Load filesystem 
      * Only JSON mode works
@@ -96,3 +96,4 @@ export class FilePath {
         return ls;
     }
 }
+//window.FilePath = FilePath

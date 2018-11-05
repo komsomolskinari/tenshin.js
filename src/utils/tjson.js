@@ -3,7 +3,7 @@
 /**
  * @class TJSON Parser, 
  */
-export class TJSON {
+export default class TJSON {
     /**
      * Get next non-empty char
      * @private @static
@@ -175,3 +175,4 @@ export class TJSON {
         return r;
     }
 }
+window.TJSON = TJSON;

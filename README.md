@@ -1,6 +1,7 @@
 # 天神乱漫.js tenshin_ranman.js
 ## 这是什么 What's this
 本项目是在当代浏览器上面跑Galgame的一点尝试，目标是在浏览器中运行[Kirikiri2引擎](https://github.com/krkrz/krkr2)的Galgame。目前尚属早期阶段，仅仅能够相对正确地按照游戏流程运行并输出文字。
+
 This project is a experiment about running Galgame in modern browser, it's original task is running full [krkr2 engine](https://github.com/krkrz/krkr2) in browser. It's still in early state, can only display text now.
 
 ## 如何运行 How to run it
@@ -50,6 +51,15 @@ This project is a experiment about running Galgame in modern browser, it's origi
 - [ ] TJS编译器    .tjs Compiler
 
 ## 更新日志 Changelog
+
+### v0.3.2
+2018-11-05
+- 重新排列代码    Reorder code
+- 暂时放弃Babel    Now nolonger use babel
+
+### v0.3.1
+2018-11-02
+- 改进立绘缩放及定位    Improve image zoom and positioning
 
 ### v0.3
 2018-11-01

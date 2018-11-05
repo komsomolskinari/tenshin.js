@@ -1,11 +1,13 @@
 // runtime libs
-import { ObjectMapper } from './objmapper';
-import { FilePath } from './utils/filepath';
-import { KSParser } from './utils/ksparser';
-import { TJSeval } from './utils/tjseval';
-import { ImageInfo } from './imageinfo';
-export class Runtime {
-    constructor() {
+import ObjectMapper from './objmapper';
+import KSParser from './utils/ksparser';
+import TJSeval from './utils/tjseval';
+
+import YZSound from './ui/sound';
+import YZFgImg from './ui/fgimg';
+
+export default class Runtime {
+    static Init() {
         this.vm = null;
         // key: var name
         this.TJSvar = {};
@@ -16,14 +18,7 @@ export class Runtime {
         this.TJShack = {};
         this.MapSelectData = [];
         this.SelectData = [];
-        this.mapper = null;
         window.TJSvar = this.TJSvar;
-
-        // key: chara name
-        this.voicecounter = {};
-        // 'immediately' mode voice, only when voice not int
-        // only trigged one time per cmd, not change ctr
-        this.immvoice = {};
 
         this.inTrans = false;
         this.transSeq = [];
@@ -31,57 +26,24 @@ export class Runtime {
 
     // Text related commands
     // 
-    Text(cmd) {
+    static Text(cmd) {
         var text = cmd.text;
         var name = cmd.name;
         var dispname = cmd.display;
-        var info = this.mapper.GetNameInfo(name);
+        var info = ObjectMapper.GetNameInfo(name);
 
         // display name haven't been rewrite, need set
         if (dispname == null) {
             if (info.name != null) dispname = info.name;
             else dispname = cmd.name;
         }
-        // calculate voice file name
-        var voiceseq;
-        if (this.immvoice[cmd.name]) {
-            voiceseq = this.immvoice[cmd.name];
-            this.immvoice[cmd.name] = null;
-        }
-        else {
-            voiceseq = this.voicecounter[cmd.name];
-            this.voicecounter[cmd.name]++;
-        }
-        //{type:text,name:charaname,display:dispname,text:txt}
-        var _vf = this.PlayVoice(info.voicefile, this.TJSvar['f.voiceBase'], voiceseq);
-        console.debug(dispname, text, _vf);
-
+        YZSound.Voice(cmd.name, this.TJSvar['f.voiceBase'], cmd.param ? cmd.param.voice : undefined)
         $('#charname').html(dispname);
         $('#chartxt').html(this.TextHTML(text));
     }
 
-    // kam%s_%03d.ogg, 001, 1 -> kam001_001.ogg
-    // not a full printf, magic included
-    PlayVoice(file, base, seq) {
-        if (file == null) return null;
-        var seqtxt;
-        if (parseInt(seq)) {
-            seqtxt = seq + "";
-            while (seqtxt.length < 3) {
-                seqtxt = '0' + seqtxt;
-            }
-            file = file.replace('%s', base);
-            file = file.replace('%03d', seqtxt);
-        }
-        else {
-            file = (seq + '.ogg').replace(/(\.ogg)+/, '.ogg');
-        }
-        $('#voice').attr('src', FilePath.find(file));
-        return file;
-    }
-
     // convert text with ks format cmd to html
-    TextHTML(txt) {
+    static TextHTML(txt) {
         if (txt.indexOf('[') < 0) return txt;
         // first, cut to lines: text\n[cmd]\ntext
         const t = txt
@@ -128,17 +90,9 @@ export class Runtime {
         return ret;
     }
 
-    // [bgm]
-    BGM(cmd) {
-        if (cmd.param.storage) {
-            let realname = cmd.param.storage.replace(/bgm/g, 'BGM') + '.ogg';
-            $('#bgm').attr('src', FilePath.find(realname));
-        }
-    }
-
     // TODO: mselect is Tenshin Ranman only command?
     // add map select option
-    MapSelectAdd(cmd) {
+    static MapSelectAdd(cmd) {
         this.MapSelectData.push([
             cmd.param.name,
             cmd.param.target,
@@ -149,7 +103,7 @@ export class Runtime {
     }
 
     // raise a map select
-    MapSelect() {
+    static MapSelect() {
         var s = "Map:\n";
         var n = 0;
         for (const d of this.MapSelectData) {
@@ -164,7 +118,7 @@ export class Runtime {
         return [ro[1], ro[3]];
     }
 
-    SelectAdd(cmd) {
+    static SelectAdd(cmd) {
         this.SelectData.push([
             cmd.param.text,
             cmd.param.target,
@@ -174,7 +128,7 @@ export class Runtime {
     }
 
     // raise a normal select
-    Select() {
+    static Select() {
         var s = "";
         var n = 0;
         for (const d of this.SelectData) {
@@ -191,15 +145,15 @@ export class Runtime {
         return [ro[1], ro[3]];
     }
 
-    AddTrans(cmd) {
+    static AddTrans(cmd) {
 
     }
 
-    CompileTrans(cmd) {
+    static CompileTrans(cmd) {
         this.inTrans = false;
     }
 
-    Call(cmd) {
+    static Call(cmd) {
         switch (cmd.name) {
             case "mselinit":
                 this.MapSelectData = [];
@@ -223,13 +177,13 @@ export class Runtime {
                 this.CompileTrans(cmd);
                 break;
             case "newlay":
-                this.mapper.NewLay(cmd);
+                ObjectMapper.NewLay(cmd);
                 break;
             case "dellay":
-                this.mapper.DelLay(cmd);
+                ObjectMapper.DelLay(cmd);
                 break;
             case "bgm":
-                this.BGM(cmd);
+                YZSound.BGM(cmd);
                 break;
             default:
                 // Jump unimpliement cmd
@@ -238,165 +192,19 @@ export class Runtime {
                     "initscene", "day_full", "ano_view", "ret_view", "playbgm", "delaydone", "white_ball", "white_ball_hide", "particle"].includes(cmd.name.toLowerCase())) break;
                 // TODO: Use ObjectMapper to compile command
                 // And send an UI frontend
-                if (this.mapper.HaveObject(cmd.name)) {
-                    if (cmd.param.voice !== undefined) {
-                        if (parseInt(cmd.param.voice))
-                            this.voicecounter[cmd.name] = parseInt(cmd.param.voice);
-                        else
-                            this.immvoice[cmd.name] = cmd.param.voice;
-                    }
-                    let mapped = this.mapper.MapObject(cmd);
-                    this.DrawObject(mapped);
+                if (ObjectMapper.HaveObject(cmd.name)) {
+                    let mapped = ObjectMapper.MapObject(cmd);
+                    //this.DrawObject(mapped);
+                    YZFgImg.DrawChara(mapped);
                 }
 
                 if (this.inTrans) {
                     this.AddTrans(cmd);
                 }
-                if (!this.mapper.HaveObject(cmd.name))
+                if (!ObjectMapper.HaveObject(cmd.name))
                     console.warn("RuntimeCall, unimpliement cmd", cmd);
                 break;
         }
     }
-
-    /*mobj.image
-    {
-        size:[number,number],
-        layer:[
-            {
-                offset:[number,number],
-                size:[number,number],
-                layer:string
-            }
-        ]
-    }*/
-    CalcImageCoord(mobj) {
-        if (!(mobj.image && mobj.image.layer)) return;
-        let layer = mobj.image.layer;
-        let level = 1;
-        if (mobj.objdata.positions) {
-            let lvcmd = mobj.objdata.positions.filter(p => p.type == "KAGEnvironment.LEVEL");
-            if (lvcmd.length) level = parseInt(lvcmd[0].level);
-        }
-
-        /*{
-            "zoom": "200", // wtf? yoffset?
-            "imgzoom": "140", // they use this
-            "stretch": "stFastLinear" // needn't, browser will do it
-        },*/
-        let scaleo = this.mapper.innerobj.levels[level];
-        let zoom = scaleo.imgzoom / 100;
-        // scale < 2, * 1.33 : all magic number
-        if (level < 2) zoom = scaleo.zoom * 1.33 / 100;
-        let ret = {};
-        ret['null'] = {
-            size: mobj.image.size,
-            offset: [0, 0]
-        }
-        layer.forEach(l => {
-            ret[l.layer] = {
-                offset: l.offset,
-                size: l.size
-            }
-        })
-        let rr = {}
-        for (const ln in ret) {
-            if (ret.hasOwnProperty(ln)) {
-                const e = ret[ln];
-                rr[ln] = {
-                    offset: [e.offset[0] * zoom, e.offset[1] * zoom],
-                    size: [e.size[0] * zoom, e.size[1] * zoom]
-                }
-            }
-        }
-
-        let rnsz = rr['null'].size;
-        rr['null'].offset = [(1280 - rnsz[0]) / 2, (960 - rnsz[1]) / 2];
-
-        let xoff = null;
-        if (mobj.objdata.positions) {
-            let xoffcmd = mobj.objdata.positions.filter(p => p.type == "KAGEnvironment.XPOSITION");
-            if (xoffcmd.length) xoff = parseInt(xoffcmd[0].xpos);
-        }
-        console.log(ret, level, zoom, xoff);
-        if (xoff !== null)
-            rr['null'].offset[0] += xoff;
-
-        // another magic
-        if (level > 1) rr['null'].offset[1] -= (300 + parseInt(scaleo.zoom));
-        return rr;
-    }
-
-    DrawObject(mobj) {
-        let ic = this.CalcImageCoord(mobj);
-        console.log(ic);
-        if (ic) {
-            let name = mobj.name;
-            // remove unused img
-            let fgs = $('#fg_' + name + ' img');
-            for (var f of fgs) {
-                let i = f.id.split('_').slice(1).join('_')
-                if (!Object.keys(ic).includes(i)) {
-                    $('#' + f.id).remove()
-                }
-            }
-            if (!$('#fg_' + name).length) {
-                $('#imagediv').append(
-                    $('<div>')
-                        .attr('id', 'fg_' + name)
-                )
-            }
-
-            for (const lname in ic) {
-                if (ic.hasOwnProperty(lname)) {
-                    const ldata = ic[lname];
-                    if (lname == 'null') {
-                        // set base div
-                        $('#fg_' + name)
-                            .css('position', 'absolute')
-                            .css('display', 'block')
-                            .css('left', ldata.offset[0])
-                            .css('top', ldata.offset[1])
-                            .css('width', ldata.size[0])
-                            .css('height', ldata.size[1])
-                    }
-                    else {
-                        if (!$('#fgl_' + lname).length) {
-                            // add image
-                            $('#fg_' + name).append(
-                                $('<img>')
-                                    .attr('id', 'fgl_' + lname)
-                                    .attr('src', FilePath.find(lname + '.png'))
-                            )
-                        }
-                        // set image
-                        $('#fgl_' + lname)
-                            .css('position', 'absolute')
-                            .css('display', 'block')
-                            .css('left', ldata.offset[0])
-                            .css('top', ldata.offset[1])
-                            .css('width', ldata.size[0])
-                            .css('height', ldata.size[1])
-                    }
-                }
-            }
-        }
-
-        if (mobj.objdata.positions) {
-            mobj.objdata.positions.filter(p => p.type == "KAGEnvironment.DISPPOSITION").forEach(p => {
-                switch (p.disp) {
-                    case "KAGEnvImage.BOTH":
-                    case "KAGEnvImage.BU":
-                        break;
-                    case "KAGEnvImage.CLEAR":
-                    case "KAGEnvImage.FACE":
-                    case "KAGEnvImage.INVISIBLE":
-                        $('#fg_' + mobj.name).remove();
-                        break;
-                    default:
-                        console.warn('Unknown KAGEnviroment.DISPPOSITION', p.disp);
-                        break;
-                }
-            })
-        }
-    }
 }
+Runtime.Init();

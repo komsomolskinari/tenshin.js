@@ -1,18 +1,27 @@
-import { FilePath } from "./utils/filepath";
-import { KRCSV } from './utils/krcsv';
-// image info loader
+import ObjectMapper from "../objmapper";
+import FilePath from "../utils/filepath";
+import KRCSV from "../utils/krcsv";
 
-export class ImageInfo {
-    constructor(basedir) {
+export default class YZFgImg {
+    static Init() {
+        this.KAGLiterial = {
+            Both: "KAGEnvImage.BOTH",
+            BU: "KAGEnvImage.BU",
+            Clear: "KAGEnvImage.CLEAR",
+            Face: "KAGEnvImage.FACE",
+            Invisible: "KAGEnvImage.INVISIBLE",
+            DispPosition: "KAGEnvironment.DISPPOSITION",
+            XPosition: "KAGEnvironment.XPOSITION",
+            Level: "KAGEnvironment.LEVEL"
+        }
+    }
+
+    static LoadData(basedir) {
         const ls = FilePath.ls(basedir);
         this.files = [];
         this.chunkdata = {};
         this.coorddata = {};
-
         this.chardress = {};
-        // image size selection cache
-        // image size info caculated by Objmapper
-        // and passed in cmd.objdata.size
         Object.keys(ls).forEach(key => {
             let subdir = ls[key];
             Object.keys(subdir).forEach(name => {
@@ -23,31 +32,11 @@ export class ImageInfo {
         });
         // load info file
         this.files.filter(f => f.match(/info\.txt$/)).forEach(f => this.LoadChunkDef(f));
-
         this.files.filter(f => f.match(/[0-9]\.txt$/)).forEach(f => this.LoadCoordData(f));
     }
-    /* this.chunkdata   char->dg1->1->02
-    {
-        char:{
-            dress:{
-                dg1:{
-                    1:[dv1,pfx1]
-                    2:[dv2,pfx1]
-                    3:[dv3,pfx2]
-                }
-            }
-            face:{
-                pfx1:{
-                    1:[1a,1b]
-                    2:[2a]
-                }
-                pfx2:{
-                    1:[1c]
-                }
-            }
-        }
-    }*/
-    async LoadChunkDef(file) {
+
+
+    static async LoadChunkDef(file) {
         let fdata = KRCSV.Parse(await $.get(FilePath.find(file)), '\t', false)
         const fsp = file.split('_')
         const charname = fsp[0];
@@ -78,22 +67,7 @@ export class ImageInfo {
         })
     }
 
-    /*
-    {
-        char:{
-            pfx1:{
-                a_1:{
-                    name1:{
-                        coord:[x,y]
-                        size:[x,y]
-                        layerno:1234
-                    }
-                }
-            }
-        }
-    }
-    */
-    async LoadCoordData(file) {
+    static async LoadCoordData(file) {
         let fdata = KRCSV.Parse(await $.get(FilePath.find(file)), '\t')
         const fvar = file.match(/_([0-9])\./)[1];
         const fsp = file.split('_');
@@ -118,15 +92,12 @@ export class ImageInfo {
         })
     }
 
-    // get image info from cmd (unessary info filtered)
-    // dress will be cached
-
     /**
      * 
      * @param {*} cmd 
      * @return {{base:[number,number],layer:[{offset:[number,number],size:[number,number],layer:string}]}};
      */
-    GetImageInfo(cmd) {
+    static GetImageInfo(cmd) {
         // HACK: rewrite 'unusual' name as a workaround
         // will fix after v1.0
         if (cmd.name == "老竹") cmd.name = "幹雄";
@@ -217,4 +188,136 @@ export class ImageInfo {
             layer: nameConverted
         }
     }
+
+    static CalcImageCoord(mcmd) {
+        if (!(mcmd.image && mcmd.image.layer)) return;
+        let layer = mcmd.image.layer;
+        let level = 1;
+        if (mcmd.objdata.positions) {
+            let lvcmd = mcmd.objdata.positions.filter(p => p.type == this.KAGLiterial.Level);
+            if (lvcmd.length) level = parseInt(lvcmd[0].level);
+        }
+
+        /*{
+            "zoom": "200", // wtf? yoffset?
+            "imgzoom": "140", // they use this
+            "stretch": "stFastLinear" // needn't, browser will do it
+        },*/
+        let scaleo = ObjectMapper.innerobj.levels[level];
+        let zoom = scaleo.imgzoom / 100;
+        // scale < 2, * 1.33 : all magic number
+        if (level < 2) zoom = scaleo.zoom * 1.33 / 100;
+        let ret = {};
+        ret['null'] = {
+            size: mcmd.image.size,
+            offset: [0, 0]
+        }
+        layer.forEach(l => {
+            ret[l.layer] = {
+                offset: l.offset,
+                size: l.size
+            }
+        })
+        let rr = {}
+        for (const ln in ret) {
+            if (ret.hasOwnProperty(ln)) {
+                const e = ret[ln];
+                rr[ln] = {
+                    offset: [e.offset[0] * zoom, e.offset[1] * zoom],
+                    size: [e.size[0] * zoom, e.size[1] * zoom]
+                }
+            }
+        }
+
+        let rnsz = rr['null'].size;
+        rr['null'].offset = [(1280 - rnsz[0]) / 2, (960 - rnsz[1]) / 2];
+
+        let xoff = null;
+        if (mcmd.objdata.positions) {
+            let xoffcmd = mcmd.objdata.positions.filter(p => p.type == this.KAGLiterial.XPosition);
+            if (xoffcmd.length) xoff = parseInt(xoffcmd[0].xpos);
+        }
+        console.log(ret, level, zoom, xoff);
+        if (xoff !== null)
+            rr['null'].offset[0] += xoff;
+
+        // another magic
+        if (level > 1) rr['null'].offset[1] -= (300 + parseInt(scaleo.zoom));
+        return rr;
+    }
+
+    static DrawChara(mcmd) {
+        let ic = this.CalcImageCoord(mcmd);
+        let name = mcmd.name;
+        let fd = $('#fg_' + name);
+        if (ic) {
+            // remove unused img
+            let fgs = $('#fg_' + name + ' img');
+            for (var f of fgs) {
+                let i = f.id.split('_').slice(1).join('_')
+                if (!Object.keys(ic).includes(i)) {
+                    $('#' + f.id).remove()
+                }
+            }
+            if (!fd.length) {
+                $('#imagediv').append(
+                    $('<div>')
+                        .attr('id', 'fg_' + name)
+                )
+            }
+
+            for (const lname in ic) {
+                if (ic.hasOwnProperty(lname)) {
+                    const ldata = ic[lname];
+                    if (lname == 'null') {
+                        // set base div
+                        fd
+                            .css('position', 'absolute')
+                            .css('display', 'block')
+                            .css('left', ldata.offset[0])
+                            .css('top', ldata.offset[1])
+                            .css('width', ldata.size[0])
+                            .css('height', ldata.size[1])
+                    }
+                    else {
+                        if (!$('#fgl_' + lname).length) {
+                            // add image
+                            fd.append(
+                                $('<img>')
+                                    .attr('id', 'fgl_' + lname)
+                                    .attr('src', FilePath.find(lname + '.png'))
+                            )
+                        }
+                        // set image
+                        $('#fgl_' + lname)
+                            .css('position', 'absolute')
+                            .css('display', 'block')
+                            .css('left', ldata.offset[0])
+                            .css('top', ldata.offset[1])
+                            .css('width', ldata.size[0])
+                            .css('height', ldata.size[1])
+                    }
+                }
+            }
+        }
+
+        if (mcmd.objdata.positions) {
+            mcmd.objdata.positions.filter(p => p.type == this.KAGLiterial.DispPosition).forEach(p => {
+                switch (p.disp) {
+                    case this.KAGLiterial.Both:
+                    case this.KAGLiterial.BU:
+                        break;
+                    case this.KAGLiterial.Clear:
+                    case this.KAGLiterial.Face:
+                    case this.KAGLiterial.Invisible:
+                        fd.remove();
+                        break;
+                    default:
+                        console.warn('Unknown KAGEnviroment.DISPPOSITION', p.disp);
+                        break;
+                }
+            })
+        }
+    }
 }
+YZFgImg.Init();
