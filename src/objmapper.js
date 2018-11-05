@@ -1,4 +1,4 @@
-import ImageInfo from "./imageinfo";
+import YZFgImg from "./ui/fgimg";
 
 export default class ObjectMapper {
     static Init() {
@@ -70,12 +70,17 @@ export default class ObjectMapper {
 
         if (this.name2type[cmd.name] == "characters") {
             newcmd.name = this.GetNameInfo(cmd.name).standname;
-            let img = ImageInfo.GetImageInfo(newcmd);
+            let img = YZFgImg.GetImageInfo(newcmd);
             if (img) {
                 ret.image = img;
             }
         }
         return ret;
+    }
+
+    static TypeOf(cmd) {
+        if (!cmd.param) return this.name2type[cmd];
+        return this.name2type[cmd.name];
     }
 
     // e.g:神様

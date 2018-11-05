@@ -4,7 +4,7 @@ import KSVM from "./ksvm";
 import Runtime from "./runtime";
 import ObjectMapper from './objmapper';
 import FilePath from './utils/filepath';
-import ImageInfo from './imageinfo';
+import YZFgImg from "./ui/fgimg";
 
 var scenes = [];
 
@@ -26,7 +26,7 @@ Runtime.TJSvar = {
 async function LoadVMData() {
     var ScriptLoadSeq = ['start.ks', '１.ks', '２.ks']
     await FilePath.Load();
-    ImageInfo.Init('fgimage');
+    YZFgImg.LoadData('fgimage');
     ObjectMapper.LoadObject(TJSON.Parse(await $.get("game/main/envinit.tjs")));
     // TODO: let vm cache module load others
     var preloadps = [];
