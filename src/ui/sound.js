@@ -5,9 +5,9 @@ export default class YZSound {
         this.bgmFormat = '.ogg'
         this.voiceFormat = '.ogg'
         this.channels = {
-            voice: $('#voice'),
-            se: $('#se'),
-            bgm: $('#bgm')
+            voice: '#voice',
+            se: '#se',
+            bgm: '#bgm'
         }
         this.charsq = {}
     }
@@ -88,7 +88,7 @@ export default class YZSound {
      */
     static AudioChannelCtl(channel, aname, playctl) {
         console.log(arguments);
-        let ch = this.channels[channel];
+        let ch = $(this.channels[channel]);
         let s = ch.attr('src');
         let asrc = null;
         if (aname != null) {
@@ -101,7 +101,27 @@ export default class YZSound {
         for (const key in playctl) {
             if (playctl.hasOwnProperty(key)) {
                 const element = playctl[key];
+                let f = () => { };
 
+                switch (element[0]) {
+                    case 'start':
+                        f = () => {
+                            ch[0].play();
+                        }
+                        break;
+                    case 'pause':
+                        f = () => {
+                            ch[0].pause();
+                        }
+                        break;
+                    case 'volume':
+                        f = () => {
+                            ch[0].volume = element[1];
+                        }
+                }
+                if (parseInt(key) == -1) {
+                    f();
+                }
             }
         }
     }

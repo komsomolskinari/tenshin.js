@@ -21,12 +21,6 @@ export class Runtime {
         this.mapper = null;
         window.TJSvar = this.TJSvar;
 
-        // key: chara name
-        this.voicecounter = {};
-        // 'immediately' mode voice, only when voice not int
-        // only trigged one time per cmd, not change ctr
-        this.immvoice = {};
-
         this.inTrans = false;
         this.transSeq = [];
     }
