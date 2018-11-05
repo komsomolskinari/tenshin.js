@@ -4,6 +4,9 @@ import { FilePath } from './utils/filepath';
 import { KSParser } from './utils/ksparser';
 import { TJSeval } from './utils/tjseval';
 import { ImageInfo } from './imageinfo';
+
+import { YZSound } from './ui/sound';
+
 export class Runtime {
     constructor() {
         this.vm = null;
@@ -53,31 +56,12 @@ export class Runtime {
             this.voicecounter[cmd.name]++;
         }
         //{type:text,name:charaname,display:dispname,text:txt}
-        var _vf = this.PlayVoice(info.voicefile, this.TJSvar['f.voiceBase'], voiceseq);
-        console.debug(dispname, text, _vf);
+        //var _vf = this.PlayVoice(info.voicefile, this.TJSvar['f.voiceBase'], voiceseq);
+        YZSound.Voice(cmd.name, this.TJSvar['f.voiceBase'], cmd.param ? cmd.param.voice : undefined)
+        //console.debug(dispname, text, _vf);
 
         $('#charname').html(dispname);
         $('#chartxt').html(this.TextHTML(text));
-    }
-
-    // kam%s_%03d.ogg, 001, 1 -> kam001_001.ogg
-    // not a full printf, magic included
-    PlayVoice(file, base, seq) {
-        if (file == null) return null;
-        var seqtxt;
-        if (parseInt(seq)) {
-            seqtxt = seq + "";
-            while (seqtxt.length < 3) {
-                seqtxt = '0' + seqtxt;
-            }
-            file = file.replace('%s', base);
-            file = file.replace('%03d', seqtxt);
-        }
-        else {
-            file = (seq + '.ogg').replace(/(\.ogg)+/, '.ogg');
-        }
-        $('#voice').attr('src', FilePath.find(file));
-        return file;
     }
 
     // convert text with ks format cmd to html
@@ -126,14 +110,6 @@ export class Runtime {
         });
         ret += rs.substr(p);
         return ret;
-    }
-
-    // [bgm]
-    BGM(cmd) {
-        if (cmd.param.storage) {
-            let realname = cmd.param.storage.replace(/bgm/g, 'BGM') + '.ogg';
-            $('#bgm').attr('src', FilePath.find(realname));
-        }
     }
 
     // TODO: mselect is Tenshin Ranman only command?
@@ -229,7 +205,7 @@ export class Runtime {
                 this.mapper.DelLay(cmd);
                 break;
             case "bgm":
-                this.BGM(cmd);
+                //this.BGM(cmd);
                 break;
             default:
                 // Jump unimpliement cmd
@@ -239,12 +215,6 @@ export class Runtime {
                 // TODO: Use ObjectMapper to compile command
                 // And send an UI frontend
                 if (this.mapper.HaveObject(cmd.name)) {
-                    if (cmd.param.voice !== undefined) {
-                        if (parseInt(cmd.param.voice))
-                            this.voicecounter[cmd.name] = parseInt(cmd.param.voice);
-                        else
-                            this.immvoice[cmd.name] = cmd.param.voice;
-                    }
                     let mapped = this.mapper.MapObject(cmd);
                     this.DrawObject(mapped);
                 }
