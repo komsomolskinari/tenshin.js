@@ -1,5 +1,5 @@
 import { Runtime } from "./runtime";
-import { TJSeval } from './utils/tjseval';
+import TJSeval from './utils/tjseval';
 
 // when to hang up vm
 let VM_STEP = 0;

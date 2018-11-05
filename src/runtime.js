@@ -1,7 +1,7 @@
 // runtime libs
 import { ObjectMapper } from './objmapper';
-import { KSParser } from './utils/ksparser';
-import { TJSeval } from './utils/tjseval';
+import KSParser from './utils/ksparser';
+import TJSeval from './utils/tjseval';
 
 import YZSound from './ui/sound';
 import YZFgImg from './ui/fgimg';

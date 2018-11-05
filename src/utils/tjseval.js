@@ -4,7 +4,7 @@
 // a = "b"
 // and a == b
 // will be eval
-export function TJSeval(str, klass) {
+export default function TJSeval(str, klass) {
     if (Object.keys(klass.TJShack).includes(str)) return klass.TJShack[str];
 
     // hack for opr1,opr2

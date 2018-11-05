@@ -1,6 +1,6 @@
 // csv & tab-seprate txt parser
 
-export class KRCSV {
+export default class KRCSV {
     /**
      * Krirkiri specified CSV and tab table parser
      * @static

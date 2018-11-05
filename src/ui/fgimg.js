@@ -13,7 +13,6 @@ export default class YZFgImg {
         }
     }
 
-
     static CalcImageCoord(mcmd) {
         if (!(mcmd.image && mcmd.image.layer)) return;
         let layer = mcmd.image.layer;

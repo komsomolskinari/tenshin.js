@@ -3,7 +3,7 @@
 /**
  * @class TJSON Parser, 
  */
-export class TJSON {
+export default class TJSON {
     /**
      * Get next non-empty char
      * @private @static

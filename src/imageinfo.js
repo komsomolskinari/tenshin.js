@@ -1,5 +1,5 @@
 import FilePath from "./utils/filepath";
-import { KRCSV } from './utils/krcsv';
+import KRCSV from './utils/krcsv';
 // image info loader
 
 export class ImageInfo {
