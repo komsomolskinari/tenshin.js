@@ -1,11 +1,10 @@
 // runtime libs
 import { ObjectMapper } from './objmapper';
-import { FilePath } from './utils/filepath';
 import { KSParser } from './utils/ksparser';
 import { TJSeval } from './utils/tjseval';
-import { ImageInfo } from './imageinfo';
 
-import { YZSound } from './ui/sound';
+import YZSound from './ui/sound';
+import YZFgImg from './ui/fgimg';
 
 export class Runtime {
     constructor() {
@@ -45,21 +44,7 @@ export class Runtime {
             if (info.name != null) dispname = info.name;
             else dispname = cmd.name;
         }
-        // calculate voice file name
-        var voiceseq;
-        if (this.immvoice[cmd.name]) {
-            voiceseq = this.immvoice[cmd.name];
-            this.immvoice[cmd.name] = null;
-        }
-        else {
-            voiceseq = this.voicecounter[cmd.name];
-            this.voicecounter[cmd.name]++;
-        }
-        //{type:text,name:charaname,display:dispname,text:txt}
-        //var _vf = this.PlayVoice(info.voicefile, this.TJSvar['f.voiceBase'], voiceseq);
         YZSound.Voice(cmd.name, this.TJSvar['f.voiceBase'], cmd.param ? cmd.param.voice : undefined)
-        //console.debug(dispname, text, _vf);
-
         $('#charname').html(dispname);
         $('#chartxt').html(this.TextHTML(text));
     }
@@ -205,7 +190,7 @@ export class Runtime {
                 this.mapper.DelLay(cmd);
                 break;
             case "bgm":
-                //this.BGM(cmd);
+                YZSound.BGM(cmd);
                 break;
             default:
                 // Jump unimpliement cmd
@@ -216,7 +201,8 @@ export class Runtime {
                 // And send an UI frontend
                 if (this.mapper.HaveObject(cmd.name)) {
                     let mapped = this.mapper.MapObject(cmd);
-                    this.DrawObject(mapped);
+                    //this.DrawObject(mapped);
+                    YZFgImg.DrawChara(mapped);
                 }
 
                 if (this.inTrans) {
@@ -225,148 +211,6 @@ export class Runtime {
                 if (!this.mapper.HaveObject(cmd.name))
                     console.warn("RuntimeCall, unimpliement cmd", cmd);
                 break;
-        }
-    }
-
-    /*mobj.image
-    {
-        size:[number,number],
-        layer:[
-            {
-                offset:[number,number],
-                size:[number,number],
-                layer:string
-            }
-        ]
-    }*/
-    CalcImageCoord(mobj) {
-        if (!(mobj.image && mobj.image.layer)) return;
-        let layer = mobj.image.layer;
-        let level = 1;
-        if (mobj.objdata.positions) {
-            let lvcmd = mobj.objdata.positions.filter(p => p.type == "KAGEnvironment.LEVEL");
-            if (lvcmd.length) level = parseInt(lvcmd[0].level);
-        }
-
-        /*{
-            "zoom": "200", // wtf? yoffset?
-            "imgzoom": "140", // they use this
-            "stretch": "stFastLinear" // needn't, browser will do it
-        },*/
-        let scaleo = this.mapper.innerobj.levels[level];
-        let zoom = scaleo.imgzoom / 100;
-        // scale < 2, * 1.33 : all magic number
-        if (level < 2) zoom = scaleo.zoom * 1.33 / 100;
-        let ret = {};
-        ret['null'] = {
-            size: mobj.image.size,
-            offset: [0, 0]
-        }
-        layer.forEach(l => {
-            ret[l.layer] = {
-                offset: l.offset,
-                size: l.size
-            }
-        })
-        let rr = {}
-        for (const ln in ret) {
-            if (ret.hasOwnProperty(ln)) {
-                const e = ret[ln];
-                rr[ln] = {
-                    offset: [e.offset[0] * zoom, e.offset[1] * zoom],
-                    size: [e.size[0] * zoom, e.size[1] * zoom]
-                }
-            }
-        }
-
-        let rnsz = rr['null'].size;
-        rr['null'].offset = [(1280 - rnsz[0]) / 2, (960 - rnsz[1]) / 2];
-
-        let xoff = null;
-        if (mobj.objdata.positions) {
-            let xoffcmd = mobj.objdata.positions.filter(p => p.type == "KAGEnvironment.XPOSITION");
-            if (xoffcmd.length) xoff = parseInt(xoffcmd[0].xpos);
-        }
-        console.log(ret, level, zoom, xoff);
-        if (xoff !== null)
-            rr['null'].offset[0] += xoff;
-
-        // another magic
-        if (level > 1) rr['null'].offset[1] -= (300 + parseInt(scaleo.zoom));
-        return rr;
-    }
-
-    DrawObject(mobj) {
-        let ic = this.CalcImageCoord(mobj);
-        console.log(ic);
-        if (ic) {
-            let name = mobj.name;
-            // remove unused img
-            let fgs = $('#fg_' + name + ' img');
-            for (var f of fgs) {
-                let i = f.id.split('_').slice(1).join('_')
-                if (!Object.keys(ic).includes(i)) {
-                    $('#' + f.id).remove()
-                }
-            }
-            if (!$('#fg_' + name).length) {
-                $('#imagediv').append(
-                    $('<div>')
-                        .attr('id', 'fg_' + name)
-                )
-            }
-
-            for (const lname in ic) {
-                if (ic.hasOwnProperty(lname)) {
-                    const ldata = ic[lname];
-                    if (lname == 'null') {
-                        // set base div
-                        $('#fg_' + name)
-                            .css('position', 'absolute')
-                            .css('display', 'block')
-                            .css('left', ldata.offset[0])
-                            .css('top', ldata.offset[1])
-                            .css('width', ldata.size[0])
-                            .css('height', ldata.size[1])
-                    }
-                    else {
-                        if (!$('#fgl_' + lname).length) {
-                            // add image
-                            $('#fg_' + name).append(
-                                $('<img>')
-                                    .attr('id', 'fgl_' + lname)
-                                    .attr('src', FilePath.find(lname + '.png'))
-                            )
-                        }
-                        // set image
-                        $('#fgl_' + lname)
-                            .css('position', 'absolute')
-                            .css('display', 'block')
-                            .css('left', ldata.offset[0])
-                            .css('top', ldata.offset[1])
-                            .css('width', ldata.size[0])
-                            .css('height', ldata.size[1])
-                    }
-                }
-            }
-        }
-
-        if (mobj.objdata.positions) {
-            mobj.objdata.positions.filter(p => p.type == "KAGEnvironment.DISPPOSITION").forEach(p => {
-                switch (p.disp) {
-                    case "KAGEnvImage.BOTH":
-                    case "KAGEnvImage.BU":
-                        break;
-                    case "KAGEnvImage.CLEAR":
-                    case "KAGEnvImage.FACE":
-                    case "KAGEnvImage.INVISIBLE":
-                        $('#fg_' + mobj.name).remove();
-                        break;
-                    default:
-                        console.warn('Unknown KAGEnviroment.DISPPOSITION', p.disp);
-                        break;
-                }
-            })
         }
     }
 }

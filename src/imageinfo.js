@@ -1,4 +1,4 @@
-import { FilePath } from "./utils/filepath";
+import FilePath from "./utils/filepath";
 import { KRCSV } from './utils/krcsv';
 // image info loader
 

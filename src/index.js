@@ -3,7 +3,7 @@ import { KSParser } from "./utils/ksparser";
 import { KSVM } from "./ksvm";
 import { Runtime } from "./runtime";
 import { ObjectMapper } from './objmapper';
-import { FilePath } from './utils/filepath';
+import FilePath from './utils/filepath';
 import { ImageInfo } from './imageinfo';
 
 var scenes = [];

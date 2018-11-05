@@ -1,7 +1,6 @@
 import FilePath from '../utils/filepath'
 
-
-export class YZSound {
+export default class YZSound {
     static Init() {
         this.bgmFormat = '.ogg'
         this.voiceFormat = '.ogg'
@@ -10,7 +9,6 @@ export class YZSound {
             se: $('#se'),
             bgm: $('#bgm')
         }
-
         this.charsq = {}
     }
 
@@ -23,7 +21,7 @@ export class YZSound {
         }
         else {
             if (!cmd.param.storage) return;
-            let realbgm = cmd.param.storage.replace(/bgm/g, 'BGM');
+            let realbgm = cmd.param.storage.replace(/bgm/i, 'BGM') + this.bgmFormat;
             // TODO: generate loop info
             let ctl = { '-1': ['start', fadetime] };
             this.AudioChannelCtl('bgm', realbgm, ctl)
@@ -58,6 +56,7 @@ export class YZSound {
             seq = this.charsq[char];
             this.charsq[char]++;
         }
+        // TODO: Global Variable Dependecy
         let fmt = window.Mapper.GetNameInfo(char).voicefile;
         if (fmt == null) return null;
         if (parseInt(seq)) {
@@ -66,8 +65,8 @@ export class YZSound {
             fmt = fmt.replace('%03d', seqtxt);
         }
         else {
-            fmt = seq.replace(/\.ogg/, '');
         }
+        fmt = fmt.replace(/\.[a-z0-9]{2,5}$/i, '') + this.voiceFormat;
         let ctl = { '-1': ['start', 0] }
         this.AudioChannelCtl('voice', fmt, ctl)
         return fmt;
@@ -89,6 +88,22 @@ export class YZSound {
      */
     static AudioChannelCtl(channel, aname, playctl) {
         console.log(arguments);
+        let ch = this.channels[channel];
+        let s = ch.attr('src');
+        let asrc = null;
+        if (aname != null) {
+            asrc = FilePath.find(aname);
+        }
+        if (asrc != s) {
+            ch.attr('src', asrc);
+            ch.unbind('timeupdate');
+        }
+        for (const key in playctl) {
+            if (playctl.hasOwnProperty(key)) {
+                const element = playctl[key];
+
+            }
+        }
     }
 }
 YZSound.Init();

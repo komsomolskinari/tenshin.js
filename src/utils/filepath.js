@@ -1,4 +1,4 @@
-export class FilePath {
+export default class FilePath {
     /**
      * Load filesystem 
      * Only JSON mode works
