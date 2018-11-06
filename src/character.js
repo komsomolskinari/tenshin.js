@@ -64,7 +64,7 @@ export default class Character {
     async __LoadChunk(filename) {
         const f = KRCSV.Parse(await $.get(FilePath.find(filename)), '\t', false);
         const _fsp = filename.split('_');
-        const pfx = _fsp.slice(1, _fsp.length - 1).join('_');
+        const pfx = _fsp.slice(0, _fsp.length - 1).join('_');
 
         if (this.face[pfx] === undefined)
             this.face[pfx] = {};
@@ -87,7 +87,7 @@ export default class Character {
         let f = KRCSV.Parse(await $.get(FilePath.find(filename)), '\t')
         const fvar = filename.match(/_([0-9])\./)[1];
         const _fsp = filename.split('_');
-        const pfx = _fsp.slice(1, _fsp.length - 1).join('_');
+        const pfx = _fsp.slice(0, _fsp.length - 1).join('_');
 
         if (this.coord[pfx] === undefined)
             this.coord[pfx] = {};
@@ -233,13 +233,28 @@ export default class Character {
         const usedVer = ([1, 1, 3, 3, 3, 5, 3])[this.imageLevel];
 
         let raw = varImg.map(v => this.coord[pfx][usedVer][v]);
-        raw.push(this.coord[pfx][usedVer][mainImg]);
+        raw = raw.map(v => {
+            return {
+                layer: v.layer,
+                offset: v.offset,
+                size: v.size,
+                zindex: 10
+            }
+        });
+        let mi = this.coord[pfx][usedVer][mainImg];
+        raw.push({
+            layer: mi.layer,
+            offset: mi.offset,
+            size: mi.size,
+            zindex: 5
+        });
         // conv name
         raw = raw.map(v => {
             return {
-                layer: ([this.name, pfx, usedVer, v.layer].join('_')),
+                layer: ([pfx, usedVer, v.layer].join('_')),
                 offset: v.offset,
-                size: v.size
+                size: v.size,
+                zindex: v.zindex
             }
         });
 
@@ -255,7 +270,8 @@ export default class Character {
             return {
                 layer: v.layer,
                 offset: [ox * zoom, oy * zoom],
-                size: [sx * zoom, sy * zoom]
+                size: [sx * zoom, sy * zoom],
+                zindex: v.zindex
             }
         })
         // move to center

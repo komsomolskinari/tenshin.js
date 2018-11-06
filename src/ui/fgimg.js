@@ -60,7 +60,8 @@ export default class YZFgImg {
                 .css('left', loffx)
                 .css('top', loffy)
                 .css('width', lszx)
-                .css('height', lszy);
+                .css('height', lszy)
+                .css('z-index', l.zindex + 500)
         })
     }
 }
