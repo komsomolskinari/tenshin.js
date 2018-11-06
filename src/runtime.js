@@ -1,6 +1,5 @@
 // runtime libs
 import ObjectMapper from './objmapper';
-import KSParser from './utils/ksparser';
 import TJSeval from './utils/tjseval';
 
 import YZSound from './ui/sound';
@@ -143,13 +142,6 @@ export default class Runtime {
                 if (["ev", "msgoff", "msgon", "se", "env", "date", "wait", "stage",
                     "beginskip", "endskip", "fadepausebgm", "fadebgm", "pausebgm", "resumebgm", "opmovie", "edmovie",
                     "initscene", "day_full", "ano_view", "ret_view", "playbgm", "delaydone", "white_ball", "white_ball_hide", "particle"].includes(cmd.name.toLowerCase())) break;
-                // TODO: Use ObjectMapper to compile command
-                // And send an UI frontend
-                if (ObjectMapper.HaveObject(cmd.name)) {
-                    let mapped = ObjectMapper.MapObject(cmd);
-                    //this.DrawObject(mapped);
-                    YZFgImg.DrawChara(mapped);
-                }
 
                 let chobj = Character.characters[cmd.name];
                 if (chobj !== undefined) {

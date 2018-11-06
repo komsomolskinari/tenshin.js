@@ -1,13 +1,23 @@
 import ObjectMapper from "./objmapper";
-import YZSound from "./ui/sound";
 import FilePath from "./utils/filepath";
 import KRCSV from "./utils/krcsv";
+import YZFgImg from "./ui/fgimg";
 const X = 0;
 const WIDTH = 0;
 const HORIZONTAL = 0;
 const Y = 1;
 const HEIGHT = 1;
 const VERTICAL = 1;
+const KAGConst = {
+    Both: "KAGEnvImage.BOTH",
+    BU: "KAGEnvImage.BU",
+    Clear: "KAGEnvImage.CLEAR",
+    Face: "KAGEnvImage.FACE",
+    Invisible: "KAGEnvImage.INVISIBLE",
+    DispPosition: "KAGEnvironment.DISPPOSITION",
+    XPosition: "KAGEnvironment.XPOSITION",
+    Level: "KAGEnvironment.LEVEL"
+}
 export default class Character {
     constructor(name) {
         this.name = name;
@@ -41,6 +51,8 @@ export default class Character {
 
         this.imageLevel = 1;
         this.imageXPos = 0;
+        this.dispPos = KAGConst.Both;
+        this.showedInDom = false;
         this.dressOpt = "";
         Character.characters[name] = this;
         if (fgLs === undefined) return;
@@ -107,6 +119,7 @@ export default class Character {
         // or calculate
         if (param.delayrun) {
             delete cmd.param.delayrun;
+            console.log('Delay exec', cmd)
             setTimeout(() => this.Process(cmd), 1000);
             return;
         }
@@ -121,19 +134,58 @@ export default class Character {
             }
         }
 
+        let mapped = {};
+        option.filter(o => ObjectMapper.IsProperty(o)).forEach(o => {
+            let t = ObjectMapper.TypeOf(o);
+            if (mapped[t] === undefined) mapped[t] = [];
+            let mo = ObjectMapper.innerobj[t][o];
+            if (mo.length === undefined) {
+                mapped[t].push(mo);
+            }
+            else {
+                for (const i of mo) {
+                    mapped[t].push(i);
+                }
+            }
+        });
 
+        (mapped.positions || []).forEach(p => {
+            switch (p.type) {
+                case KAGConst.DispPosition:
+                    this.dispPos = p.disp;
+                    break;
+                case KAGConst.XPosition:
+                    this.imageXPos = parseInt(p.xpos);
+                    break;
+                case KAGConst.Level:
+                    this.imageLevel = parseInt(p.level);
+                    break;
+                default:
+                    break;
+            }
+        })
         // if standName !== name, we need call another character's Image()
         // TODO: Update imageLevel, imageXPos
-        // TODO: Select faceOpt
-
         let allDress = Object.keys(this.dress);
         let dOpt = option.filter(o => allDress.includes(o))[0];
         if (dOpt) {
             this.dressOpt = dOpt;
         }
         let fOpt = option.filter(o => o.match(/^[0-9]{3}$/) != null)[0];
+        let imgctl;
         if (fOpt) {
-            this.Image(fOpt);
+            imgctl = this.Image(fOpt);
+        }
+        if (![KAGConst.Both, KAGConst.BU].includes(this.dispPos)) {
+            if (this.showedInDom) {
+                this.showedInDom = false;
+                YZFgImg.HideCharacter(name);
+                // FG.Hide(name)
+            }
+        }
+        else {
+            this.showedInDom = true;
+            YZFgImg.DrawCharacter(name, imgctl);
         }
     }
 
@@ -221,7 +273,7 @@ export default class Character {
             },
             layer: raw
         };
-        console.log(ctl);
+        return ctl;
     }
 }
 Character.voiceBase = "";

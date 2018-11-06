@@ -27,7 +27,6 @@ Runtime.TJSvar = {
 async function LoadVMData() {
     let ScriptLoadSeq = ['start.ks', '１.ks', '２.ks']
     await FilePath.Load();
-    YZFgImg.LoadData('fgimage');
     ObjectMapper.LoadObject(TJSON.Parse(await $.get("game/main/envinit.tjs")));
 
     Object.keys(ObjectMapper.innerobj.characters)

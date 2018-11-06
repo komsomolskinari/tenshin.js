@@ -32,12 +32,16 @@ export default class ObjectMapper {
         if (idx != -1) this.objs.splice(idx);
     }
 
+    static IsProperty(str) {
+        return this.objs.includes(str);
+    }
+
     static MapObject(cmd) {
         let objdata = {}
         if (this.odatacache[cmd.name] === undefined) this.odatacache[cmd.name] = {};
         // handle registered opions here
         // then pass name & image id to imageinfo
-        cmd.option.filter(o => this.objs.includes(o)).forEach(o => {
+        cmd.option.filter(o => this.IsProperty(o)).forEach(o => {
             if (objdata[this.name2type[o]] === undefined) objdata[this.name2type[o]] = [];
             let mo = this.innerobj[this.name2type[o]][o];
             if (mo.length === undefined) {
