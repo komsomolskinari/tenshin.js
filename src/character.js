@@ -1,4 +1,4 @@
-import ObjectMapper from "./objmapper";
+import ObjectMapper from "./objectmapper";
 import YZFgImg from "./ui/fgimg";
 import YZSound from "./ui/sound";
 import YZText from "./ui/text";

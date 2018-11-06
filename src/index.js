@@ -1,6 +1,6 @@
 import Character from "./character";
 import KSVM from "./ksvm";
-import ObjectMapper from './objmapper';
+import ObjectMapper from './objectmapper';
 import Runtime from "./runtime";
 import YZSound from "./ui/sound";
 import YZText from "./ui/text";
