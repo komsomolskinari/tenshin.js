@@ -1,5 +1,4 @@
 import FilePath from '../utils/filepath'
-import ObjectMapper from '../objmapper'
 
 export default class YZSound {
     static Init() {

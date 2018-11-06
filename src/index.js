@@ -1,13 +1,12 @@
-import TJSON from "./utils/tjson";
-import KSParser from "./utils/ksparser";
-import KSVM from "./ksvm";
-import Runtime from "./runtime";
-import ObjectMapper from './objmapper';
-import FilePath from './utils/filepath';
-import YZFgImg from "./ui/fgimg";
 import Character from "./character";
-import YZText from "./ui/text";
+import KSVM from "./ksvm";
+import ObjectMapper from './objmapper';
+import Runtime from "./runtime";
 import YZSound from "./ui/sound";
+import YZText from "./ui/text";
+import FilePath from './utils/filepath';
+import KSParser from "./utils/ksparser";
+import TJSON from "./utils/tjson";
 
 var scenes = [];
 
