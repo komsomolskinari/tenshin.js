@@ -34,11 +34,12 @@ This project is a experiment about running Galgame in modern browser, it's origi
 - [x] 语音支持    Voice
 - [x] 背景音乐    BGM
 - [x] 文件系统    File System
+- [x] 图片支持    Image
 ### 正在工作 WIP
-- [ ] 图片支持    Image
+- [ ] 改进图片定位    Improve image positioning
 - [ ] 视频支持    Video
-### 近期 Soon 
 - [ ] 基本动画    Basic Animation
+### 近期 Soon 
 - [ ] 图片特效    Image Effect
 - [ ] 改进的选择支    Improved Select
 - [ ] 存档    Save And Load
@@ -51,6 +52,10 @@ This project is a experiment about running Galgame in modern browser, it's origi
 - [ ] TJS编译器    .tjs Compiler
 
 ## 更新日志 Changelog
+
+### v0.3.3
+2018-11-06
+- 现在使用对象化的运行库    Now use object oriented runtime
 
 ### v0.3.2
 2018-11-05
