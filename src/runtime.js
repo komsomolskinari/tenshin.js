@@ -145,7 +145,7 @@ export default class Runtime {
                 if (this.inTrans) {
                     this.AddTrans(cmd);
                 }
-                if (!ObjectMapper.HaveObject(cmd.name))
+                if (!ObjectMapper.IsProperty(cmd.name))
                     console.warn("RuntimeCall, unimpliement cmd", cmd);
                 break;
         }

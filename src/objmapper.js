@@ -1,5 +1,3 @@
-import YZFgImg from "./ui/fgimg";
-
 export default class ObjectMapper {
     static Init() {
         this.objs = []
@@ -17,10 +15,6 @@ export default class ObjectMapper {
         this.objs = Object.keys(this.name2type);
     }
 
-    static HaveObject(obj) {
-        return this.objs.includes(obj);
-    }
-
     static NewLay(cmd) {
         var name = cmd.param.name;
         this.objs.push(name);
@@ -34,50 +28,6 @@ export default class ObjectMapper {
 
     static IsProperty(str) {
         return this.objs.includes(str);
-    }
-
-    static MapObject(cmd) {
-        let objdata = {}
-        if (this.odatacache[cmd.name] === undefined) this.odatacache[cmd.name] = {};
-        // handle registered opions here
-        // then pass name & image id to imageinfo
-        cmd.option.filter(o => this.IsProperty(o)).forEach(o => {
-            if (objdata[this.name2type[o]] === undefined) objdata[this.name2type[o]] = [];
-            let mo = this.innerobj[this.name2type[o]][o];
-            if (mo.length === undefined) {
-                objdata[this.name2type[o]].push(mo);
-            }
-            else {
-                for (const i of mo) {
-                    objdata[this.name2type[o]].push(i);
-                }
-            }
-        });
-        for (const key in objdata) {
-            if (objdata.hasOwnProperty(key)) {
-                const value = objdata[key];
-                this.odatacache[cmd.name][key] = value;
-            }
-        }
-
-        cmd.objdata = this.odatacache[cmd.name];
-        let newcmd = JSON.parse(JSON.stringify(cmd));
-        newcmd.option = cmd.option
-            .filter(o => !this.objs.includes(o))
-            .filter(o => !["sync", "nosync", "back", "front", "grayscale", "bvoice", "nextvoice", "resetcolor", "stopvoice", "hideemotion"].includes(o));
-        newcmd.param = {}
-        let ret = {};
-        ret.objdata = cmd.objdata;
-        ret.name = cmd.name;
-
-        if (this.name2type[cmd.name] == "characters") {
-            newcmd.name = this.GetNameInfo(cmd.name).standname;
-            let img = YZFgImg.GetImageInfo(newcmd);
-            if (img) {
-                ret.image = img;
-            }
-        }
-        return ret;
     }
 
     static TypeOf(cmd) {
