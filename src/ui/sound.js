@@ -6,9 +6,9 @@ export default class YZSound {
         this.bgmFormat = '.ogg'
         this.voiceFormat = '.ogg'
         this.channels = {
-            voice: '#voice',
-            se: '#se',
-            bgm: '#bgm'
+            voice: $('#voice'),
+            se: $('#se'),
+            bgm: $('#bgm')
         }
         this.charsq = {}
     }
@@ -54,7 +54,7 @@ export default class YZSound {
      * @param {*} playctl Play Control
      */
     static AudioChannelCtl(channel, aname, playctl) {
-        let ch = $(this.channels[channel]);
+        let ch = this.channels[channel];
         let s = ch.attr('src');
         let asrc = null;
         if (aname != null) {
@@ -92,4 +92,3 @@ export default class YZSound {
         }
     }
 }
-YZSound.Init();

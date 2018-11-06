@@ -4,6 +4,7 @@ import TJSeval from './utils/tjseval';
 import YZSound from './ui/sound';
 import Character from './character';
 import TextHTML from './utils/texthtml';
+import YZText from './ui/text';
 
 export default class Runtime {
     static Init() {
@@ -25,20 +26,14 @@ export default class Runtime {
     // 
     static Text(cmd) {
         let { text, name, display } = cmd;
-        var info = ObjectMapper.GetNameInfo(name);
-
         if (name) {
             let ch = Character.characters[name];
-            // display name haven't been rewrite, need set
-            if (display == null) {
-                if (info.name != null) display = ch.displayName;
-                else display = cmd.name;
-            }
             Character.voiceBase = this.TJSvar['f.voiceBase'];
-            ch.Voice();
+            ch.Text(text, display);
         }
-        $('#charname').html(display);
-        $('#chartxt').html(TextHTML(text));
+        else {
+            YZText.Print(text, display);
+        }
     }
 
     // TODO: mselect is Tenshin Ranman only command?

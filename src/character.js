@@ -3,6 +3,7 @@ import FilePath from "./utils/filepath";
 import KRCSV from "./utils/krcsv";
 import YZFgImg from "./ui/fgimg";
 import YZSound from "./ui/sound";
+import YZText from "./ui/text";
 const X = 0;
 const WIDTH = 0;
 const HORIZONTAL = 0;
@@ -191,8 +192,14 @@ export default class Character {
         }
     }
 
-    Text(line) {
-
+    Text(text, display) {
+        // display name haven't been rewrite, need set
+        if (!display) {
+            if (this.displayName) display = this.displayName;
+            else display = this.name;
+        }
+        this.Voice();
+        YZText.Print(text, display);
     }
 
     /**

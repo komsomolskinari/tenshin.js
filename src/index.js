@@ -6,6 +6,8 @@ import ObjectMapper from './objmapper';
 import FilePath from './utils/filepath';
 import YZFgImg from "./ui/fgimg";
 import Character from "./character";
+import YZText from "./ui/text";
+import YZSound from "./ui/sound";
 
 var scenes = [];
 
@@ -46,6 +48,8 @@ async function LoadVMData() {
 }
 
 $(document).ready(() => {
+    YZSound.Init();
+    YZText.Init();
     $(document).click(() => KSVM.Next());
     LoadVMData().then(() => {
         KSVM.RunFrom('start');
