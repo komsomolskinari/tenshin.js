@@ -4,6 +4,7 @@ import TJSeval from './utils/tjseval';
 import YZSound from './ui/sound';
 import Character from './character';
 import YZText from './ui/text';
+import YZBgImg from './ui/bgimg';
 
 export default class Runtime {
     static Init() {
@@ -140,12 +141,24 @@ export default class Runtime {
                 if (chobj !== undefined) {
                     chobj.Process(cmd);
                 }
+                switch (ObjectMapper.TypeOf(cmd)) {
+                    case "characters":
+                        Character.characters[cmd.name].Process(cmd);
+                        break;
+                    case "times":
+                        YZBgImg.SetDaytime(cmd.name);
+                        break;
+                    case "stages":
+                        YZBgImg.Process(cmd);
+                        break;
+                    default:
+                        console.warn("RuntimeCall, unimpliement cmd", cmd);
+                        break;
+                }
 
                 if (this.inTrans) {
                     this.AddTrans(cmd);
                 }
-                if (!ObjectMapper.IsProperty(cmd.name))
-                    console.warn("RuntimeCall, unimpliement cmd", cmd);
                 break;
         }
     }

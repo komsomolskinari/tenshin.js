@@ -7,6 +7,7 @@ import YZText from "./ui/text";
 import FilePath from './utils/filepath';
 import KSParser from "./utils/ksparser";
 import TJSON from "./utils/tjson";
+import YZBgImg from "./ui/bgimg";
 
 var scenes = [];
 
@@ -49,6 +50,7 @@ async function LoadVMData() {
 $(document).ready(() => {
     YZSound.Init();
     YZText.Init();
+    YZBgImg.Init();
     $(document).click(() => KSVM.Next());
     LoadVMData().then(() => {
         KSVM.RunFrom('start');

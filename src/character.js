@@ -25,8 +25,8 @@ export default class Character {
         this.name = name;
         this.currentVoice = 1;
         this.nextVoice = undefined;
-        this.voiceFmt = ObjectMapper.GetNameInfo(name).voicefile;
-        this.displayName = ObjectMapper.GetNameInfo(name).standname;
+        this.voiceFmt = ObjectMapper.GetProperty(name).voiceFile;
+        this.displayName = ObjectMapper.GetProperty(name).standName;
         // if character has no image, skip image meta
         let fgLs = FilePath.ls(`fgimage/${name}`);
         /*{

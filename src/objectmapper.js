@@ -26,6 +26,12 @@ export default class ObjectMapper {
         if (idx != -1) this.objs.splice(idx);
     }
 
+    static GetProperty(str) {
+        if (!this.IsProperty(str)) return undefined;
+        let t = this.TypeOf(str);
+        return this.innerobj[t][str];
+    }
+
     static IsProperty(str) {
         return this.objs.includes(str);
     }
@@ -33,27 +39,6 @@ export default class ObjectMapper {
     static TypeOf(cmd) {
         if (!cmd.param) return this.name2type[cmd];
         return this.name2type[cmd.name];
-    }
-
-    // e.g:神様
-    // return:
-    // - name: 姫
-    // - voicefile: kam%s_%03d.ogg
-    // - standname:
-    static GetNameInfo(name) {
-        let ret = {
-            name: null,
-            voicefile: null,
-            standname: null
-        };
-        if (name == null) return ret;
-        let c = this.innerobj.characters[name];
-        if (c.nameAlias !== undefined) ret.name = c.nameAlias;
-        if (c.voiceFile !== undefined) ret.voicefile = c.voiceFile;
-        if (c.standName !== undefined) ret.standname = c.standName;
-        else ret.standname = name;
-        return ret;
-
     }
 }
 ObjectMapper.Init();
