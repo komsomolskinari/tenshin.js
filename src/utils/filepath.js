@@ -33,17 +33,13 @@ export default class FilePath {
     /**
      * List directory
      * @param {String} dir String, target directory
-     * @returns {*} FileTree
+     * @returns {*} FileTree, undefine if dir not exist
      */
     static ls(dir) {
         if (!this.ready) return undefined;
         if (dir === undefined) dir = '';
-        var units = dir.split('/').filter(u => u)
-        var p = this.idxtree;
-        for (const u of units) {
-            p = p[u]
-        }
-        return p;
+        var units = dir.split('/').filter(u => u);
+        return units.reduce((prev, curr) => prev === undefined ? undefined : prev[curr], this.idxtree);
     }
 
     /**

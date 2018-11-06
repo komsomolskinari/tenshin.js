@@ -105,7 +105,7 @@ export default class YZFgImg {
         let level = null;
         if (cmd.objdata !== undefined) {
             if (cmd.objdata.positions !== undefined) {
-                level = cmd.objdata.positions.filter(p => p.type == "KAGEnvironment.LEVEL");
+                level = cmd.objdata.positions.filter(p => p.type == this.KAGLiterial.Level);
                 if (level.length > 1) {
                     console.warn("GetImageInfo, multiple LEVEL", cmd);
                 }
@@ -241,8 +241,8 @@ export default class YZFgImg {
         if (xoff !== null)
             rr['null'].offset[0] += xoff;
 
-        // another magic
-        if (level > 1) rr['null'].offset[1] -= (300 + parseInt(scaleo.zoom));
+        // another magic, modify ypos
+        if (level > 1) rr['null'].offset[1] -= (240 + 2 * parseInt(scaleo.zoom));
         return rr;
     }
 

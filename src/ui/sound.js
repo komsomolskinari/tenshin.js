@@ -31,45 +31,12 @@ export default class YZSound {
 
     /**
      * Output voice
-     * @param {String} char Character
-     * @param {String} base Voice base name, from runtime variable
-     * @param {String} sequence Sequence id
+     * @param {String} src Source
      */
-    static Voice(char, base, sequence) {
-        if (!this.charsq[char]) {
-            this.charsq[char] = 1;
-        }
-        let seq = 0;
-        if (sequence !== undefined) {
-            let intseq = parseInt(sequence);
-            // string seq, just use one time
-            if (isNaN(intseq)) {
-                seq = sequence;
-            }
-            // number seq, save it
-            else {
-                this.charsq[char] = intseq;
-                seq = intseq;
-            }
-        }
-        // no seq info, load one
-        else {
-            seq = this.charsq[char];
-            this.charsq[char]++;
-        }
-        let fmt = ObjectMapper.GetNameInfo(char).voicefile;
-        if (fmt == null) return null;
-        if (parseInt(seq)) {
-            let seqtxt = String(seq).padStart(3, '0')
-            fmt = fmt.replace('%s', base);
-            fmt = fmt.replace('%03d', seqtxt);
-        }
-        else {
-        }
-        fmt = fmt.replace(/\.[a-z0-9]{2,5}$/i, '') + this.voiceFormat;
+    static Voice(src) {
+        src += this.voiceFormat;
         let ctl = { '-1': ['start', 0] }
-        this.AudioChannelCtl('voice', fmt, ctl)
-        return fmt;
+        this.AudioChannelCtl('voice', src, ctl)
     }
 
     // playctl format: key is time(sec), -1 means immediately

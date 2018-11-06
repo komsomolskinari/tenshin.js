@@ -5,6 +5,7 @@ import Runtime from "./runtime";
 import ObjectMapper from './objmapper';
 import FilePath from './utils/filepath';
 import YZFgImg from "./ui/fgimg";
+import Character from "./character";
 
 var scenes = [];
 
@@ -24,10 +25,14 @@ Runtime.TJSvar = {
 };
 
 async function LoadVMData() {
-    var ScriptLoadSeq = ['start.ks', '１.ks', '２.ks']
+    let ScriptLoadSeq = ['start.ks', '１.ks', '２.ks']
     await FilePath.Load();
     YZFgImg.LoadData('fgimage');
     ObjectMapper.LoadObject(TJSON.Parse(await $.get("game/main/envinit.tjs")));
+
+    Object.keys(ObjectMapper.innerobj.characters)
+        .forEach(c => new Character(c));
+
     // TODO: let vm cache module load others
     var preloadps = [];
     ScriptLoadSeq.forEach(s => {

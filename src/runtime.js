@@ -5,10 +5,11 @@ import TJSeval from './utils/tjseval';
 
 import YZSound from './ui/sound';
 import YZFgImg from './ui/fgimg';
+import Character from './character';
+import TextHTML from './utils/texthtml';
 
 export default class Runtime {
     static Init() {
-        this.vm = null;
         // key: var name
         this.TJSvar = {};
         // set tjs eval native implement hack
@@ -18,7 +19,6 @@ export default class Runtime {
         this.TJShack = {};
         this.MapSelectData = [];
         this.SelectData = [];
-        window.TJSvar = this.TJSvar;
 
         this.inTrans = false;
         this.transSeq = [];
@@ -27,67 +27,20 @@ export default class Runtime {
     // Text related commands
     // 
     static Text(cmd) {
-        var text = cmd.text;
-        var name = cmd.name;
-        var dispname = cmd.display;
+        let { text, name, display } = cmd;
         var info = ObjectMapper.GetNameInfo(name);
 
-        // display name haven't been rewrite, need set
-        if (dispname == null) {
-            if (info.name != null) dispname = info.name;
-            else dispname = cmd.name;
+        if (name) {
+            let ch = Character.characters[name];
+            // display name haven't been rewrite, need set
+            if (display == null) {
+                if (info.name != null) display = ch.displayName;
+                else display = cmd.name;
+            }
+            //YZSound.Voice(cmd.name, this.TJSvar['f.voiceBase'], cmd.param ? cmd.param.voice : undefined)
         }
-        YZSound.Voice(cmd.name, this.TJSvar['f.voiceBase'], cmd.param ? cmd.param.voice : undefined)
-        $('#charname').html(dispname);
-        $('#chartxt').html(this.TextHTML(text));
-    }
-
-    // convert text with ks format cmd to html
-    static TextHTML(txt) {
-        if (txt.indexOf('[') < 0) return txt;
-        // first, cut to lines: text\n[cmd]\ntext
-        const t = txt
-            .replace(/\[/g, '\n[')
-            .replace(/\]/g, ']\n')
-            .split('\n');
-        // generate raw text and cmd position
-        let rs = "";
-        // [[pos,cmd,opt,arg],...] use KSParser to parse function
-        let c = [];
-        t.forEach(e => {
-            if (e[0] == '[') {
-                let f = KSParser.Parse(e)[0];
-                c.push([rs.length, f.name, f.option, f.param])
-            }
-            else {
-                rs += e;
-            }
-        })
-        let p = 0;
-        let ret = "";
-        c.forEach(t => {
-            // append unformatted txt
-            ret += rs.substr(p, t[0] - p);
-            p = t[0];
-            switch (t[1]) {
-                case 'ruby':
-                    ret += '<ruby>';
-                    ret += rs[p];
-                    p++;
-                    ret += '<rt>';
-                    ret += t[3].text;
-                    ret += '</rt></ruby>';
-                    break;
-                case 'r':
-                    ret += '<br />';
-                    break;
-                default:
-                    console.warn("TextHTML, Unimplied inline tag", t);
-                    break;
-            }
-        });
-        ret += rs.substr(p);
-        return ret;
+        $('#charname').html(display);
+        $('#chartxt').html(TextHTML(text));
     }
 
     // TODO: mselect is Tenshin Ranman only command?
@@ -196,6 +149,11 @@ export default class Runtime {
                     let mapped = ObjectMapper.MapObject(cmd);
                     //this.DrawObject(mapped);
                     YZFgImg.DrawChara(mapped);
+                }
+
+                let chobj = Character.characters[cmd.name];
+                if (chobj !== undefined) {
+                    chobj.Process(cmd);
                 }
 
                 if (this.inTrans) {

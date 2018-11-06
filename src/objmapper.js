@@ -5,8 +5,6 @@ export default class ObjectMapper {
         this.objs = []
         this.name2type = {}
         this.innerobj = null;
-        this.ImageInfo = null;
-
         // Object data cache
         this.odatacache = {};
     }
