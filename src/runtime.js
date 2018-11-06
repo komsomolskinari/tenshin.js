@@ -1,9 +1,7 @@
 // runtime libs
 import ObjectMapper from './objmapper';
 import TJSeval from './utils/tjseval';
-
 import YZSound from './ui/sound';
-import YZFgImg from './ui/fgimg';
 import Character from './character';
 import TextHTML from './utils/texthtml';
 
@@ -36,7 +34,8 @@ export default class Runtime {
                 if (info.name != null) display = ch.displayName;
                 else display = cmd.name;
             }
-            //YZSound.Voice(cmd.name, this.TJSvar['f.voiceBase'], cmd.param ? cmd.param.voice : undefined)
+            Character.voiceBase = this.TJSvar['f.voiceBase'];
+            ch.Voice();
         }
         $('#charname').html(display);
         $('#chartxt').html(TextHTML(text));

@@ -2,6 +2,7 @@ import ObjectMapper from "./objmapper";
 import FilePath from "./utils/filepath";
 import KRCSV from "./utils/krcsv";
 import YZFgImg from "./ui/fgimg";
+import YZSound from "./ui/sound";
 const X = 0;
 const WIDTH = 0;
 const HORIZONTAL = 0;
@@ -200,6 +201,7 @@ export default class Character {
      */
     Voice(seq) {
         this.nextVoice = undefined;
+        if (!this.voiceFmt) return;
         let s;
         if (isNaN(parseInt(seq)) && seq !== undefined) {
             s = seq;
@@ -218,7 +220,7 @@ export default class Character {
         }
         // drop extension
         stxt = stxt.replace(/\.[a-z0-9]{2,5}$/i, '');
-        YZSound.Voice(s);
+        YZSound.Voice(stxt);
     }
 
     Image(faceOpt) {

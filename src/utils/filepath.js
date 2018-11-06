@@ -68,14 +68,14 @@ export default class FilePath {
     // '' -> 'voice' -> 'voice/aoi'
     static _genfind(tree, dir) {
         tree.forEach(e => {
-            if (e.type != "file") {
+            if (e.type == "file") {
+                if (this.findtree[e.name] === undefined)
+                    this.findtree[e.name] = [];
+                this.findtree[e.name].push(dir + '/' + e.name)
+            }
+            else {
                 this._genfind(e.sub, dir + '/' + e.name);
-                return;
             }
-            if (this.findtree[e.name] === undefined) {
-                this.findtree[e.name] = []
-            }
-            this.findtree[e.name].push(dir + '/' + e.name)
         })
     }
 
