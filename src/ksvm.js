@@ -201,3 +201,4 @@ export default class KSVM {
     }
 }
 KSVM.Init();
+window.KSVM = KSVM;

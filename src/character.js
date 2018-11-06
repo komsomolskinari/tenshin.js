@@ -111,6 +111,7 @@ export default class Character {
     // -p [?]delayrun: do it when voice play to arg
     // o- [?]sync: sync with what?
     Process(cmd) {
+        console.debug(cmd);
         let { name, option, param } = cmd;
         if (name !== this.name) return;
 
@@ -119,8 +120,8 @@ export default class Character {
         // or calculate
         if (param.delayrun) {
             delete cmd.param.delayrun;
-            console.log('Delay exec', cmd)
-            setTimeout(() => this.Process(cmd), 1000);
+            console.debug('Delay exec command', cmd);
+            setTimeout(() => this.Process(cmd), 2000);
             return;
         }
 
@@ -175,12 +176,12 @@ export default class Character {
         let imgctl;
         if (fOpt) {
             imgctl = this.Image(fOpt);
+            this.dispPos = KAGConst.Both;
         }
         if (![KAGConst.Both, KAGConst.BU].includes(this.dispPos)) {
             if (this.showedInDom) {
                 this.showedInDom = false;
                 YZFgImg.HideCharacter(name);
-                // FG.Hide(name)
             }
         }
         else {
@@ -217,14 +218,15 @@ export default class Character {
         }
         // drop extension
         stxt = stxt.replace(/\.[a-z0-9]{2,5}$/i, '');
-        console.log(stxt)
-        //YZSound.Voice(s);
+        YZSound.Voice(s);
     }
 
     Image(faceOpt) {
         // select image
         let mainId = parseInt(faceOpt.substr(0, 1))
         let varId = parseInt(faceOpt.substr(1, 2))
+
+        if (!this.dressOpt) this.dressOpt = Object.keys(this.dress)[0];
 
         let [mainImg, pfx] = this.dress[this.dressOpt][mainId];
         let varImg = this.face[pfx][varId];
@@ -248,13 +250,16 @@ export default class Character {
             size: mi.size,
             zindex: 5
         });
+
+        let zoff = Object.keys(Character.characters).indexOf(this.name) * 10;
+
         // conv name
         raw = raw.map(v => {
             return {
                 layer: ([pfx, usedVer, v.layer].join('_')),
                 offset: v.offset,
                 size: v.size,
-                zindex: v.zindex
+                zindex: v.zindex + zoff
             }
         });
 
@@ -276,15 +281,15 @@ export default class Character {
         })
         // move to center
         let [bx, by] = baseSize;
-        let baseOffset = [(1280 - bx) / 2, (960 - by) / 2];
+        let [centerx, centery] = [zoom * bx / 2, zoom * by / 2];
+        let baseOffset = [640 - centerx, 360 - centery];
         baseOffset[HORIZONTAL] += this.imageXPos;
-        // manually set ypos, do we really need it? 
+        // manually set ypos, do we really need it?
         // (envinit.tjs).yoffset = "1200"
-        if (this.imageLevel > 1) baseOffset[VERTICAL] -= (240 + 2 * parseInt(scaleo.zoom));
-
+        if (this.imageLevel > 1) baseOffset[VERTICAL] -= (200 + 2 * parseInt(scaleo.zoom));
         let ctl = {
             base: {
-                size: baseSize,
+                size: [bx * zoom, by * zoom],
                 offset: baseOffset
             },
             layer: raw

@@ -1,4 +1,3 @@
-import ObjectMapper from "../objmapper";
 import FilePath from "../utils/filepath";
 
 export default class YZFgImg {
@@ -7,7 +6,8 @@ export default class YZFgImg {
 
     static HideCharacter(name) {
         let fd = $('#fg_' + name);
-        fd.css('display', 'none');
+        //fd.css('display', 'none');
+        fd.remove();
     }
 
     static DrawCharacter(name, ctl) {
@@ -28,6 +28,8 @@ export default class YZFgImg {
                 $('<div>')
                     .attr('id', 'fg_' + name)
             )
+            // refresh fd
+            fd = $('#fg_' + name);
         }
 
         let [bszx, bszy] = base.size;
@@ -61,7 +63,7 @@ export default class YZFgImg {
                 .css('top', loffy)
                 .css('width', lszx)
                 .css('height', lszy)
-                .css('z-index', l.zindex + 500)
+                .css('z-index', l.zindex + 5000)
         })
     }
 }
