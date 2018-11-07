@@ -36,8 +36,7 @@ export default class YZFgImg {
         let [boffx, boffy] = base.offset;
         // set base div
         fd
-            .css('position', 'absolute')
-            .css('display', 'block')
+            .css('display', '')
             .css('left', boffx)
             .css('top', boffy)
             .css('width', bszx)
@@ -57,8 +56,6 @@ export default class YZFgImg {
             let [lszx, lszy] = l.size;
             let [loffx, loffy] = l.offset;
             $('#fgl_' + l.layer)
-                .css('position', 'absolute')
-                .css('display', 'block')
                 .css('left', loffx)
                 .css('top', loffy)
                 .css('width', lszx)

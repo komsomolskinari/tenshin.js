@@ -5,27 +5,20 @@
     <title>Tenshin.js</title>
     <script src="jquery.min.js"></script>
     <script src="index.js"></script>
+    <link rel="stylesheet" href="index.css" />
+    <meta charset="utf8" />
 </head>
 
 <body>
-    <div id="dispwindow" style="
-        height: 720px;
-        width: 1280px;
-        position: absolute;
-        border: solid 1px green;
-        z-index: 100000">
-    </div>
-    <div id="mask">
-        <div id="bgdiv" style="height: 720px;width: 1280px;position:absolute;">
-            <img id="bgimg" style="position:absolute;z-index: 100;" />
-        </div>
-        <div id="imagediv" style="position: absolute;">
+    <div id="base">
+        <div id="camera">
+            <div id="bgdiv">
+                <img id="bgimg" />
+            </div>
+            <div id="imagediv"></div>
         </div>
     </div>
-    <div id="textdiv" style="
-        position: absolute;
-        background-color: rgba(255,255,255, 0.5);
-        z-index: 90000;">
+    <div id="textdiv">
         <h2 id="charname"></h2>
         <p id="chartxt"></p>
     </div>

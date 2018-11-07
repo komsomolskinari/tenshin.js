@@ -1,0 +1,26 @@
+#base {
+    mask: url('1280.png');
+    -webkit-mask: url('1280.png');
+    height: 720px;
+    width:1280px;
+}
+#bgdiv {
+    height: 720px;
+    width: 1280px;
+    position: absolute;
+}
+#bgimg {
+    position: absolute;
+    z-index: 100;
+}
+#imagediv {
+    position: absolute;
+}
+
+#imagediv div{
+    position: absolute;
+}
+
+#imagediv img{
+    position: absolute;
+}
