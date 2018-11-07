@@ -19,7 +19,7 @@ export default class FilePath {
         }
         // direct json mode
         else if (mode == "json") {
-            this.tree = await $.ajax(path)
+            this.tree = await $.getJSON(path)
             this.root = root.substr(root.length - 1) == '/' ? root : root + '/'
         }
 
@@ -80,7 +80,7 @@ export default class FilePath {
     }
 
     static async _loaddir(url) {
-        var ls = await $.ajax(url);
+        var ls = await $.getJSON(url);
         var ps = [];
         for (const l of ls) {
             if (l.type == "directory") {
