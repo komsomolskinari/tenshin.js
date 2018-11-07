@@ -37,6 +37,7 @@ export default class ObjectMapper {
     }
 
     static TypeOf(cmd) {
+        if (!cmd) return null;
         if (!cmd.param) return this.name2type[cmd];
         return this.name2type[cmd.name];
     }

@@ -1,5 +1,6 @@
 import Runtime from "./runtime";
 import TJSeval from './utils/tjseval';
+import AsyncTask from "./utils/asynctask";
 
 // when to hang up vm
 let VM_STEP = 0;
@@ -139,6 +140,7 @@ export default class KSVM {
         this.runmode = VM_SCENE;
         this.dispmode = VM_NORMAL;
         this.hang = false;
+        AsyncTask.Cancel();
         this.Run();
     }
 

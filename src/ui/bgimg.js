@@ -18,6 +18,13 @@ export default class YZBgImg {
     static Process(cmd) {
         let { name, option, param } = cmd;
         this.stage = ObjectMapper.GetProperty(name);
+
+        // inline time
+        let inlineTime = (option.filter(o => ObjectMapper.TypeOf(o) == "times") || [])[0];
+        if (inlineTime) {
+            this.SetDaytime(inlineTime);
+        }
+
         this.curImg = this.stage.image.replace('TIME', this.daytime.prefix);
         let bgPath = FilePath.find(this.curImg + this.imageFormat);
         this.bgfd.attr('src', bgPath);
@@ -44,8 +51,6 @@ export default class YZBgImg {
 
         let blur = param.blur || null;
         this.SetBlur(blur);
-
-        console.log(option, param);
     }
 
     static SetZoom(zoom, x, y) {

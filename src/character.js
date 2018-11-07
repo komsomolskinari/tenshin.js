@@ -4,6 +4,7 @@ import YZSound from "./ui/sound";
 import YZText from "./ui/text";
 import FilePath from "./utils/filepath";
 import KRCSV from "./utils/krcsv";
+import AsyncTask from "./utils/asynctask";
 const X = 0;
 const WIDTH = 0;
 const HORIZONTAL = 0;
@@ -113,7 +114,6 @@ export default class Character {
     // -p [?]delayrun: do it when voice play to arg
     // o- [?]sync: sync with what?
     Process(cmd) {
-        console.debug(cmd);
         let { name, option, param } = cmd;
         if (name !== this.name) return;
 
@@ -123,7 +123,7 @@ export default class Character {
         if (param.delayrun) {
             delete cmd.param.delayrun;
             console.debug('Delay exec command', cmd);
-            setTimeout(() => this.Process(cmd), 2000);
+            AsyncTask.Add(() => this.Process(cmd), undefined, 2000);
             return;
         }
 
@@ -169,6 +169,19 @@ export default class Character {
         })
         // if standName !== name, we need call another character's Image()
         // TODO: Update imageLevel, imageXPos
+
+        if (this.displayName && this.displayName !== this.name) {
+            let dch = Character.characters[this.displayName];
+            if (dch) {
+                dch.ProcessImageCmd(option);
+            }
+        }
+        else {
+            this.ProcessImageCmd(option);
+        }
+    }
+
+    ProcessImageCmd(option) {
         let allDress = Object.keys(this.dress);
         let dOpt = option.filter(o => allDress.includes(o))[0];
         if (dOpt) {
@@ -181,14 +194,14 @@ export default class Character {
             this.dispPos = KAGConst.Both;
         }
         if (![KAGConst.Both, KAGConst.BU].includes(this.dispPos)) {
-            if (this.showedInDom) {
-                this.showedInDom = false;
-                YZFgImg.HideCharacter(name);
-            }
+            //if (this.showedInDom) {
+            this.showedInDom = false;
+            YZFgImg.HideCharacter(this.name);
+            //}
         }
         else {
             this.showedInDom = true;
-            YZFgImg.DrawCharacter(name, imgctl);
+            YZFgImg.DrawCharacter(this.name, imgctl);
         }
     }
 
@@ -207,23 +220,29 @@ export default class Character {
      * @param {*} seq Alternate seq id, only apply non-nuber
      */
     Voice(seq) {
-        this.nextVoice = undefined;
-        if (!this.voiceFmt) return;
-        let s;
-        if (isNaN(parseInt(seq)) && seq !== undefined) {
-            s = seq;
+        let stxt;
+        if (this.nextVoice) {
+            stxt = this.nextVoice;
+            this.nextVoice = undefined;
         }
-        else { // number or undefined, ignore arg seq
-            s = this.currentVoice;
-            this.currentVoice++;
-        }
-        let stxt = s;
-        if (!isNaN(parseInt(s))) {
-            stxt = this.voiceFmt;
-            // TODO: real printf
-            stxt = stxt
-                .replace('%s', Character.voiceBase)
-                .replace('%03d', String(s).padStart(3, '0'));
+        else {
+            if (!this.voiceFmt) return;
+            let s;
+            if (isNaN(parseInt(seq)) && seq !== undefined) {
+                s = seq;
+            }
+            else { // number or undefined, ignore arg seq
+                s = this.currentVoice;
+                this.currentVoice++;
+            }
+            stxt = s;
+            if (!isNaN(parseInt(s))) {
+                stxt = this.voiceFmt;
+                // TODO: real printf
+                stxt = stxt
+                    .replace('%s', Character.voiceBase)
+                    .replace('%03d', String(s).padStart(3, '0'));
+            }
         }
         // drop extension
         stxt = stxt.replace(/\.[a-z0-9]{2,5}$/i, '');
