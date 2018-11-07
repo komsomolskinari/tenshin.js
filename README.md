@@ -1,19 +1,19 @@
 # 天神乱漫.js tenshin_ranman.js
 ## 这是什么 What's this
-本项目是在当代浏览器上面跑Galgame的一点尝试，目标是在浏览器中运行[Kirikiri2引擎](https://github.com/krkrz/krkr2)的Galgame。目前尚属早期阶段，仅仅能够相对正确地按照游戏流程运行并输出文字。
+本项目是在当代浏览器上面跑Galgame的一点尝试，目标是在浏览器中运行[Kirikiri2引擎](https://github.com/krkrz/krkr2)的Galgame，目前尚属早期阶段，仅有基本功能。
 
-This project is a experiment about running Galgame in modern browser, it's original task is running full [krkr2 engine](https://github.com/krkrz/krkr2) in browser. It's still in early state, can only display text now.
+This project is a experiment about running Galgame in modern browser, it's original task is running full [krkr2 engine](https://github.com/krkrz/krkr2) in browser. It's still in early state, basic functions only.
 
 ## 如何运行 How to run it
 1. 在项目根目录下运行`./test.sh`
 2. 把游戏拿XP3Viewer什么的拆包，拆出来的放在`game/`目录下。
-3. 参照`nginx.conf`配置nginx，把网站的root位置设置为项目根目录。
-4. 启动nginx，浏览器访问http://localhost:8080/
+3. 参照`appendix/hfs.vfs`配置HFS。
+4. 启动nginx，浏览器访问http://localhost/
 ----
 1. Run `./test.sh`
 2. Dump game resource with XP3Viewer or something, put output files under `game/`
-3. Configure nginx, see `nginx.conf` for example.
-4. Run nginx, browse http://localhost:8080/
+3. Configure HFS, use `appendix/hfs.vfs` for example.
+4. Run nginx, browse http://localhost/
 
 ## 目前的困难 Problems
 1. 我不会写脚本语言解释器，也就无法执行.tjs脚本
