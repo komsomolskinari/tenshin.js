@@ -129,7 +129,7 @@ export default class TJSON {
         }
         return r;
     }
-    
+
     /**
      * Get next 'key-value pair' (key1=>value1)
      * @private @static

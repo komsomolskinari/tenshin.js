@@ -2,11 +2,11 @@ import FilePath from "../utils/filepath";
 
 export default class YZFgImg {
     static Init() {
+        this.imageFormat = '.png';
     }
 
     static HideCharacter(name) {
         let fd = $('#fg_' + name);
-        //fd.css('display', 'none');
         fd.remove();
     }
 
@@ -49,7 +49,7 @@ export default class YZFgImg {
                 fd.append(
                     $('<img>')
                         .attr('id', 'fgl_' + l.layer)
-                        .attr('src', FilePath.find(l.layer + '.png'))
+                        .attr('src', FilePath.find(l.layer + this.imageFormat))
                 );
             }
             // set image

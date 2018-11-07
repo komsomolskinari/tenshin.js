@@ -51,7 +51,9 @@ export default class FilePath {
     static find(file, relative) {
         if (!this.ready) return undefined;
         if (relative === true) return this.findtree[file];
-        return (this.root + '/' + this.findtree[file][0]).replace(/\/+/g, '/');
+        let treeItem = (this.findtree[file] || [])[0];
+        if (treeItem) return (`${this.root}/${treeItem}`).replace(/\/+/g, '/');
+        else return undefined;
     }
 
     static _genindex(tree) {
@@ -71,10 +73,10 @@ export default class FilePath {
             if (e.type == "file") {
                 if (this.findtree[e.name] === undefined)
                     this.findtree[e.name] = [];
-                this.findtree[e.name].push(dir + '/' + e.name)
+                this.findtree[e.name].push(`${dir}/${e.name}`)
             }
             else {
-                this._genfind(e.sub, dir + '/' + e.name);
+                this._genfind(e.sub, `${dir}/${e.name}`);
             }
         })
     }

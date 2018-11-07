@@ -2,13 +2,13 @@ import Character from "./character";
 import KSVM from "./ksvm";
 import ObjectMapper from './objectmapper';
 import Runtime from "./runtime";
+import YZBgImg from "./ui/bgimg";
 import YZSound from "./ui/sound";
 import YZText from "./ui/text";
+import AsyncTask from "./utils/asynctask";
 import FilePath from './utils/filepath';
 import KSParser from "./utils/ksparser";
 import TJSON from "./utils/tjson";
-import YZBgImg from "./ui/bgimg";
-import AsyncTask from "./utils/asynctask";
 
 var scenes = [];
 

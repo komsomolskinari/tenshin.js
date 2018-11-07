@@ -1,10 +1,10 @@
 // runtime libs
-import ObjectMapper from './objectmapper';
-import TJSeval from './utils/tjseval';
-import YZSound from './ui/sound';
 import Character from './character';
-import YZText from './ui/text';
+import ObjectMapper from './objectmapper';
 import YZBgImg from './ui/bgimg';
+import YZSound from './ui/sound';
+import YZText from './ui/text';
+import TJSeval from './utils/tjseval';
 
 export default class Runtime {
     static Init() {

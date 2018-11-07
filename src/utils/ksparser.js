@@ -1,22 +1,4 @@
 // KAG Script parser
-/*
-FAKE!!
-
-grammar ks;
-
-ks: (commands)*;
-commands: command | LINE;
-command: '[' identifier (arg)? ']';
-arg: SP identifier (SP? '=' SP? value)?;
-identifier: IDENTCH*;
-value: STRING | identifier;
-
-SP: '\p{Z}';
-LINE: '[~\r\n]'+;
-IDENTCH: '\p{L}';
-STRING: '"' .? '"' | '\'' .? '\'';
-
-*/
 
 /**
  * @class KSParser
