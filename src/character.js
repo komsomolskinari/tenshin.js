@@ -141,7 +141,7 @@ export default class Character {
         option.filter(o => ObjectMapper.IsProperty(o)).forEach(o => {
             let t = ObjectMapper.TypeOf(o);
             if (mapped[t] === undefined) mapped[t] = [];
-            let mo = ObjectMapper.innerobj[t][o];
+            let mo = ObjectMapper.GetProperty(o);
             if (mo.length === undefined) {
                 mapped[t].push(mo);
             }
