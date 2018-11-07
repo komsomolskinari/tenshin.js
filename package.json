@@ -1,6 +1,6 @@
 {
   "name": "tenshin.js",
-  "version": "0.0.1",
+  "version": "0.3.4",
   "description": "天神乱漫的Javascript实现",
   "main": "index.js",
   "scripts": {
@@ -12,12 +12,12 @@
   ],
   "author": "Student Main",
   "license": "LGPL-3.0-or-later",
+  "homepage": "https://github.com/studentmain/tenshin.js",
   "dependencies": {
-    "babel-core": "^6.26.3",
-    "babel-loader": "^7.1.5",
-    "babel-polyfill": "^6.26.0",
-    "babel-preset-es2015": "^6.24.1",
     "jquery": "^3.3.1",
     "webpack": "^4.25.1"
+  },
+  "devDependencies": {
+    "webpack-cli": "^3.1.2"
   }
 }
