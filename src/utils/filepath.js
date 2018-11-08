@@ -86,7 +86,7 @@ export default class FilePath {
         var ps = [];
         for (const l of ls) {
             if (l.type == "directory") {
-                ps.push(loaddir(url + l.name + '/').then((arg) => l.sub = arg));
+                ps.push(_loaddir(url + l.name + '/').then((arg) => l.sub = arg));
             }
             else l["sub"] = null;
         }

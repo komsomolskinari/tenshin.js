@@ -58,10 +58,15 @@ export default class Character {
         this.showedInDom = false;
         this.dressOpt = "";
         Character.characters[name] = this;
-        if (fgLs === undefined) return;
-        Object.keys(fgLs).filter(f => f.match(/info\.txt$/)).forEach(f => this.__LoadChunk(f));
-        Object.keys(fgLs).filter(f => f.match(/[0-9]\.txt$/)).forEach(f => this.__LoadCoord(f));
+        if (fgLs != undefined) this.__LoadImageInfo(fgLs);
+    }
 
+    async __LoadImageInfo(list) {
+        let files = Object.keys(list);
+        let pms = [];
+        files.filter(f => f.match(/info\.txt$/)).forEach(f => pms.push(this.__LoadChunk(f)));
+        files.filter(f => f.match(/[0-9]\.txt$/)).forEach(f => pms.push(this.__LoadCoord(f)));
+        await Promise.all(pms);
     }
 
     async __LoadChunk(filename) {

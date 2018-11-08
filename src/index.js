@@ -31,11 +31,6 @@ async function LoadVMData() {
     let ScriptLoadSeq = ['start.ks', '１.ks', '２.ks']
     await FilePath.Load();
     ObjectMapper.LoadObject(TJSON.Parse(await $.get("game/main/envinit.tjs")));
-
-    Object.keys(ObjectMapper.innerobj.characters)
-        .forEach(c => new Character(c));
-
-    // TODO: let vm cache module load others
     var preloadps = [];
     ScriptLoadSeq.forEach(s => {
         var sn = s.split('.')[0];
@@ -45,7 +40,12 @@ async function LoadVMData() {
                 .then(sp => KSVM.AddScript(sn, sp))
         )
     })
-    return Promise.all(preloadps);
+    await Promise.all(preloadps);
+    // TODO: too many async task in new Character()
+    // Slow it down? Or let other task run first?
+    Object.keys(ObjectMapper.innerobj.characters)
+        .forEach(c => new Character(c));
+    return;
 }
 
 $(document).ready(() => {
@@ -57,6 +57,7 @@ $(document).ready(() => {
     LoadVMData().then(() => {
         KSVM.RunFrom('start');
         var preloadps = [];
+        // TODO: let vm cache module load other script
         var scripts = Object.keys(FilePath.ls('scenario'));
         scripts.forEach(s => {
             var sn = s.split('.')[0];
