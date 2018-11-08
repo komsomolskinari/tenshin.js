@@ -4,8 +4,18 @@
 
 This project is a experiment about running Galgame in modern browser, it's original task is running full [krkr2 engine](https://github.com/krkrz/krkr2) in browser. It's still in early state, basic functions only.
 
+### 项目目的
+1. 照顾没模拟器用的iOS用户
+2. 照顾没模拟器用的主机用户
+3. 照顾没虚拟机用的ARM/MIPS/Alpha/M68K... Linux/Unix用户
+4. 证明*凡是能用JS重写的必将用JS重写*
+
+### 注意
+1. 暂不严肃考虑在广域网上运行，虽然实际上可以
+2. 不考虑商业化应用，虽然有谁拿去用我也拦不住
+
 ## 如何运行 How to run it
-1. 在项目根目录下运行`./test.sh`
+1. 在项目根目录下运行`./test.sh` (需要bash)
 2. 把游戏拿XP3Viewer什么的拆包，拆出来的放在`game/`目录下。
 3. 参照`appendix/hfs.vfs`配置HFS。
 4. 启动nginx，浏览器访问http://localhost/
