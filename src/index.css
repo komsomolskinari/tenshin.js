@@ -1,6 +1,6 @@
 #base {
-    mask: url('1280.png');
-    -webkit-mask: url('1280.png');
+    mask: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg"><g><rect x="0" y="0" width="1280" height="720"/></g></svg>');
+    -webkit-mask: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg"><g><rect x="0" y="0" width="1280" height="720"/></g></svg>');
     height: 720px;
     width:1280px;
 }
