@@ -6,8 +6,9 @@ export default class YZBgImg {
         this.daytime = undefined;
         this.stage = undefined;
         this.curImg = "";
-        this.imageFormat = ".png"
+        this.imageFormat = ".png";
         this.bgfd = $('#bgimg');
+        this.camfd = $('#camera');
     }
 
     static SetDaytime(time) {
@@ -79,4 +80,26 @@ export default class YZBgImg {
         this.SetBlur(null);
         this.SetZoom(100, 0, 0);
     }
+
+    static ProcessEnv(cmd) {
+        let { name, option, param } = cmd;
+        if (option.includes("resetcamera")) {
+            // reset and return
+            this.SetEnvZoom(100, 0, 0);
+        }
+
+        let cx = parseInt(param.camerax || 0);
+        let cy = parseInt(param.cameray || 0);
+        let zoom = parseInt(param.camerazoom || 100);
+        this.SetEnvZoom(zoom, cx, cy);
+    }
+
+    static SetEnvZoom(zoom, x, y) {
+        this.camfd
+            .css('left', x)
+            .css('top', y)
+            .css('transform', `scale(${zoom / 100})`)
+            .css('transform-origin', '50% 50% 0px')
+    }
+
 }

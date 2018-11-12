@@ -24,3 +24,7 @@
 #imagediv img{
     position: absolute;
 }
+
+#camera {
+    position: absolute;
+}
