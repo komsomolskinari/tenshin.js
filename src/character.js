@@ -369,8 +369,8 @@ export default class Character {
         let [centerx, centery] = [zoom * bx, zoom * by];
         let baseOffset = [640 - centerx, 320 - centery];
         // offset * zoom, looks better
-        baseOffset[HORIZONTAL] += zoom * this.imageXPos;
-
+        if (this.imageLevel < 2) baseOffset[HORIZONTAL] += zoom * this.imageXPos;
+        else baseOffset[HORIZONTAL] += this.imageXPos;
         let ctl = {
             base: {
                 size: [baseSize[X] * zoom, baseSize[Y] * zoom],
