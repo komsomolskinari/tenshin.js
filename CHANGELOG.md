@@ -1,5 +1,12 @@
 # 更新日志 Changelog
 
+
+## [v0.3.5] - 2018-11-12
+### 新增 Added
+- 画面整体移动及缩放    env camera
+### 改变 Changed
+- 采用新的人物图片坐标计算方法 New foreground image coordinate caculation
+
 ## [v0.3.4] - 2018-11-07
 ### 新增 Added
 - 背景图片    Background image
