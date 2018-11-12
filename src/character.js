@@ -52,6 +52,13 @@ export default class Character {
         }}*/
         this.coord = {};
 
+        /*{
+        prefix1:{
+            variable1: [x,y],
+            variable2: [x,y]
+        }}*/
+        this.center = {};
+
         this.imageLevel = 1;
         this.imageXPos = 0;
         this.dispPos = KAGConst.Both;
@@ -63,10 +70,13 @@ export default class Character {
 
     async __LoadImageInfo(list) {
         let files = Object.keys(list);
+        // load all data, limit rate here, or it will block pipe
         let pms = [];
         files.filter(f => f.match(/info\.txt$/)).forEach(f => pms.push(this.__LoadChunk(f)));
         files.filter(f => f.match(/[0-9]\.txt$/)).forEach(f => pms.push(this.__LoadCoord(f)));
         await Promise.all(pms);
+        // calc center offset. Magic here
+        this.__CalcCenter();
     }
 
     async __LoadChunk(filename) {
@@ -110,6 +120,48 @@ export default class Character {
                 layer: lid
             };
         })
+    }
+
+    __CalcCenter() {
+        // for each variable's face image, calculate center coord.
+        let pfxs = Object.keys(this.face);
+
+        for (const pfx of pfxs) {
+            let faces = this.face[pfx];
+            // all avaliable face, flatten faces
+            let flist = [];
+            for (const key in faces) {
+                if (faces.hasOwnProperty(key)) {
+                    const element = faces[key];
+                    for (const face of element) {
+                        flist.push(face);
+                    }
+                }
+            }
+            flist = flist.filter((val, idx, self) => self.indexOf(val) === idx);
+
+            this.center[pfx] = {};
+
+            let vars = Object.keys(this.coord[pfx]);
+
+            for (const v of vars) {
+                let layers = Object.keys(this.coord[pfx][v]);
+                layers = layers.filter(l => flist.includes(l));
+                let centers = layers.map(l => {
+                    let ldata = this.coord[pfx][v][l];
+                    let [loffx, loffy] = ldata.offset;
+                    let [lsizex, lsizey] = ldata.size;
+                    let lcntr = [loffx + lsizex / 2, loffy + lsizey / 2];
+                    return lcntr;
+                });
+                let lcount = centers.length;
+                let center = centers.reduce((p, c) => {
+                    return [p[0] + c[0], p[1] + c[1]];
+                }, [0, 0]);
+
+                this.center[pfx][v] = [center[0] / lcount, center[1] / lcount];
+            }
+        }
     }
     //
     // o- nextvoice: generate a new voice channel, play voice, delete it
@@ -176,9 +228,9 @@ export default class Character {
         // TODO: Update imageLevel, imageXPos
 
         if (this.displayName && this.displayName !== this.name) {
-            let dch = Character.characters[this.displayName];
-            if (dch) {
-                dch.ProcessImageCmd(option);
+            let dispch = Character.characters[this.displayName];
+            if (dispch) {
+                dispch.ProcessImageCmd(option);
             }
         }
         else {
@@ -313,16 +365,16 @@ export default class Character {
             }
         })
         // move to center
-        let [bx, by] = baseSize;
-        let [centerx, centery] = [zoom * bx / 2, zoom * by / 2];
-        let baseOffset = [640 - centerx, 360 - centery];
+        let [bx, by] = this.center[pfx][usedVer];
+        let [centerx, centery] = [zoom * bx, zoom * by];
+        let baseOffset = [640 - centerx, 320 - centery];
         baseOffset[HORIZONTAL] += this.imageXPos;
         // manually set ypos, do we really need it?
         // (envinit.tjs).yoffset = "1200"
-        if (this.imageLevel > 1) baseOffset[VERTICAL] -= (200 + 2 * parseInt(scaleo.zoom));
+        // if (this.imageLevel > 1) baseOffset[VERTICAL] -= (200 + 2 * parseInt(scaleo.zoom));
         let ctl = {
             base: {
-                size: [bx * zoom, by * zoom],
+                size: [baseSize[X] * zoom, baseSize[Y] * zoom],
                 offset: baseOffset
             },
             layer: raw
