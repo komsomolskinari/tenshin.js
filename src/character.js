@@ -250,7 +250,7 @@ export default class Character {
             imgctl = this.Image(fOpt);
             this.dispPos = KAGConst.Both;
         }
-        if (![KAGConst.Both, KAGConst.BU].includes(this.dispPos)) {
+        if ([KAGConst.Clear, KAGConst.Face, KAGConst.Invisible].includes(this.dispPos)) {
             //if (this.showedInDom) {
             this.showedInDom = false;
             YZFgImg.HideCharacter(this.name);
@@ -368,10 +368,9 @@ export default class Character {
         let [bx, by] = this.center[pfx][usedVer];
         let [centerx, centery] = [zoom * bx, zoom * by];
         let baseOffset = [640 - centerx, 320 - centery];
-        baseOffset[HORIZONTAL] += this.imageXPos;
-        // manually set ypos, do we really need it?
-        // (envinit.tjs).yoffset = "1200"
-        // if (this.imageLevel > 1) baseOffset[VERTICAL] -= (200 + 2 * parseInt(scaleo.zoom));
+        // offset * zoom, looks better
+        baseOffset[HORIZONTAL] += zoom * this.imageXPos;
+
         let ctl = {
             base: {
                 size: [baseSize[X] * zoom, baseSize[Y] * zoom],
