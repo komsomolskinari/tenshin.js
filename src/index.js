@@ -9,8 +9,7 @@ import AsyncTask from "./async/asynctask";
 import FilePath from './utils/filepath';
 import KSParser from "./utils/ksparser";
 import TJSON from "./utils/tjson";
-
-var scenes = [];
+import Preloader from "./async/preload";
 
 Runtime.TJShack = {
     "f.all_clear_check=(sf.sakuya_clear && sf.ruri_clear && sf.sana_clear && sf.aoi_clear && sf.mahiro_clear && sf.yukari_clear)": 1,
@@ -29,8 +28,10 @@ Runtime.TJSvar = {
 
 async function LoadVMData() {
     let ScriptLoadSeq = ['start.ks', '１.ks', '２.ks']
+
     await FilePath.Load();
-    ObjectMapper.LoadObject(TJSON.Parse(await $.get("game/main/envinit.tjs")));
+    let envinit = await $.get(FilePath.find('envinit.tjs'));
+    ObjectMapper.LoadObject(TJSON.Parse(envinit));
     var preloadps = [];
     ScriptLoadSeq.forEach(s => {
         var sn = s.split('.')[0];
@@ -38,8 +39,8 @@ async function LoadVMData() {
             $.get(FilePath.find(s)).promise()
                 .then(sc => KSParser.Parse(sc))
                 .then(sp => KSVM.AddScript(sn, sp))
-        )
-    })
+        );
+    });
     await Promise.all(preloadps);
     // TODO: too many async task in new Character()
     // Slow it down? Or let other task run first?
@@ -48,25 +49,25 @@ async function LoadVMData() {
     return;
 }
 
-$(document).ready(() => {
+$(document).ready(async () => {
     YZSound.Init();
     YZText.Init();
     YZBgImg.Init();
     AsyncTask.Init();
     $(document).click(() => KSVM.Next());
-    LoadVMData().then(() => {
-        KSVM.RunFrom('start');
-        var preloadps = [];
-        // TODO: let vm cache module load other script
-        var scripts = Object.keys(FilePath.ls('scenario'));
-        scripts.forEach(s => {
-            var sn = s.split('.')[0];
-            preloadps.push(
-                $.get(FilePath.find(s)).promise()
-                    .then(sc => KSParser.Parse(sc))
-                    .then(sp => KSVM.AddScript(sn, sp))
-            )
-        })
-        Promise.all(preloadps).then(() => console.debug("cache ok"));
+    await LoadVMData();
+    KSVM.RunFrom('start');
+    var preloadps = [];
+    // TODO: let vm cache module load other script
+    var scripts = Object.keys(FilePath.ls('scenario'));
+    scripts.forEach(s => {
+        var sn = s.split('.')[0];
+        preloadps.push(
+            $.get(FilePath.find(s)).promise()
+                .then(sc => KSParser.Parse(sc))
+                .then(sp => KSVM.AddScript(sn, sp))
+        );
     });
+    await Promise.all(preloadps);
+    console.debug("cache ok");
 });
