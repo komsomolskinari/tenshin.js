@@ -5,7 +5,7 @@ import Runtime from "./runtime";
 import YZBgImg from "./ui/bgimg";
 import YZSound from "./ui/sound";
 import YZText from "./ui/text";
-import AsyncTask from "./utils/asynctask";
+import AsyncTask from "./async/asynctask";
 import FilePath from './utils/filepath';
 import KSParser from "./utils/ksparser";
 import TJSON from "./utils/tjson";

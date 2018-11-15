@@ -1,5 +1,5 @@
 import Runtime from "./runtime";
-import AsyncTask from "./utils/asynctask";
+import AsyncTask from "./async/asynctask";
 import TJSeval from './utils/tjseval';
 
 // when to hang up vm

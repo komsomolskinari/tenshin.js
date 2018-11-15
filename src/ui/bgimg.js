@@ -92,7 +92,6 @@ export default class YZBgImg {
         let cx = parseInt(param.camerax || 0);
         let cy = parseInt(param.cameray || 0);
         let zoom = parseInt(param.camerazoom || 100);
-        console.log(zoom, cx, cy);
         this.SetEnvZoom(zoom, cx, cy);
     }
 

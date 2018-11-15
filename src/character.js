@@ -2,7 +2,7 @@ import ObjectMapper from "./objectmapper";
 import YZFgImg from "./ui/fgimg";
 import YZSound from "./ui/sound";
 import YZText from "./ui/text";
-import AsyncTask from "./utils/asynctask";
+import AsyncTask from "./async/asynctask";
 import FilePath from "./utils/filepath";
 import KRCSV from "./utils/krcsv";
 const X = 0;
