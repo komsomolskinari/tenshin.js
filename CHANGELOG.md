@@ -1,17 +1,20 @@
 # 更新日志 Changelog
 
+## [v0.4] - 2018-11-15
+### 改变 Changed
+- 加载逻辑调整    Adjust loading logic
 
 ## [v0.3.5] - 2018-11-12
 ### 新增 Added
 - 画面整体移动及缩放    env camera
 ### 改变 Changed
-- 采用新的人物图片坐标计算方法 New foreground image coordinate caculation
+- 采用新的人物图片坐标计算方法     New foreground image coordinate caculation
 
 ## [v0.3.4] - 2018-11-07
 ### 新增 Added
 - 背景图片    Background image
 - 支持HFS作为HTTP服务器    Now support HFS
-- 显示区域限制在1280\*720px    Display window limited in 1280*720px
+- 显示区域限制在1280\*720px    Display window limited in 1280\*720px
 ### 修复 Fixed
 - 过期异步操作现在被正确取消    Outdated async operation now cancelled correctly
 

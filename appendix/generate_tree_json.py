@@ -17,4 +17,4 @@ def gen_dir(path):
     os.chdir('../')
     return ret
 t = gen_dir(sys.argv[1])
-print(json.dumps(t,indent=4))
+print(json.dumps(t))

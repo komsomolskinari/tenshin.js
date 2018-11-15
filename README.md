@@ -46,7 +46,6 @@ This project is a experiment about running Galgame in modern browser, it's origi
 - [x] 文件系统    File System
 - [x] 图片支持    Image
 ### 正在工作 WIP
-- [ ] 改进图片定位    Improve image positioning
 - [ ] 视频支持    Video
 - [ ] 基本动画    Basic Animation
 ### 近期 Soon 
