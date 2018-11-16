@@ -1,19 +1,25 @@
 // KAG Script parser
 
+export default class KSParser {
+    static Parse(str) {
+        return new _KSParser().Parse(str);
+    }
+}
+
 /**
  * @class KSParser
  */
-export default class KSParser {
+class _KSParser {
     /**
      * KS script to KS 'AST'
-     * @public @static
+     * @public
      * @param {String} str KS script string to parse
      * @return {Object} KS AST
      * @see _text
      * @see _func
      */
-    static Parse(str) {
-        var lines = [];
+    Parse(str) {
+        let lines = [];
         // scan1, check line type
         str.split('\n').forEach(l => {
             l = l.trim();
@@ -24,8 +30,7 @@ export default class KSParser {
                 case '[':
                     // cut to multiple function token
                     l = l.replace(/\](.)/g, ']\n$1');
-                    var ls = l.split('\n');
-                    ls.forEach(s => lines.push(s));
+                    l.split('\n').forEach(s => lines.push(s));
                     return;
                 case '*':
                     // tag, direct pass
@@ -47,7 +52,7 @@ export default class KSParser {
                 case '[': // type:func
                     return this._func(c);
                 case '*': // type:entry *tag|comment
-                    var tag = c.substr(1).trim().split('|')[0];
+                    let tag = c.substr(1).trim().split('|')[0];
                     if (tag) return { type: "entry", name: tag };
                     else return null;
                 default: // type:text
@@ -64,8 +69,8 @@ export default class KSParser {
      * @param {String} str
      * @returns {{type:string,name:string,display:string,text:string}}
      */
-    static _text(str) {
-        var ret = {
+    _text(str) {
+        let ret = {
             type: "text",
             name: null,
             display: null,
@@ -74,7 +79,7 @@ export default class KSParser {
 
         // have name
         if (str.indexOf('【') == 0) {
-            var fname = str.split('】')[0].replace('【', '').trim();
+            let fname = str.split('】')[0].replace('【', '').trim();
             ret.text = str.split('】')[1].trim();
 
             // need rewrite name
@@ -94,12 +99,12 @@ export default class KSParser {
 
     /**
      * Get next char
-     * @static @private
+     * @private
      * @param {Boolean} inc Step to next
      */
-    static _nextch(inc) {
+    _nextch(inc) {
         while (" \f\n\r\t\v".includes(this._fstr[this._fp])) this._fp++;
-        var ret = this._fstr[this._fp];
+        let ret = this._fstr[this._fp];
         if (this._fp >= this._fstr.length) ret = null;
         if (inc == true) this._fp++;
         return ret;
@@ -107,23 +112,23 @@ export default class KSParser {
 
     /**
      * Parse function line
-     * @private @static
+     * @private
      * @param {String} str
      * @returns {{type:String,name:String,option:[String],param:{}}}
      * @see _kv
      * @see _ident
      */
-    static _func(str) {
+    _func(str) {
         this._fstr = str.substr(1, str.length - 2).trim();
         this._fp = 0;
-        var ret = {
+        let ret = {
             type: "func",
             name: this._ident(),
             option: [],
             param: {}
         };
-        var k = [];
-        var v = [];
+        let k = [];
+        let v = [];
         this._nextch();
         while (this._fp < this._fstr.length) {
             if (k.length > 10000) throw "too long";
@@ -133,8 +138,8 @@ export default class KSParser {
         }
 
         for (let index = 0; index < k.length; index++) {
-            var key = k[index];
-            var value = v[index];
+            let key = k[index];
+            let value = v[index];
 
             // key = value
             if (key && value) {
@@ -156,13 +161,12 @@ export default class KSParser {
      * @see _str
      * @see _ident
      */
-    // TODO: support [func key=]
-    static _kv() {
-        var ret = [];
+    _kv() {
+        let ret = [];
         ret.push(this._ident());
         if (this._nextch() == '=') {
             this._fp++;
-            var r;
+            let r;
             switch (this._nextch()) {
                 case '"':
                     this._fp++;
@@ -187,10 +191,10 @@ export default class KSParser {
      * @private @static
      * @param {String} sep Separators
      */
-    static _str(sep) {
-        var b = '';
+    _str(sep) {
+        let b = '';
         while (true) {
-            var nc = this._nextch(true);
+            let nc = this._nextch(true);
             if (!sep.includes(nc) && nc != null) {
                 b += nc;
             }
@@ -202,12 +206,12 @@ export default class KSParser {
 
     /**
      * Parse identifier
-     * @private @static
+     * @private
      */
-    static _ident() {
-        var b = '';
+    _ident() {
+        let b = '';
         while (true) {
-            var nc = this._fstr[this._fp];
+            let nc = this._fstr[this._fp];
             this._fp++;
             if (!" \t[]=".includes(nc) && nc != null) {
                 b += nc;
