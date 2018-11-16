@@ -17,7 +17,7 @@ export default class YZFgImg {
         let fd = $('#fg_' + name);
         // remove unused img
         let fgs = $('#fg_' + name + ' img');
-        for (var f of fgs) {
+        for (let f of fgs) {
             let i = f.id.split('_').slice(1).join('_')
             if (!Object.keys(layer).includes(i)) {
                 $('#' + f.id).remove()

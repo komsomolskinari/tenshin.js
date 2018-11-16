@@ -30,7 +30,7 @@ export default class KSVM {
     static AddScript(name, script) {
         this.scripts[name] = script;
         // scan tags
-        var lineno = 0;
+        let lineno = 0;
         for (const s of script) {
             if (s.type == "entry") {
                 if (this.tags[s.name] === undefined) this.tags[s.name] = [];
@@ -79,7 +79,7 @@ export default class KSVM {
                             // Let runtime handle these logic?
                             if (cmd.param.eval != undefined) {
                                 // tjs eval
-                                var r = TJSeval(cmd.param.eval, Runtime);
+                                let r = TJSeval(cmd.param.eval, Runtime);
                                 // eval false, cancel jump
                                 if (!r) break;
                             }
@@ -96,18 +96,22 @@ export default class KSVM {
                         // mselect & select should have same entry?
                         // make runtime do these too?
                         case "mselect":
-                            var next = Runtime.MapSelect();
-                            if (next !== undefined) {
-                                if (next[0] !== undefined) {
-                                    this.currentpos = this.LocateTag(next[0], next[1]);
+                            {
+                                let next = Runtime.MapSelect();
+                                if (next !== undefined) {
+                                    if (next[0] !== undefined) {
+                                        this.currentpos = this.LocateTag(next[0], next[1]);
+                                    }
                                 }
                             }
                             break;
                         case "select":
-                            var next = Runtime.Select();
-                            if (next !== undefined) {
-                                if (next[0] !== undefined) {
-                                    this.currentpos = this.LocateTag(next[0], next[1]);
+                            {
+                                let next = Runtime.Select();
+                                if (next !== undefined) {
+                                    if (next[0] !== undefined) {
+                                        this.currentpos = this.LocateTag(next[0], next[1]);
+                                    }
                                 }
                             }
                             break;

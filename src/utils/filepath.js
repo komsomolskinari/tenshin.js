@@ -7,9 +7,9 @@ export default class FilePath {
         if (this.loading) return;
         this.loading = true;
         this.ready = false;
-        var mode = "json"
-        var path = "tree.json"
-        var root = "game"
+        let mode = "json"
+        let path = "tree.json"
+        let root = "game"
         this.loading = true;
         this.tree = [];
         // nginx json mode
@@ -38,7 +38,7 @@ export default class FilePath {
     static ls(dir) {
         if (!this.ready) return undefined;
         if (dir === undefined) dir = '';
-        var units = dir.split('/').filter(u => u);
+        let units = dir.split('/').filter(u => u);
         return units.reduce((prev, curr) => prev === undefined ? undefined : prev[curr], this.idxtree);
     }
 
@@ -57,7 +57,7 @@ export default class FilePath {
     }
 
     static _genindex(tree) {
-        var r = {}
+        let r = {}
         tree.forEach(e => {
             if (e.type == "directory") {
                 r[e.name] = this._genindex(e.sub);
@@ -82,8 +82,8 @@ export default class FilePath {
     }
 
     static async _loaddir(url) {
-        var ls = await $.getJSON(url);
-        var ps = [];
+        let ls = await $.getJSON(url);
+        let ps = [];
         for (const l of ls) {
             if (l.type == "directory") {
                 ps.push(_loaddir(url + l.name + '/').then((arg) => l.sub = arg));

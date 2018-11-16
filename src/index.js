@@ -33,9 +33,9 @@ async function LoadVMData() {
     await FilePath.Load();
     let envinit = await $.get(FilePath.find('envinit.tjs'));
     ObjectMapper.LoadObject(TJSON.Parse(envinit));
-    var preloadps = [];
+    let preloadps = [];
     ScriptLoadSeq.forEach(s => {
-        var sn = s.split('.')[0];
+        let sn = s.split('.')[0];
         preloadps.push(
             $.get(FilePath.find(s)).promise()
                 .then(sc => KSParser.Parse(sc))
@@ -59,11 +59,11 @@ $(document).ready(async () => {
     $(document).click(() => KSVM.Next());
     await LoadVMData();
     KSVM.RunFrom('start');
-    var preloadps = [];
+    let preloadps = [];
     // TODO: let vm cache module load other script
-    var scripts = Object.keys(FilePath.ls('scenario'));
+    let scripts = Object.keys(FilePath.ls('scenario'));
     scripts.forEach(s => {
-        var sn = s.split('.')[0];
+        let sn = s.split('.')[0];
         preloadps.push(
             $.get(FilePath.find(s)).promise()
                 .then(sc => KSParser.Parse(sc))

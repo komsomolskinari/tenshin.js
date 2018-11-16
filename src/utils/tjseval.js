@@ -28,14 +28,14 @@ export default function TJSeval(str, klass) {
             break;
     }
 
-    var returnBool = (str.indexOf("==") >= 0);
-    var sp = "=";
+    let returnBool = (str.indexOf("==") >= 0);
+    let sp = "=";
     if (returnBool) sp = "==";
-    var lr = str.split(sp);
-    var lvalue = lr[0];
-    var rexp = lr[1];
+    let lr = str.split(sp);
+    let lvalue = lr[0];
+    let rexp = lr[1];
 
-    var rvalue = null;
+    let rvalue = null;
     // cacluate rvalue
     rexp = rexp.trim().replace(/([+\-\*\/])/g, " $1 ").split(/ +/g);
     if (rexp.length == 1) {
@@ -45,8 +45,8 @@ export default function TJSeval(str, klass) {
         else rvalue = klass.TJSvar[rexp[0]];
     }
     else {
-        var rv1;
-        var rv2;
+        let rv1;
+        let rv2;
         // a ==/= b opr c
         // use standard stack mode to handle rvalue
         for (const r of rexp) {
@@ -78,7 +78,7 @@ export default function TJSeval(str, klass) {
     }
 
     if (returnBool) {
-        var lv;
+        let lv;
         if (lvalue[0] == '"') lv = lvalue.substr(1, lvalue.length - 2);
         else if ("0123456789".includes(lvalue[0])) lv = parseInt(lvalue);
         else lv = klass.TJSvar[lvalue];

@@ -132,7 +132,7 @@ class _KSParser {
         this._nextch();
         while (this._fp < this._fstr.length) {
             if (k.length > 10000) throw "too long";
-            var r = this._kv();
+            let r = this._kv();
             k.push(r[0]);
             v.push(r[1]);
         }
