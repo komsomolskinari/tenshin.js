@@ -10,6 +10,7 @@ import FilePath from './utils/filepath';
 import KSParser from "./utils/ksparser";
 import TJSON from "./utils/tjson";
 import Preloader from "./async/preload";
+import YZCG from "./ui/cg";
 
 Runtime.TJShack = {
     "f.all_clear_check=(sf.sakuya_clear && sf.ruri_clear && sf.sana_clear && sf.aoi_clear && sf.mahiro_clear && sf.yukari_clear)": 1,
@@ -53,6 +54,7 @@ $(document).ready(async () => {
     YZSound.Init();
     YZText.Init();
     YZBgImg.Init();
+    YZCG.Init();
     AsyncTask.Init();
     $(document).click(() => KSVM.Next());
     await LoadVMData();

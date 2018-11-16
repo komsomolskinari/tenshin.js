@@ -15,15 +15,12 @@ export default class ObjectMapper {
         this.objs = Object.keys(this.name2type);
     }
 
-    static NewLay(cmd) {
-        var name = cmd.param.name;
-        this.objs.push(name);
+    static AddLayer(layer) {
+        this.name2type[layer] = 'layer'
     }
 
-    static DelLay(cmd) {
-        var name = cmd.param.name;
-        var idx = this.objs.indexOf(name);
-        if (idx != -1) this.objs.splice(idx);
+    static RemoveLayer(cmd) {
+        delete this.name2type[layer];
     }
 
     static GetProperty(str) {

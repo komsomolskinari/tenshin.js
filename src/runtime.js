@@ -5,6 +5,7 @@ import YZBgImg from './ui/bgimg';
 import YZSound from './ui/sound';
 import YZText from './ui/text';
 import TJSeval from './utils/tjseval';
+import YZCG from './ui/cg';
 
 export default class Runtime {
     static Init() {
@@ -123,10 +124,10 @@ export default class Runtime {
                 this.CompileTrans(cmd);
                 break;
             case "newlay":
-                ObjectMapper.NewLay(cmd);
+                YZCG.NewLay(cmd);
                 break;
             case "dellay":
-                ObjectMapper.DelLay(cmd);
+                YZCG.DelLay(cmd);
                 break;
             case "bgm":
                 YZSound.BGM(cmd);
@@ -153,6 +154,9 @@ export default class Runtime {
                         break;
                     case "stages":
                         YZBgImg.Process(cmd);
+                        break;
+                    case "layer":
+                        YZCG.LayerCtl(cmd);
                         break;
                     default:
                         console.warn("RuntimeCall, unimpliement cmd", cmd);
