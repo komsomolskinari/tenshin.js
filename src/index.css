@@ -35,3 +35,7 @@
     position: absolute;
     z-index: 10000;
 }
+
+#layerdiv img {
+    position: absolute;
+}

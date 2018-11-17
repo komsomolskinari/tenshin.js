@@ -19,7 +19,7 @@ export default class ObjectMapper {
         this.name2type[layer] = 'layer'
     }
 
-    static RemoveLayer(cmd) {
+    static RemoveLayer(layer) {
         delete this.name2type[layer];
     }
 
