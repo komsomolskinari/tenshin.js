@@ -54,21 +54,34 @@ export default class YZBgImg {
         this.SetBlur(blur);
     }
 
-    static SetZoom(zoom, x, y) {
-        this.bgfd.on('load', () => {
-            let rzoom = zoom / 100;
-            let origx = parseInt(this.bgfd.get(0).naturalWidth);
-            let origy = parseInt(this.bgfd.get(0).naturalHeight);
-            let [curx, cury] = [origx * rzoom, origy * rzoom]
-            let [cx, cy] = [curx / 2, cury / 2];
-            let [offx, offy] = [640 - cx, 360 - cy];
-            [offx, offy] = [offx - x / 10, offy - y / 10];
-            this.bgfd
-                .css('width', curx)
-                .css('height', cury)
-                .css('left', offx)
-                .css('top', offy)
-        })
+    static async SetZoom(zoom, x, y) {
+        let rzoom = zoom / 100;
+        let origx = parseInt(this.bgfd.get(0).naturalWidth);
+        let origy = parseInt(this.bgfd.get(0).naturalHeight);
+        // not loaded
+        if (origx + origy <= 0) {
+            // wait image loaded
+            await new Promise((resolve, reject) => {
+                this.bgfd.on('load', () => resolve());
+                this.bgfd.on('error', () => reject());
+            })
+            origx = parseInt(this.bgfd.get(0).naturalWidth);
+            origy = parseInt(this.bgfd.get(0).naturalHeight);
+        }
+
+        let [curx, cury] = [origx * rzoom, origy * rzoom]
+        let [cx, cy] = [curx / 2, cury / 2];
+        let [offx, offy] = [640 - cx, 360 - cy];
+        [offx, offy] = [offx - x / 10, offy - y / 10];
+        this.bgfd
+            .css('width', curx)
+            .css('height', cury)
+            .css('left', offx)
+            .css('top', offy)
+
+            // remove listener, prepare for next call
+            .off('load')
+            .off('error')
     }
 
     static SetBlur(blur) {
@@ -103,5 +116,4 @@ export default class YZBgImg {
             .css('transform', `scale(${zoom / 100})`)
             .css('transform-origin', '50% 50% 0px')
     }
-
 }
