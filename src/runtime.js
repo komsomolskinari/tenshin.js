@@ -101,7 +101,7 @@ export default class Runtime {
     }
 
     static Call(cmd) {
-        switch (cmd.name) {
+        switch (cmd.name.toLowerCase()) {
             case "mselinit":
                 this.MapSelectData = [];
                 break;
@@ -135,9 +135,12 @@ export default class Runtime {
             case "env":
                 YZBgImg.ProcessEnv(cmd);
                 break;
+            case "ev":
+                YZCG.EV(cmd);
+                break;
             default:
                 // Jump unimpliement cmd
-                if (["ev", "msgoff", "msgon", "se", "date", "wait", "stage",
+                if (["msgoff", "msgon", "se", "date", "wait", "stage",
                     "beginskip", "endskip", "fadepausebgm", "fadebgm", "pausebgm", "resumebgm", "opmovie", "edmovie",
                     "initscene", "day_full", "ano_view", "ret_view", "playbgm", "delaydone", "white_ball", "white_ball_hide", "particle"].includes(cmd.name.toLowerCase())) break;
 

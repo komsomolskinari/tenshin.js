@@ -1,6 +1,6 @@
 import ObjectMapper from "../objectmapper";
 import FilePath from "../utils/filepath";
-
+//import KRCSV from "../utils/krcsv";
 export default class YZCG {
     static Init() {
         this.evfd = $('#evdiv');
@@ -8,6 +8,37 @@ export default class YZCG {
         this.layerfd = $('#layerdiv');
         this.imageFormat = ".png";
         this.layerlast = {};
+        this.cglist = [];
+        this.diffdef = {};
+        this.basefmt = 'EV%U%.png';
+        this.difffmt = 'diff_ev%l%.png';
+        this.__LoadCGList();
+    }
+
+    static async __LoadCGList() {
+        KRCSV.Parse(await $.get(FilePath.find('evdiff.csv')), ',', null)
+            .forEach(d =>
+                this.diffdef[d[0]] = {
+                    ev: d[0],
+                    base: d[1],
+                    diff: d[2],
+                    offset: [d[3] || 0, d[4] || 0],
+                    size: [d[5] || 1280, d[6] || 720]
+                });
+
+        let ls = FilePath.ls('evimage');
+        delete ls.diff;
+        Object.keys(ls) // base images
+            .map(l => l.match(/ev([0-9]+[a-z]+)/i)[1]) // filter only cg
+            .forEach(d =>
+                this.diffdef[d[0]] = {
+                    ev: d[0],
+                    base: d[0],
+                    diff: null,
+                    offset: [0, 0], // offset and size only apply on diff
+                    size: [0, 0]
+                });
+        this.cglist = Object.keys(this.diffdef);
     }
 
     static NewLay(cmd) {
@@ -95,6 +126,22 @@ export default class YZCG {
 
     static EV(cmd) {
         let { name, option, param } = cmd;
+        console.log(cmd);
+        if (option.includes('hide')) {
+            console.log('hide ev');
+            return;
+        }
+
+        let evs = option.filter(o => this.cglist.includes(o));
+        if (evs.length == 0) {
+            evs = option.filter(o => FilePath.find(o + '.png'));
+            if (evs.length == 0) console.log(`no ev, ${cmd}`);
+            else console.log(`cg ev ${evs[0]}`)
+        }
+        else {
+            let def = this.diffdef[evs[0]];
+            console.log(`ev ${def.ev},base ${def.base},diff ${def.diff}`);
+        }
     }
 
     static Date(cmd) {

@@ -29,8 +29,6 @@ Runtime.TJSvar = {
 
 async function LoadVMData() {
     let ScriptLoadSeq = ['start.ks', '１.ks', '２.ks']
-
-    await FilePath.Load();
     let envinit = await $.get(FilePath.find('envinit.tjs'));
     ObjectMapper.LoadObject(TJSON.Parse(envinit));
     let preloadps = [];
@@ -51,6 +49,7 @@ async function LoadVMData() {
 }
 
 $(document).ready(async () => {
+    await FilePath.Load();
     YZSound.Init();
     YZText.Init();
     YZBgImg.Init();
