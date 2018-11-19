@@ -14,28 +14,9 @@ This project is a experiment about running Galgame in modern browser, it's origi
 1. 暂不严肃考虑在广域网上运行，虽然实际上可以
 2. 不考虑商业化应用，虽然有谁拿去用我也拦不住
 
-## 如何运行 How to run it
-1. 在项目根目录下运行`./test.sh` (需要bash)
-2. 把游戏拿XP3Viewer什么的拆包，拆出来的放在`game/`目录下。
-3. 参照`appendix/hfs.vfs`配置HFS。
-4. 启动nginx，浏览器访问http://localhost/
-----
-1. Run `./test.sh`
-2. Dump game resource with XP3Viewer or something, put output files under `game/`
-3. Configure HFS, use `appendix/hfs.vfs` for example.
-4. Run nginx, browse http://localhost/
-
-## 目前的困难 Problems
-1. 我不会写脚本语言解释器，也就无法执行.tjs脚本
-2. 预计缺乏可移植性，对于其他Galgame，还有其他工作要做
-3. 虚拟文件系统针对nginx json的支持挂了，同时还不支持Apache/IIS的目录浏览。
-4. 懒癌发作
-----
-1. I don't know how to write a compiler, so this project lack ability of execute .tjs script
-2. Seems not so portable. For more game, there's much work to do.
-3. Virtual filesystem's nginx support is corrupted, and Apache/IIS is still not supported.
-4. Too lazy
-
+## 文档
+- [如何运行](doc/HOW_TO_RUN.md)
+- [更新日志](doc/CHANGELOG.md)
 ## 计划 Projects
 ### 完成 Finished
 - [x] 解析KS脚本    Parse .ks Script

@@ -1,5 +1,15 @@
 # 更新日志 Changelog
 
+## [v0.4.1] - 2018-11-19
+### 新增 Added
+- CG显示    CG Displaying
+### 改变 Changed
+- 现在无视指令大小写    Now ignore case in command
+- 采用异步方法等待图片加载    Wait for image loaded using async
+- var转换为let    Replace var to let
+### 修复 Fixed
+- 立绘显示的时间    When to display foreground image
+
 ## [v0.4] - 2018-11-15
 ### 改变 Changed
 - 加载逻辑调整    Adjust loading logic
