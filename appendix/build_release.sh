@@ -1,12 +1,12 @@
 #! /bin/bash
 
 ./test.sh
-APPENDIX='generate_tree_json.py hfs.vfs nginx.conf'
+APPENDIX='generate_tree_json.py kagura.js'
 LOCAL='index.js index.js.map index.html index.css'
 LIB='jquery.min.js'
 for i in $APPENDIX
 do
     cp appendix/$i $i 
 done
-tar -czvf release.tar.gz $LOCAL $LIB $APPENDIX
+tar -czvf release.tar.gz $LOCAL $LIB $APPENDIX doc/
 rm $APPENDIX
