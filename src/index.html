@@ -12,13 +12,16 @@
 <body>
     <div id="base">
         <div id="camera">
-            <div id="bgdiv">
+            <div id="bgdiv" style="z-index: 10">
                 <img id="bgimg" />
             </div>
-            <div id="datediv"></div>
-            <div id="evdiv"></div>
-            <div id="layerdiv"></div>
-            <div id="imagediv"></div>
+            <div id="datediv" style="z-index: 20"></div>
+            <div id="evdiv" style="z-index: 30">
+                <img id="evbase" style="z-index: 1" />
+                <img id="evdiff" style="z-index: 2" />
+            </div>
+            <div id="layerdiv" style="z-index: 50"></div>
+            <div id="imagediv" style="z-index: 100"></div>
         </div>
     </div>
     <div id="textdiv">

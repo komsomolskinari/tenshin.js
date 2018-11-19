@@ -4,14 +4,14 @@ import FilePath from "../utils/filepath";
 export default class YZCG {
     static Init() {
         this.evfd = $('#evdiv');
+        this.evbasefd = $('#evbase');
+        this.evdifffd = $('#evdiff');
         this.datefd = $('#datediv');
         this.layerfd = $('#layerdiv');
         this.imageFormat = ".png";
         this.layerlast = {};
         this.cglist = [];
         this.diffdef = {};
-        this.basefmt = 'EV%U%.png';
-        this.difffmt = 'diff_ev%l%.png';
         this.__LoadCGList();
     }
 
@@ -126,22 +126,40 @@ export default class YZCG {
 
     static EV(cmd) {
         let { name, option, param } = cmd;
-        console.log(cmd);
-        if (option.includes('hide')) {
-            console.log('hide ev');
-            return;
-        }
 
         let evs = option.filter(o => this.cglist.includes(o));
         if (evs.length == 0) {
             evs = option.filter(o => FilePath.find(o + '.png'));
-            if (evs.length == 0) console.log(`no ev, ${cmd}`);
-            else console.log(`cg ev ${evs[0]}`)
+            if (evs.length == 0) console.warn('CG.EV: no ev', cmd);
+            else {
+                this.evdifffd.css('display', 'none');
+                this.evbasefd
+                    .attr('src', FilePath.find(evs[0] + '.png'))
+                    .css('display', '');
+            }
         }
         else {
             let def = this.diffdef[evs[0]];
-            console.log(`ev ${def.ev},base ${def.base},diff ${def.diff}`);
+            this.evbasefd
+                .attr('src', FilePath.find(def.base.toUpperCase() + '.png'))
+                .css('display', '');
+            if (def.diff) {
+                this.evdifffd
+                    .attr('src', FilePath.find(def.diff.toUpperCase() + '.png'))
+                    .css('display', '')
+                    .css('left', def.offset[0])
+                    .css('top', def.offset[1])
+                //.css('width', lszx)
+                //.css('height', lszy);
+            }
+            else this.evdifffd.css('display', 'none');
         }
+
+        if (option.includes('hide')) {
+            this.evfd.css('display', 'none');
+        }
+        else
+            this.evfd.css('display', '');
     }
 
     static Date(cmd) {

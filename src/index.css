@@ -4,38 +4,19 @@
     height: 720px;
     width:1280px;
 }
+#base div{
+    position: absolute;
+}
+#base img{
+    position: absolute;
+}
 #bgdiv {
     height: 720px;
     width: 1280px;
-    position: absolute;
-}
-#bgimg {
-    position: absolute;
-    z-index: 100;
-}
-#imagediv {
-    position: absolute;
-}
-
-#imagediv div{
-    position: absolute;
-}
-
-#imagediv img{
-    position: absolute;
 }
 
 #camera {
     position: relative;
     height: 720px;
     width: 1280px;
-}
-
-#layerdiv {
-    position: absolute;
-    z-index: 10000;
-}
-
-#layerdiv img {
-    position: absolute;
 }
