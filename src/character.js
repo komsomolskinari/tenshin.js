@@ -122,6 +122,7 @@ export default class Character {
         })
     }
 
+    // Known issue: see キツネ服耳ありポーズＡ, cannot handle these coordinate 
     __CalcCenter() {
         // for each variable's face image, calculate center coord.
         let pfxs = Object.keys(this.face);
@@ -216,6 +217,7 @@ export default class Character {
                     break;
                 case KAGConst.XPosition:
                     this.imageXPos = parseInt(p.xpos);
+                    this.dispPos = KAGConst.Both; // ?? 1.ks 1865, should we do this?
                     break;
                 case KAGConst.Level:
                     this.imageLevel = parseInt(p.level);
@@ -248,17 +250,15 @@ export default class Character {
         let imgctl;
         if (fOpt) {
             imgctl = this.Image(fOpt);
-            this.dispPos = KAGConst.Both;
+            //this.dispPos = KAGConst.Both;
         }
-        if ([KAGConst.Clear, KAGConst.Face, KAGConst.Invisible].includes(this.dispPos)) {
-            //if (this.showedInDom) {
-            this.showedInDom = false;
-            YZFgImg.HideCharacter(this.name);
-            //}
-        }
-        else {
+        if ([KAGConst.Both, KAGConst.BU].includes(this.dispPos)) {
             this.showedInDom = true;
             YZFgImg.DrawCharacter(this.name, imgctl);
+        }
+        else {
+            this.showedInDom = false;
+            YZFgImg.HideCharacter(this.name);
         }
     }
 

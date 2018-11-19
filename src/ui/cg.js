@@ -29,11 +29,13 @@ export default class YZCG {
         let ls = FilePath.ls('evimage');
         delete ls.diff;
         Object.keys(ls) // base images
-            .map(l => l.match(/ev([0-9]+[a-z]+)/i)[1]) // filter only cg
+            //.filter(l => l.match(/ev([0-9]+[a-z]+)/i)[1]) // filter only cg
+            .map(l => l.match(/ev[0-9]+[a-z]+/i)[0])
+            .filter(l => l)
             .forEach(d =>
-                this.diffdef[d[0]] = {
-                    ev: d[0],
-                    base: d[0],
+                this.diffdef[d] = {
+                    ev: d,
+                    base: d,
                     diff: null,
                     offset: [0, 0], // offset and size only apply on diff
                     size: [0, 0]
@@ -106,6 +108,7 @@ export default class YZCG {
         // split a low level image lib?
         let x = (param.xpos !== undefined) ? param.xpos : last.x;
         let y = (param.ypos !== undefined) ? param.ypos : last.y;
+        // TODO: coordinate convert
         let zoom = param.zoom || last.zoom;
         x = parseInt(x);
         y = parseInt(y);
@@ -166,3 +169,4 @@ export default class YZCG {
         let { name, option, param } = cmd;
     }
 }
+window.YZCG = YZCG;
