@@ -16,7 +16,7 @@ export default function TextHTML(txt) {
     let c = [];
     t.forEach(e => {
         if (e[0] == '[') {
-            let f = KSParser.Parse(e)[0];
+            let f = KSParser.parse(e)[0];
             c.push([rs.length, f])
         }
         else {

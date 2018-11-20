@@ -1,15 +1,9 @@
 // KAG Script parser
 
-export default class KSParser {
-    static Parse(str) {
-        return new _KSParser().Parse(str);
-    }
-}
-
 /**
  * @class KSParser
  */
-class _KSParser {
+export default class KSParser {
     /**
      * KS script to KS 'AST'
      * @public
@@ -18,7 +12,52 @@ class _KSParser {
      * @see _text
      * @see _func
      */
-    Parse(str) {
+    static parse(str) {
+        return new KSParser()._parse(str);
+    }
+
+    /**
+     * KS script to KS 'AST'
+     * @public
+     * @param {Object} obj KS AST
+     * @return {String} script string
+     */
+    static stringify(obj) {
+        return obj.reduce((str, line) => {
+            let l;
+            switch (line.type) {
+                case "entry":
+                    l = '*' + line.name;
+                    break;
+                case "text":
+                    let _name = '';
+                    if (line.name != null) {
+                        _name = line.name;
+                        if (line.display != null) _name += ('/' + line.display);
+                        _name = `【${_name}】`;
+                    }
+                    l = _name + line.text;
+                    break;
+                case "func":
+                    let optstr = line.option.join(' ');
+                    let paramstr = Object.keys(line.param)
+                        .map(p => `${p}=${line.param[p]}`)
+                        .join(' ');
+
+                    let ls = [line.name];
+                    if (optstr) ls.push(optstr);
+                    if (paramstr) ls.push(paramstr);
+                    l = `[${ls.join(' ')}]`
+                    break;
+                default:
+                    l = '';
+                    break;
+            }
+            return str + l + '\n';
+        }, "");
+    }
+
+    _parse(str) {
         let lines = [];
         // scan1, check line type
         str.split('\n').forEach(l => {

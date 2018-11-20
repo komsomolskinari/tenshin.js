@@ -4,11 +4,64 @@
  * @class TJSON Parser, 
  */
 export default class TJSON {
-    static Parse(str) {
-        return new _TJSON().Parse(str);
+    /**
+     * JSON.parse in TJS world
+     * @public
+     * @param {String} str
+     * @return {*}
+     */
+    static parse(str) {
+        return new TJSON()._parse(str);
     }
-}
-class _TJSON {
+    /**
+     * JSON.stringify in TJS world
+     * @public
+     * @param {*} obj
+     * @return {String}
+     */
+    static stringify(obj) {
+        switch (typeof (obj)) {
+            case "boolean": // true & false
+                if (obj) return 'true';
+                else return 'false';
+                break;
+            case "number": // 123
+                return String(obj);
+                break;
+            case "object": // WATCHOUT! everything is object in JS
+                // get out of switch
+                break;
+            case "string": // 'too young'
+                return '"' + obj + '"';
+                break;
+            case "symbol":
+            case "undefined":
+            case "function":
+            default: // WTF!
+                return undefined;
+                break;
+        }
+        // so all 'object' goes here
+        let r = '';
+        if (Array.isArray(obj)) { // []
+            let subs = obj
+                .map(o => this.stringify(o))
+                .filter(o => o !== undefined);
+            return `[${subs.join(',')}]`;
+        }
+        if (obj === null) { // null
+            return 'null'
+        }
+
+        let s = Object.keys(obj).map(k => {
+            let vs = this.stringify(obj[k]);
+            if (vs === undefined) return undefined;
+            else return `"${k}"=>${vs}`;
+        });
+        return `%[${s.join(',')}]`;
+    }
+
+
     /**
      * Get next non-empty char
      * @private @static
@@ -33,7 +86,7 @@ class _TJSON {
      * @param {String} str TJSON string
      * @returns {Object}
      */
-    Parse(str) {
+    _parse(str) {
         this.str = ''
         this.ptr = 0;
         this.obj = null;

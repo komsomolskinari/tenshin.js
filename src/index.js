@@ -30,13 +30,13 @@ Runtime.TJSvar = {
 async function LoadVMData() {
     let ScriptLoadSeq = ['start.ks', '１.ks', '２.ks']
     let envinit = await $.get(FilePath.find('envinit.tjs'));
-    ObjectMapper.LoadObject(TJSON.Parse(envinit));
+    ObjectMapper.LoadObject(TJSON.parse(envinit));
     let preloadps = [];
     ScriptLoadSeq.forEach(s => {
         let sn = s.split('.')[0];
         preloadps.push(
             $.get(FilePath.find(s)).promise()
-                .then(sc => KSParser.Parse(sc))
+                .then(sc => KSParser.parse(sc))
                 .then(sp => KSVM.AddScript(sn, sp))
         );
     });
@@ -65,7 +65,7 @@ $(document).ready(async () => {
         let sn = s.split('.')[0];
         preloadps.push(
             $.get(FilePath.find(s)).promise()
-                .then(sc => KSParser.Parse(sc))
+                .then(sc => KSParser.parse(sc))
                 .then(sp => KSVM.AddScript(sn, sp))
         );
     });

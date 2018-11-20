@@ -8,7 +8,7 @@ export default class KRCSV {
      * @param {String} mode Seprator char
      * @param {*} title Title line, when null, no title
      */
-    static Parse(txt, mode, title) {
+    static parse(txt, mode, title) {
         let lines = txt.split('\n').filter(l => l.length > 0);
         if (mode === undefined) mode = this.GuessMode(lines);
         if (mode != ',') lines = lines.map(l => l.replace(new RegExp(mode, 'g'), ','));
