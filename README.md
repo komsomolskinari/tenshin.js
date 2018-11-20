@@ -1,5 +1,6 @@
-# 天神乱漫.js tenshin_ranman.js
+# 天神乱漫.js TenshinRanman => (lucky || !lucky)
 ![图文无关](doc/神社娘.png)
+*图文无关*
 ## 这是什么 What's this
 本项目是在当代浏览器上面跑Galgame的一点尝试，目标是在浏览器中运行[Kirikiri2引擎](https://github.com/krkrz/krkr2)的Galgame，目前尚属早期阶段，仅有基本功能。
 
