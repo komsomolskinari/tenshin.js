@@ -1,4 +1,6 @@
-# 天神乱漫.js TenshinRanman => (lucky || !lucky)
+# 天神乱漫.js
+`TenshinRanman => (lucky || !lucky)`
+
 ![图文无关](doc/神社娘.png)
 *图文无关*
 ## 这是什么 What's this

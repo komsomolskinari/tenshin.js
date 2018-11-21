@@ -1,7 +1,7 @@
 #! /bin/bash
 
 ./test.sh
-APPENDIX='generate_tree_json.py kagura.js'
+APPENDIX='tree.py kagura.js'
 LOCAL='index.js index.js.map index.html index.css'
 LIB='jquery.min.js'
 for i in $APPENDIX
