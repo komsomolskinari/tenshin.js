@@ -2,8 +2,6 @@ import FilePath from '../utils/filepath'
 
 export default class YZSound {
     static Init() {
-        this.bgmFormat = '.ogg'
-        this.voiceFormat = '.ogg'
         this.channels = {
             voice: $('#voice'),
             se: $('#se'),
@@ -21,7 +19,7 @@ export default class YZSound {
         }
         else {
             if (!cmd.param.storage) return;
-            let realbgm = cmd.param.storage.replace(/bgm/i, 'BGM') + this.bgmFormat;
+            let realbgm = cmd.param.storage.replace(/bgm/i, 'BGM');
             // TODO: generate loop info
             let ctl = { '-1': ['start', fadetime] };
             this.AudioChannelCtl('bgm', realbgm, ctl)
@@ -33,7 +31,6 @@ export default class YZSound {
      * @param {String} src Source
      */
     static Voice(src) {
-        src += this.voiceFormat;
         let ctl = { '-1': ['start', 0] }
         this.AudioChannelCtl('voice', src, ctl)
     }
