@@ -7,18 +7,20 @@ export default class FilePath {
         if (this.loading) return;
         this.loading = true;
         this.ready = false;
-        this.mode = "nginx";
+        this.mode = "lighttpd";
         this.path = "tree.json";
         this.root = "game/";
         this.loading = true;
         this.tree = [];
+        // directory browse driver
         // nginx json mode
-        if (this.mode == "nginx") {
+        if (this.mode !== "json") {
             this.tree = await this._loaddir(this.root)
             this.path = this.root;
         }
+        // single file dirver
         // direct json mode
-        else if (this.mode == "json") {
+        else {
             this.tree = await $.getJSON(this.path)
             this.root = this.root.substr(this.root.length - 1) == '/' ?
                 this.root :
@@ -96,8 +98,7 @@ export default class FilePath {
         const scriptExt = ["txt", "csv", "ks", "tjs", "func", "ini", "asd", "sli"];
 
         findlist.forEach(l => {
-            let [, name, ext] = l.match(/(.+?)\.([^.]*$|$)/i);
-            ext = ext.toLowerCase();
+            let [, name, ext] = l.toLowerCase().match(/(.+?)\.([^.]*$|$)/i);
             if (imageExt.includes(ext)) {
                 r.image[name] = l;
             }
@@ -131,17 +132,126 @@ export default class FilePath {
         })
     }
 
+
+    /**
+     * Load VFS directory
+     * @param {*} url 
+     */
     static async _loaddir(url) {
-        let ls = await $.getJSON(url);
+        /*
+        [
+            {
+                name: string,
+                type: "directory"/ "file",
+                sub: [...]/ null
+            }...
+        ]
+        */
+        // get raw data, so we can parse it next
+        let ls = await $.ajax(url, { dataType: 'text' });
+        let ret = [];
+        switch (this.mode) {
+            case 'nginx-json': // nginx json, all other format will convert to it
+                ret = JSON.parse(ls);
+                break;
+            case 'nginx-xml': // nginx xml
+                let ngxml = $.parseXML(ls);
+                $(ngxml).find('directory').each((idx, elm) => {
+                    ret.push({
+                        name: $(elm).text(),
+                        type: 'directory'
+                    })
+                });
+                $(ngxml).find('file').each((idx, elm) => {
+                    ret.push({
+                        name: $(elm).text(),
+                        type: 'file'
+                    })
+                });
+                break;
+            case 'nginx-html':
+                new DOMParser()
+                    .parseFromString(ls, "text/html")   // parse html
+                    .getElementsByTagName('pre')[0]     // get <pre>
+                    .innerHTML                          // 's innerhtml
+                    .split('\n')                        // as lines
+                    .filter(l => l)                     // and except empty line
+                    .forEach(l => {
+                        let filename = $(l).text();
+                        if (filename[0] == '.') return;
+                        let match = filename.match(/(.+)\/$/i)
+                        if (match) {
+                            ret.push({
+                                name: match[1],
+                                type: 'directory'
+                            })
+                        }
+                        else {
+                            ret.push({
+                                name: filename,
+                                type: 'file'
+                            })
+                        }
+                    })
+                break;
+            case 'hfs': // broken
+                let hfsrows = new DOMParser()
+                    .parseFromString(ls, "text/html")
+                    .getElementById('files')            // get #file
+                    .rows;                              // 's rows
+
+                [].slice.call(hfsrows, 1)               // except header line
+                    .forEach(r => {
+                        let filename = r                // tr
+                            .cells[0]                   // 1st td
+                            .firstElementChild          // input
+                            .value;                     // .value
+                        if (filename[0] == '.') return;
+                        let match = filename.match(/(.+)\/$/i)
+                        if (match) {
+                            ret.push({
+                                name: match[1],
+                                type: 'directory'
+                            })
+                        }
+                        else {
+                            ret.push({
+                                name: filename,
+                                type: 'file'
+                            })
+                        }
+                    })
+                break;
+            case 'lighttpd':
+                let lhdrows = new DOMParser()
+                    .parseFromString(ls, "text/html")
+                    .getElementsByTagName('table')[0]   // get 1st table
+                    .rows;                              // 's rows
+
+                [].slice.call(lhdrows, 1)               // except header line
+                    .forEach(r => {
+                        let type = [].includes.call(r.classList, 'd') ?
+                            'directory' :
+                            'file';
+                        let name = r                    // tr
+                            .cells[0]                   // 1st td
+                            .firstElementChild          // a
+                            .innerText                  // text
+                            //.match(/(.+)\/?$/i)[1]      // remove optional /
+                        if (name[0] == '.') return;
+                        ret.push({ name, type });
+                    })
+                break;
+        }
         let ps = [];
-        for (const l of ls) {
+        for (const l of ret) {
             if (l.type == "directory") {
                 ps.push(this._loaddir(url + l.name + '/').then((arg) => l.sub = arg));
             }
             else l["sub"] = null;
         }
         await Promise.all(ps)
-        return ls;
+        return ret;
     }
 }
 window.FilePath = FilePath
