@@ -9,12 +9,15 @@ def gen_dir(path):
     for d in ds:
         if d[0] == '.':
             continue
-        j = {"name":d,"type":"file","sub":None}
+        j = {"name":d,"type":"file"}
         if os.path.isdir(d):
             j["type"] = "directory"
-            j["sub"] = gen_dir(d)
+            j["content"] = gen_dir(d)
         ret.append(j)
     os.chdir('../')
     return ret
 t = gen_dir(sys.argv[1])
-print(json.dumps(t))
+ret = [{"type":"directory","name": ".","contents":t},
+{"type":"report","directories":0,"files":0}]
+
+print(json.dumps(ret))

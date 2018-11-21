@@ -1,5 +1,14 @@
 # 更新日志 Changelog
 
+## [v0.4.2] - 2018-11-21
+### 新增 Added
+- 支持nginx (html/xml/json), HFS, Apache, lighttpd, IIS目录浏览    Directory browsing
+- 自动查找文件扩展名    Automatic find fiel extension
+- `KSParser.strinify`, `TJSON.strinify`
+### 改变 Changed
+- `KSParser`, `TJSON`, `KRCSV` `Parse` 改成 `parse`
+- JSON目录索引文件改用[tree -J](http://mama.indstate.edu/users/ice/tree/)格式    JSON file index now use `tree -J` format
+
 ## [v0.4.1] - 2018-11-19
 ### 新增 Added
 - CG显示    CG Displaying

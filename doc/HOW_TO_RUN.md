@@ -44,9 +44,12 @@
 - nginx (Linux & WSL) *Windows Unicode支持有问题，不能用*
 - HFS (Windows)
 - lighttpd (Windows)
+- Apache2
+- IIS
 
 ## 浏览器
 按理说功能完善的当代浏览器都可以，不过`功能完善的当代浏览器`其实就那几个
 - Chrome 70 (Windows & Android)
 - Firefox 63 (Windows & Android)
 - Edge 17 *画面有问题*
+- Safari (MacOS)

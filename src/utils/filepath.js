@@ -7,25 +7,20 @@ export default class FilePath {
         this.loading = true;
         this.ready = false;
         this.mode = "nginx-json";
-        this.path = "tree.json";
-        this.root = "game/";
+        this.root = "game/";        // game root
+        this.loadpath = "game/";    // path file or game root
         this.loading = true;
         this.tree = [];
+
+        this.root = this.root.substr(this.root.length - 1) == '/' ?
+            this.root :
+            this.root + '/';
         // directory browse driver
         // nginx json mode
-        if (this.mode !== "json") {
-            this.tree = await this._loaddir(this.root)
-            this.path = this.root;
-        }
+        this.tree = await this.__loader(this.loadpath);
         // single file dirver
         // direct json mode
         // add tree driver?
-        else {
-            this.tree = await $.getJSON(this.path)
-            this.root = this.root.substr(this.root.length - 1) == '/' ?
-                this.root :
-                this.root + '/';
-        }
 
         this.idxtree = this._genindex(this.tree);
         this.findtree = this._genfind(this.tree, '')
@@ -82,7 +77,7 @@ export default class FilePath {
         let r = {}
         tree.forEach(e => {
             if (e.type == "directory") {
-                r[e.name] = this._genindex(e.sub);
+                r[e.name] = this._genindex(e.contents);
             }
             else r[e.name] = 0;
         });
@@ -149,7 +144,7 @@ export default class FilePath {
                 ret[e.name].push(`${dir}/${e.name}`)
             }
             else {
-                ret = Object.assign(ret, this._genfind(e.sub, `${dir}/${e.name}`));
+                ret = Object.assign(ret, this._genfind(e.contents, `${dir}/${e.name}`));
             }
         })
         return ret;
@@ -160,39 +155,58 @@ export default class FilePath {
      * Load VFS directory
      * @param {*} url 
      */
-    static async _loaddir(url) {
+    static async __loader(url) {
         /*
         [
             {
                 name: string,
                 type: "directory"/ "file",
-                sub: [...]/ null
+                contents: [...]/ null
             }...
         ]
         */
 
-        const __loader_map = {
+        const __loader_http_map = {
             'nginx': this.__loader_nginx_html,
             'nginx-json': this.__loader_nginx_json,
             'nginx-xml': this.__loader_nginx_xml,
             'nginx-html': this.__loader_nginx_html,
             'hfs': this.__loader_hfs,
             'lighttpd': this.__loader_lighttpd,
-            'apache': this.__loader__error,
-            'iis': this.__loader__error,
+            'apache': this.__loader_apache,
+            'iis': this.__loader_iis,
+        }
+
+
+        // windows: tree /a /f
+        // linux:   tree --charset ascii
+        //          tree -J (ok)
+        //          tree -X
+        const __loader_file_map = {
+            'json': this.__loader_tree_json,
+            'xml': this.__loader__error,
+            'tree': this.__loader__error,
+        }
+
+        if (!Object.keys(__loader_http_map).includes(this.mode)) {
+            let text = await $.ajax(url, { dataType: 'text' });
+            return __loader_file_map[this.mode](text);
         }
 
         // get raw data, so we can parse it next
         let ls = await $.ajax(url, { dataType: 'text' });
         let ret = [];
-        let loader = __loader_map[this.mode] || this.__loader__error;
+        let loader = __loader_http_map[this.mode] || this.__loader__error;
         ret = loader(ls);
         let ps = [];
         for (const l of ret) {
             if (l.type == "directory") {
-                ps.push(this._loaddir(url + l.name + '/').then((arg) => l.sub = arg));
+                ps.push(
+                    this.__loader(url + l.name + '/')
+                        .then((arg) => l.contents = arg)
+                );
             }
-            else l["sub"] = null;
+            else l["contents"] = null;
         }
         await Promise.all(ps)
         return ret;
@@ -210,7 +224,7 @@ export default class FilePath {
 
     static __loader__pre(text) {
         return new DOMParser()
-            .parseFromString(text, "text/html")   // parse html
+            .parseFromString(text, "text/html") // parse html
             .getElementsByTagName('pre')[0]     // get <pre>
             .innerHTML                          // 's innerhtml
             .split('\n')                        // as lines
@@ -344,6 +358,11 @@ export default class FilePath {
                 }
             });
         return ret;
+    }
+
+    static __loader_tree_json(text) {
+        let obj = JSON.parse(text);
+        return obj[0].contents;
     }
 }
 window.FilePath = FilePath
