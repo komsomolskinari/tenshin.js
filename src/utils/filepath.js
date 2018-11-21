@@ -1,13 +1,12 @@
 export default class FilePath {
     /**
-     * Load filesystem 
-     * Only JSON mode works
+     * Load VFS
      */
     static async Load() {
         if (this.loading) return;
         this.loading = true;
         this.ready = false;
-        this.mode = "lighttpd";
+        this.mode = "nginx-json";
         this.path = "tree.json";
         this.root = "game/";
         this.loading = true;
@@ -20,6 +19,7 @@ export default class FilePath {
         }
         // single file dirver
         // direct json mode
+        // add tree driver?
         else {
             this.tree = await $.getJSON(this.path)
             this.root = this.root.substr(this.root.length - 1) == '/' ?
@@ -28,9 +28,9 @@ export default class FilePath {
         }
 
         this.idxtree = this._genindex(this.tree);
-        this.findtree = {};
-        this._genfind(this.tree, '')
+        this.findtree = this._genfind(this.tree, '')
         this.mediatree = this._genmedia(Object.keys(this.findtree));
+
         this.loading = false;
         this.ready = true;
     }
@@ -61,11 +61,23 @@ export default class FilePath {
         else return undefined;
     }
 
+    /**
+     * Find media file
+     * @param {String} file file to find, without extension
+     * @param {String} type file type
+     * @param {Boolean} relative return path without root directory
+     * @returns {String} path
+     */
     static findMedia(file, type, relative) {
         let realname = this.mediatree[type][file.toLowerCase()];
         return this.find(realname, relative);
     }
 
+    // ----- Generate index files ----- //
+    /**
+     * generate ls's index
+     * @param {*} tree fs tree
+     */
     static _genindex(tree) {
         let r = {}
         tree.forEach(e => {
@@ -77,6 +89,10 @@ export default class FilePath {
         return r;
     }
 
+    /**
+     * generate findmedia's index
+     * @param {[String]} findlist find tree in list format
+     */
     static _genmedia(findlist) {
         let r = {
             image: {},
@@ -112,27 +128,34 @@ export default class FilePath {
                 r.script[name] = l;
             }
             else {
+                console.debug(`FilePath: unknown file type, file: ${l}`);
                 r.other[name] = l;
             }
         });
         return r;
     }
 
-    // '' -> 'voice' -> 'voice/aoi'
+    /**
+     * generate find's index
+     * @param {*} tree fs tree
+     * @param {String} dir start directory
+     */
     static _genfind(tree, dir) {
+        let ret = {};
         tree.forEach(e => {
             if (e.type == "file") {
-                if (this.findtree[e.name] === undefined)
-                    this.findtree[e.name] = [];
-                this.findtree[e.name].push(`${dir}/${e.name}`)
+                if (ret[e.name] === undefined)
+                    ret[e.name] = [];
+                ret[e.name].push(`${dir}/${e.name}`)
             }
             else {
-                this._genfind(e.sub, `${dir}/${e.name}`);
+                ret = Object.assign(ret, this._genfind(e.sub, `${dir}/${e.name}`));
             }
         })
+        return ret;
     }
 
-
+    // ----- Loader public tools ----- //
     /**
      * Load VFS directory
      * @param {*} url 
@@ -147,102 +170,23 @@ export default class FilePath {
             }...
         ]
         */
+
+        const __loader_map = {
+            'nginx': this.__loader_nginx_html,
+            'nginx-json': this.__loader_nginx_json,
+            'nginx-xml': this.__loader_nginx_xml,
+            'nginx-html': this.__loader_nginx_html,
+            'hfs': this.__loader_hfs,
+            'lighttpd': this.__loader_lighttpd,
+            'apache': this.__loader__error,
+            'iis': this.__loader__error,
+        }
+
         // get raw data, so we can parse it next
         let ls = await $.ajax(url, { dataType: 'text' });
         let ret = [];
-        switch (this.mode) {
-            case 'nginx-json': // nginx json, all other format will convert to it
-                ret = JSON.parse(ls);
-                break;
-            case 'nginx-xml': // nginx xml
-                let ngxml = $.parseXML(ls);
-                $(ngxml).find('directory').each((idx, elm) => {
-                    ret.push({
-                        name: $(elm).text(),
-                        type: 'directory'
-                    })
-                });
-                $(ngxml).find('file').each((idx, elm) => {
-                    ret.push({
-                        name: $(elm).text(),
-                        type: 'file'
-                    })
-                });
-                break;
-            case 'nginx-html':
-                new DOMParser()
-                    .parseFromString(ls, "text/html")   // parse html
-                    .getElementsByTagName('pre')[0]     // get <pre>
-                    .innerHTML                          // 's innerhtml
-                    .split('\n')                        // as lines
-                    .filter(l => l)                     // and except empty line
-                    .forEach(l => {
-                        let filename = $(l).text();
-                        if (filename[0] == '.') return;
-                        let match = filename.match(/(.+)\/$/i)
-                        if (match) {
-                            ret.push({
-                                name: match[1],
-                                type: 'directory'
-                            })
-                        }
-                        else {
-                            ret.push({
-                                name: filename,
-                                type: 'file'
-                            })
-                        }
-                    })
-                break;
-            case 'hfs': // broken
-                let hfsrows = new DOMParser()
-                    .parseFromString(ls, "text/html")
-                    .getElementById('files')            // get #file
-                    .rows;                              // 's rows
-
-                [].slice.call(hfsrows, 1)               // except header line
-                    .forEach(r => {
-                        let filename = r                // tr
-                            .cells[0]                   // 1st td
-                            .firstElementChild          // input
-                            .value;                     // .value
-                        if (filename[0] == '.') return;
-                        let match = filename.match(/(.+)\/$/i)
-                        if (match) {
-                            ret.push({
-                                name: match[1],
-                                type: 'directory'
-                            })
-                        }
-                        else {
-                            ret.push({
-                                name: filename,
-                                type: 'file'
-                            })
-                        }
-                    })
-                break;
-            case 'lighttpd':
-                let lhdrows = new DOMParser()
-                    .parseFromString(ls, "text/html")
-                    .getElementsByTagName('table')[0]   // get 1st table
-                    .rows;                              // 's rows
-
-                [].slice.call(lhdrows, 1)               // except header line
-                    .forEach(r => {
-                        let type = [].includes.call(r.classList, 'd') ?
-                            'directory' :
-                            'file';
-                        let name = r                    // tr
-                            .cells[0]                   // 1st td
-                            .firstElementChild          // a
-                            .innerText                  // text
-                            //.match(/(.+)\/?$/i)[1]      // remove optional /
-                        if (name[0] == '.') return;
-                        ret.push({ name, type });
-                    })
-                break;
-        }
+        let loader = __loader_map[this.mode] || this.__loader__error;
+        ret = loader(ls);
         let ps = [];
         for (const l of ret) {
             if (l.type == "directory") {
@@ -251,6 +195,154 @@ export default class FilePath {
             else l["sub"] = null;
         }
         await Promise.all(ps)
+        return ret;
+    }
+
+    // ----- Loader public tools ----- //
+    static __loader__table(text) {
+        return [].slice.call(
+            new DOMParser()
+                .parseFromString(text, "text/html")
+                .getElementsByTagName('table')[0]
+                .rows
+        )
+    }
+
+    static __loader__pre(text) {
+        return new DOMParser()
+            .parseFromString(text, "text/html")   // parse html
+            .getElementsByTagName('pre')[0]     // get <pre>
+            .innerHTML                          // 's innerhtml
+            .split('\n')                        // as lines
+            .filter(l => l)                     // and except empty line
+    }
+
+    static __loader__error() {
+        console.error('FilePath: Invaild file listing mode');
+    }
+
+    // ----- Loader for each httpd ----- //
+    static __loader_nginx_json(text) {
+        return JSON.parse(text);
+    }
+    static __loader_nginx_xml(text) {
+        let ret = [];
+        let ngxml = $.parseXML(text);
+        $(ngxml).find('directory').each((idx, elm) => {
+            ret.push({
+                name: $(elm).text(),
+                type: 'directory'
+            })
+        });
+        $(ngxml).find('file').each((idx, elm) => {
+            ret.push({
+                name: $(elm).text(),
+                type: 'file'
+            })
+        });
+        return ret;
+    }
+    static __loader_nginx_html(text) {
+        let ret = [];
+        this.__loader__pre(text).forEach(l => {
+            let filename = $(l).text();
+            if (filename[0] == '.') return;
+            let match = filename.match(/(.+)\/$/i);
+            if (match) {
+                ret.push({
+                    name: match[1],
+                    type: 'directory'
+                });
+            }
+            else {
+                ret.push({
+                    name: filename,
+                    type: 'file'
+                });
+            }
+        });
+        return ret;
+    }
+    static __loader_hfs(text) {
+        let ret = [];
+        this.__loader__table(text)
+            .slice(1)
+            .forEach(r => {
+                let filename = r        // tr
+                    .cells[0]           // 1st td
+                    .firstElementChild  // input
+                    .value;             // .value
+                if (filename[0] == '.') return;
+                let match = filename.match(/(.+)\/$/i);
+                if (match) {
+                    ret.push({
+                        name: match[1],
+                        type: 'directory'
+                    });
+                }
+                else {
+                    ret.push({
+                        name: filename,
+                        type: 'file'
+                    });
+                }
+            });
+        return ret;
+    }
+    static __loader_lighttpd(text) {
+        let ret = [];
+        this.__loader__table(text)
+            .slice(1)
+            .forEach(r => {
+                let type = [].includes.call(r.classList, 'd') ?
+                    'directory' :
+                    'file';
+                let name = r            // tr
+                    .cells[0]           // 1st td
+                    .firstElementChild  // a
+                    .innerText;         // text
+                if (name[0] == '.') return;
+                ret.push({ name, type });
+            });
+        return ret;
+    }
+    static __loader_iis(text) {
+        let ret = [];
+        this.__loader__pre(text).forEach(l => {
+            let a = $(l);
+            let name = a.text();
+            let type = a.attr('href').match(/\/$/) ?
+                'directory' :
+                'file';
+            if (name[0] == '.') return;
+            ret.push({ name, type });
+        });
+        return ret;
+    }
+    static __loader_apache(text) {
+        let ret = [];
+        this.__loader__table(text)
+            .slice(1)
+            .forEach(r => {
+                let filename = r        // tr
+                    .cells[1]           // 2nd td, 1st is icon
+                    .firstElementChild  // a
+                    .href;              // .href
+                if (filename[0] == '.') return;
+                let match = filename.match(/(.+)\/$/i);
+                if (match) {
+                    ret.push({
+                        name: match[1],
+                        type: 'directory'
+                    });
+                }
+                else {
+                    ret.push({
+                        name: filename,
+                        type: 'file'
+                    });
+                }
+            });
         return ret;
     }
 }
