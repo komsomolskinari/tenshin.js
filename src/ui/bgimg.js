@@ -27,7 +27,7 @@ export default class YZBgImg {
         }
 
         this.curImg = this.stage.image.replace('TIME', this.daytime.prefix);
-        let bgPath = FilePath.find(this.curImg + this.imageFormat);
+        let bgPath = FilePath.findMedia(this.curImg, 'image');
         this.bgfd.attr('src', bgPath);
         this.Reset();
         let mapped = {};

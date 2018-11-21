@@ -49,7 +49,7 @@ export default class YZFgImg {
                 fd.append(
                     $('<img>')
                         .attr('id', 'fgl_' + l.layer)
-                        .attr('src', FilePath.find(l.layer + this.imageFormat))
+                        .attr('src', FilePath.findMedia(l.layer, 'image'))
                 );
             }
             // set image

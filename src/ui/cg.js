@@ -55,7 +55,7 @@ export default class YZCG {
         this.layerfd.append(
             $('<img>')
                 .attr('id', `layer_${lname}`)
-                .attr('src', FilePath.find(lfile + this.imageFormat))
+                .attr('src', FilePath.findMedia(lfile, 'image'))
         );
 
         this.layerlast[lname] = {
@@ -132,23 +132,23 @@ export default class YZCG {
 
         let evs = option.filter(o => this.cglist.includes(o));
         if (evs.length == 0) {
-            evs = option.filter(o => FilePath.find(o + '.png'));
+            evs = option.filter(o => FilePath.findMedia(o, 'image'));
             if (evs.length == 0) console.warn('CG.EV: no ev', cmd);
             else {
                 this.evdifffd.css('display', 'none');
                 this.evbasefd
-                    .attr('src', FilePath.find(evs[0] + '.png'))
+                    .attr('src', FilePath.findMedia(evs[0], 'image'))
                     .css('display', '');
             }
         }
         else {
             let def = this.diffdef[evs[0]];
             this.evbasefd
-                .attr('src', FilePath.find(def.base.toUpperCase() + '.png'))
+                .attr('src', FilePath.findMedia(def.base.toUpperCase(), 'image'))
                 .css('display', '');
             if (def.diff) {
                 this.evdifffd
-                    .attr('src', FilePath.find(def.diff.toUpperCase() + '.png'))
+                    .attr('src', FilePath.findMedia(def.diff.toUpperCase(), 'image'))
                     .css('display', '')
                     .css('left', def.offset[0])
                     .css('top', def.offset[1])

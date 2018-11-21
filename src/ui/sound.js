@@ -57,7 +57,7 @@ export default class YZSound {
         let s = ch.attr('src');
         let asrc = null;
         if (aname != null) {
-            asrc = FilePath.find(aname);
+            asrc = FilePath.findMedia(aname, 'audio');
         }
         if (asrc != s) {
             ch.attr('src', asrc);

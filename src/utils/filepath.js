@@ -7,25 +7,28 @@ export default class FilePath {
         if (this.loading) return;
         this.loading = true;
         this.ready = false;
-        let mode = "json"
-        let path = "tree.json"
-        let root = "game"
+        this.mode = "nginx";
+        this.path = "tree.json";
+        this.root = "game/";
         this.loading = true;
         this.tree = [];
         // nginx json mode
-        if (mode == "nginx") {
-            this.tree = await this._loaddir(path)
-            this.root = path;
+        if (this.mode == "nginx") {
+            this.tree = await this._loaddir(this.root)
+            this.path = this.root;
         }
         // direct json mode
-        else if (mode == "json") {
-            this.tree = await $.getJSON(path)
-            this.root = root.substr(root.length - 1) == '/' ? root : root + '/'
+        else if (this.mode == "json") {
+            this.tree = await $.getJSON(this.path)
+            this.root = this.root.substr(this.root.length - 1) == '/' ?
+                this.root :
+                this.root + '/';
         }
 
         this.idxtree = this._genindex(this.tree);
         this.findtree = {};
         this._genfind(this.tree, '')
+        this.mediatree = this._genmedia(Object.keys(this.findtree));
         this.loading = false;
         this.ready = true;
     }
@@ -56,6 +59,11 @@ export default class FilePath {
         else return undefined;
     }
 
+    static findMedia(file, type, relative) {
+        let realname = this.mediatree[type][file.toLowerCase()];
+        return this.find(realname, relative);
+    }
+
     static _genindex(tree) {
         let r = {}
         tree.forEach(e => {
@@ -63,6 +71,48 @@ export default class FilePath {
                 r[e.name] = this._genindex(e.sub);
             }
             else r[e.name] = 0;
+        });
+        return r;
+    }
+
+    static _genmedia(findlist) {
+        let r = {
+            image: {},
+            video: {},
+            audio: {},
+            script: {},
+            other: {},
+        }
+
+        // See: https://developer.akamai.com/legacy/learn/Images/common-image-formats.html
+        // See: http://www.chromium.org/audio-video
+        // Script: txt csv ini - standard format,
+        //         ks tjs - krkr engine
+        //         asd func sli - krkr data
+        // Unsupported format needs convert.
+        const imageExt = ["bmp", "jpg", "jpeg", "png", "webp", "gif", "svg"];
+        const videoExt = ["mp4", "webm", "m4a", "ogv", "ogm"];
+        const audioExt = ["mp3", "flac", "ogg", "oga", "opus", "wav"];
+        const scriptExt = ["txt", "csv", "ks", "tjs", "func", "ini", "asd", "sli"];
+
+        findlist.forEach(l => {
+            let [, name, ext] = l.match(/(.+?)\.([^.]*$|$)/i);
+            ext = ext.toLowerCase();
+            if (imageExt.includes(ext)) {
+                r.image[name] = l;
+            }
+            else if (videoExt.includes(ext)) {
+                r.video[name] = l;
+            }
+            else if (audioExt.includes(ext)) {
+                r.audio[name] = l;
+            }
+            else if (scriptExt.includes(ext)) {
+                r.script[name] = l;
+            }
+            else {
+                r.other[name] = l;
+            }
         });
         return r;
     }
@@ -86,12 +136,12 @@ export default class FilePath {
         let ps = [];
         for (const l of ls) {
             if (l.type == "directory") {
-                ps.push(_loaddir(url + l.name + '/').then((arg) => l.sub = arg));
+                ps.push(this._loaddir(url + l.name + '/').then((arg) => l.sub = arg));
             }
             else l["sub"] = null;
         }
-        Promise.all(ps)
+        await Promise.all(ps)
         return ls;
     }
 }
-//window.FilePath = FilePath
+window.FilePath = FilePath
