@@ -11,6 +11,7 @@ import KSParser from "./utils/ksparser";
 import TJSON from "./utils/tjson";
 import Preloader from "./async/preload";
 import YZCG from "./ui/cg";
+import YZVideo from "./ui/video";
 
 Runtime.TJShack = {
     "f.all_clear_check=(sf.sakuya_clear && sf.ruri_clear && sf.sana_clear && sf.aoi_clear && sf.mahiro_clear && sf.yukari_clear)": 1,
@@ -28,6 +29,7 @@ Runtime.TJSvar = {
 };
 
 async function LoadVMData() {
+    //Unicode 万国码
     let ScriptLoadSeq = ['start.ks', '１.ks', '２.ks']
     let envinit = await $.get(FilePath.find('envinit.tjs'));
     ObjectMapper.LoadObject(TJSON.parse(envinit));
@@ -54,6 +56,7 @@ $(document).ready(async () => {
     YZText.Init();
     YZBgImg.Init();
     YZCG.Init();
+    YZVideo.Init();
     AsyncTask.Init();
     $(document).click(() => KSVM.Next());
     await LoadVMData();

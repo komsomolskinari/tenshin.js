@@ -52,6 +52,7 @@ export default class YZCG {
         if (lfd.length > 0) {
             lfd.remove();
         }
+        if (!lfile) return;
         this.layerfd.append(
             $('<img>')
                 .attr('id', `layer_${lname}`)
@@ -73,8 +74,13 @@ export default class YZCG {
     }
 
     static DelLay(cmd) {
-        $(`#layer_${cmd.param.name}`).remove();
-        ObjectMapper.RemoveLayer(cmd.param.name);
+        try {
+            $(`#layer_${cmd.param.name}`).remove();
+            ObjectMapper.RemoveLayer(cmd.param.name);
+        }
+        catch{
+
+        }
     }
 
     static async LayerCtl(cmd) {

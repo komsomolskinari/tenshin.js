@@ -56,7 +56,7 @@ export default class KSVM {
     }
 
     // main entry
-    static Run() {
+    static async Run() {
         if (this.runlock) return;
         this.runlock = true;
         while (!this.hang) {
@@ -116,7 +116,7 @@ export default class KSVM {
                             }
                             break;
                         default:
-                            Runtime.Call(cmd);
+                            await Runtime.Call(cmd);
                             break;
                     }
                     break;
@@ -132,28 +132,28 @@ export default class KSVM {
     }
 
     // run from *tag, used for playback
-    static RunFrom(tag) {
+    static async RunFrom(tag) {
         this.currentpos = this.tags[tag][0];
         this.runlock = false;
-        this.Run();
+        await this.Run();
     }
 
     // VM Control Functions
     // .
-    static Next() {
+    static async Next() {
         this.runmode = VM_SCENE;
         this.dispmode = VM_NORMAL;
         this.hang = false;
         AsyncTask.Cancel();
-        this.Run();
+        await this.Run();
     }
 
     // >
-    static Auto() {
+    static async Auto() {
         this.runmode = VM_SELECT;
         this.dispmode = VM_AUTO;
         this.hang = false;
-        this.Run();
+        await this.Run();
     }
 
     // debug only

@@ -6,6 +6,7 @@ import YZSound from './ui/sound';
 import YZText from './ui/text';
 import TJSeval from './utils/tjseval';
 import YZCG from './ui/cg';
+import YZVideo from './ui/video';
 
 export default class Runtime {
     static Init() {
@@ -100,6 +101,7 @@ export default class Runtime {
         this.inTrans = false;
     }
 
+    // Experimental command parser prototype
     static UnpackCmd(cmd) {
         let { name, option, param } = cmd;
         let t = {};
@@ -111,14 +113,15 @@ export default class Runtime {
                     "beginskip", "endskip", "fadepausebgm", "fadebgm",
                     "pausebgm", "resumebgm", "opmovie", "edmovie",
                     "initscene", "day_full", "ano_view", "ret_view",
-                    "playbgm", "delaydone", "white_ball", "white_ball_hide", "particle"]
-                    .includes(element.toLowerCase())) t[element] = 'command';
+                    "playbgm", "delaydone", "white_ball", "white_ball_hide", "particle",
+                    "show", "hide", "eval", "newlay", "dellay", "bgm", "env", "ev", "date"]
+                    .includes(element.toLowerCase())) t[element] = "command";
             }
         });
-        console.log(t);
+        //console.log(t);
     }
 
-    static Call(cmd) {
+    static async Call(cmd) {
         this.UnpackCmd(cmd);
         // Always use arrow function, or Firefox will 'this is undefined'
         const callbacks = {
@@ -134,11 +137,15 @@ export default class Runtime {
             "bgm": cmd => YZSound.BGM(cmd),
             "env": cmd => YZBgImg.ProcessEnv(cmd),
             "ev": cmd => YZCG.EV(cmd),
+
+            // macro, native impliement
+            "opmovie": async () => await YZVideo.OP(),
+            "edmovie": async cmd => await YZVideo.ED(cmd)
         }
         let callname = cmd.name.toLowerCase();
         let cb = callbacks[callname];
         if (cb !== undefined) {
-            cb(cmd);
+            await cb(cmd);
         }
         else {
             // Jump unimpliement cmd
