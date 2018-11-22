@@ -13,6 +13,7 @@
   "author": "Student Main",
   "license": "LGPL-3.0-or-later",
   "homepage": "https://github.com/studentmain/tenshin.js",
+  "repository": "https://github.com/studentmain/tenshin.js",
   "dependencies": {
     "jquery": "^3.3.1",
     "webpack": "^4.26.0"
