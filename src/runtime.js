@@ -100,77 +100,82 @@ export default class Runtime {
         this.inTrans = false;
     }
 
-    static Call(cmd) {
-        switch (cmd.name.toLowerCase()) {
-            case "mselinit":
-                this.MapSelectData = [];
-                break;
-            case "mseladd":
-                this.MapSelectAdd(cmd);
-                break;
-            case "seladd":
-                this.SelectAdd(cmd);
-                break;
-            case "sysjump":
-                console.debug("Sysjump, EOF?", cmd);
-                break;
-            case "eval":
-                TJSeval(cmd.param.exp, this);
-                break;
-            case "begintrans":
-                this.inTrans = true;
-                break;
-            case "endtrans":
-                this.CompileTrans(cmd);
-                break;
-            case "newlay":
-                YZCG.NewLay(cmd);
-                break;
-            case "dellay":
-                YZCG.DelLay(cmd);
-                break;
-            case "bgm":
-                YZSound.BGM(cmd);
-                break;
-            case "env":
-                YZBgImg.ProcessEnv(cmd);
-                break;
-            case "ev":
-                YZCG.EV(cmd);
-                break;
-            default:
-                // Jump unimpliement cmd
+    static UnpackCmd(cmd) {
+        let { name, option, param } = cmd;
+        let t = {};
+        t[name] = ObjectMapper.TypeOf(name);
+        option.forEach(element => {
+            t[element] = ObjectMapper.TypeOf(element);
+            if (t[element] === undefined) {
                 if (["msgoff", "msgon", "se", "date", "wait", "stage",
-                    "beginskip", "endskip", "fadepausebgm", "fadebgm", "pausebgm", "resumebgm", "opmovie", "edmovie",
-                    "initscene", "day_full", "ano_view", "ret_view", "playbgm", "delaydone", "white_ball", "white_ball_hide", "particle"].includes(cmd.name.toLowerCase())) break;
+                    "beginskip", "endskip", "fadepausebgm", "fadebgm",
+                    "pausebgm", "resumebgm", "opmovie", "edmovie",
+                    "initscene", "day_full", "ano_view", "ret_view",
+                    "playbgm", "delaydone", "white_ball", "white_ball_hide", "particle"]
+                    .includes(element.toLowerCase())) t[element] = 'command';
+            }
+        });
+        console.log(t);
+    }
 
-                let chobj = Character.characters[cmd.name];
-                if (chobj !== undefined) {
-                    chobj.Process(cmd);
-                }
-                switch (ObjectMapper.TypeOf(cmd)) {
-                    case "characters":
-                        Character.characters[cmd.name].Process(cmd);
-                        break;
-                    case "times":
-                        YZBgImg.SetDaytime(cmd.name);
-                        break;
-                    case "stages":
-                        YZBgImg.Process(cmd);
-                        break;
-                    case "layer":
-                        YZCG.LayerCtl(cmd);
-                        break;
-                    default:
-                        console.warn("RuntimeCall, unimpliement cmd", cmd);
-                        break;
-                }
+    static Call(cmd) {
+        this.UnpackCmd(cmd);
+        // Always use arrow function, or Firefox will 'this is undefined'
+        const callbacks = {
+            "mselinit": () => this.MapSelectData = [],
+            "mseladd": cmd => this.MapSelectAdd(cmd),
+            "seladd": cmd => this.SelectAdd(cmd),
+            "sysjump": cmd => console.debug("Sysjump, EOF?", cmd),
+            "eval": cmd => TJSeval(cmd.param.exp, this),
+            "begintrans": () => this.inTrans = true,
+            "endtrans": cmd => this.CompileTrans(cmd),
+            "newlay": cmd => YZCG.NewLay(cmd),
+            "dellay": cmd => YZCG.DelLay(cmd),
+            "bgm": cmd => YZSound.BGM(cmd),
+            "env": cmd => YZBgImg.ProcessEnv(cmd),
+            "ev": cmd => YZCG.EV(cmd),
+        }
+        let callname = cmd.name.toLowerCase();
+        let cb = callbacks[callname];
+        if (cb !== undefined) {
+            cb(cmd);
+        }
+        else {
+            // Jump unimpliement cmd
+            if (["msgoff", "msgon", "se", "date", "wait", "stage",
+                "beginskip", "endskip", "fadepausebgm", "fadebgm",
+                "pausebgm", "resumebgm", "opmovie", "edmovie",
+                "initscene", "day_full", "ano_view", "ret_view",
+                "playbgm", "delaydone", "white_ball", "white_ball_hide", "particle"]
+                .includes(cmd.name.toLowerCase())) return;
 
-                if (this.inTrans) {
-                    this.AddTrans(cmd);
-                }
-                break;
+            let chobj = Character.characters[cmd.name];
+            if (chobj !== undefined) {
+                chobj.Process(cmd);
+            }
+            switch (ObjectMapper.TypeOf(cmd)) {
+                case "characters":
+                    Character.characters[cmd.name].Process(cmd);
+                    break;
+                case "times":
+                    YZBgImg.SetDaytime(cmd.name);
+                    break;
+                case "stages":
+                    YZBgImg.Process(cmd);
+                    break;
+                case "layer":
+                    YZCG.LayerCtl(cmd);
+                    break;
+                default:
+                    console.warn("RuntimeCall, unimpliement cmd", cmd);
+                    break;
+            }
+
+            if (this.inTrans) {
+                this.AddTrans(cmd);
+            }
         }
     }
 }
+
 Runtime.Init();
