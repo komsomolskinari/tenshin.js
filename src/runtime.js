@@ -51,7 +51,7 @@ export default class Runtime {
     }
 
     // raise a map select
-    static MapSelect() {
+    static async MapSelect() {
         var s = "Map:\n";
         var n = 0;
         for (const d of this.MapSelectData) {
@@ -76,7 +76,7 @@ export default class Runtime {
     }
 
     // raise a normal select
-    static Select() {
+    static async Select() {
         var s = "";
         var n = 0;
         for (const d of this.SelectData) {

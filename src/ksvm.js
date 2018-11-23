@@ -97,7 +97,7 @@ export default class KSVM {
                         // make runtime do these too?
                         case "mselect":
                             {
-                                let next = Runtime.MapSelect();
+                                let next = await Runtime.MapSelect();
                                 if (next !== undefined) {
                                     if (next[0] !== undefined) {
                                         this.currentpos = this.LocateTag(next[0], next[1]);
@@ -107,7 +107,7 @@ export default class KSVM {
                             break;
                         case "select":
                             {
-                                let next = Runtime.Select();
+                                let next = await Runtime.Select();
                                 if (next !== undefined) {
                                     if (next[0] !== undefined) {
                                         this.currentpos = this.LocateTag(next[0], next[1]);

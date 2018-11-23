@@ -68,7 +68,7 @@ export default class YZSound {
                 switch (element[0]) {
                     case 'start':
                         f = () => {
-                            ch[0].play();
+                            ch[0].play().catch(e => { });
                         }
                         break;
                     case 'pause':
