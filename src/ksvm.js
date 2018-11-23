@@ -33,12 +33,31 @@ export default class KSVM {
      * @param {*} script compiled script
      */
     static AddScript(name, script) {
+        if (Object.keys(this.scripts).includes(name)) {
+            console.debug(`AddScript: duplicate script ${name}`)
+            return;
+        }
         this.scripts[name] = script;
         // scan tags
-        script.forEach(s => {
-            if (s.type != "entry") return;
-            if (this.tags[s.name] === undefined) this.tags[s.name] = [];
-            this.tags[s.name].push({ "script": name, "line": lineno });
+        script
+            .map((l, i) => {
+                return ({
+                    name: l.name,
+                    type: l.type,
+                    line: i
+                });
+            })
+            .filter(l => l.type == "entry")
+            .forEach(l => {
+                this.AddTag(l.name, name, l.line)
+            });
+    }
+
+    static AddTag(name, script, line) {
+        if (this.tags[name] === undefined) this.tags[name] = [];
+        this.tags[name].push({
+            script: script,
+            line: line
         });
     }
 
@@ -56,8 +75,8 @@ export default class KSVM {
         const tags = this.tags[tag.substr(1)];
         if (script === undefined) return tags[0];
         else {
-            for (const tag of tags) {
-                if (tag.script == script) return tag;
+            for (const t of tags) {
+                if (t.script == script) return t;
             }
         }
         return undefined;
@@ -75,7 +94,7 @@ export default class KSVM {
         if (this.runlock) return;
         this.runlock = true;
         while (!this.hang) {
-            if (this.currentpos.line >= this.scripts[this.currentpos.script].length) {
+            if (this.CurrentCmd() === undefined) {
                 // too far
                 this.hang = true;
                 console.debug("EOF");
