@@ -40,12 +40,24 @@ export default class KSVM {
         }
     }
 
+    /**
+     * Locate a KS tag
+     * @param {String} tag tag name, with *
+     * @param {String} script script name
+     */
     static LocateTag(tag, script) {
-        const ts = this.tags[tag.substr(1)];
+        console.log(tag, script);
+        if (script == undefined) debugger;
+        script = script.match(/(.+?)\.([^.]*$|$)/i)[1];
+        // No tag, return first line of script
+        if (tag === undefined) {
+            return { script: script, line: 0 };
+        }
+        const tags = this.tags[tag.substr(1)];
         if (script === undefined) return ts[0];
         else {
-            for (const t of ts) {
-                if (t.script == script.split('.')[0]) return t;
+            for (const tag of tags) {
+                if (tag.script == script) return tag;
             }
         }
         return undefined;
@@ -69,58 +81,16 @@ export default class KSVM {
             const cmd = this.CurrentCmd();
             // NOTE: macro is not implement, use native implement instead
             switch (cmd.type) {
-                // skip entry
                 case "entry":
                     break;
-                // exec functions
                 case "func":
-                    switch (cmd.name) {
-                        case "next":
-                            // Let runtime handle these logic?
-                            if (cmd.param.eval != undefined) {
-                                // tjs eval
-                                let r = TJSVM.eval(cmd.param.eval);
-                                // eval false, cancel jump
-                                if (!r) break;
-                            }
-                            // no target tag defined, directly load script
-                            if (cmd.param.target == undefined) {
-                                this.currentpos = { "script": cmd.param.storage.split('.')[0], "line": 0 };
-                            }
-                            // or locate the tag
-                            else {
-                                this.currentpos = this.LocateTag(cmd.param.target, cmd.param.storage);
-                            }
-                            break;
-
-                        // mselect & select should have same entry?
-                        // make runtime do these too?
-                        case "mselect":
-                            {
-                                let next = await Runtime.MapSelect();
-                                if (next !== undefined) {
-                                    if (next[0] !== undefined) {
-                                        this.currentpos = this.LocateTag(next[0], next[1]);
-                                    }
-                                }
-                            }
-                            break;
-                        case "select":
-                            {
-                                let next = await Runtime.Select();
-                                if (next !== undefined) {
-                                    if (next[0] !== undefined) {
-                                        this.currentpos = this.LocateTag(next[0], next[1]);
-                                    }
-                                }
-                            }
-                            break;
-                        default:
-                            await Runtime.Call(cmd);
-                            break;
+                    let next = await Runtime.Call(cmd);
+                    // Okay, comand return a new position, lets use it
+                    if (next !== undefined) {
+                        this.currentpos = this.LocateTag(next[0], next[1]);
+                        if (this.currentpos === undefined) debugger;
                     }
                     break;
-                // output text
                 case "text":
                     Runtime.Text(cmd);
                     if (this.runmode == VM_SCENE) this.hang = true;
@@ -146,64 +116,6 @@ export default class KSVM {
         this.hang = false;
         AsyncTask.Cancel();
         await this.Run();
-    }
-
-    // >
-    static async Auto() {
-        this.runmode = VM_SELECT;
-        this.dispmode = VM_AUTO;
-        this.hang = false;
-        await this.Run();
-    }
-
-    // debug only
-    static Step() {
-        this.runmode = VM_STEP;
-        this.dispmode = VM_NORMAL;
-        this.hang = false;
-        this.Run();
-    }
-
-    // >> 
-    static Jump() {
-        this.runmode = VM_NEVER;
-        this.dispmode = VM_QUICK;
-        this.hang = false;
-        this.Run();
-    }
-
-    // >|
-    static NextSelect() {
-        this.runmode = VM_SCENE;
-        this.dispmode = VM_NONE;
-        this.hang = false;
-        this.Run();
-    }
-
-    // <
-    static BackLog() {
-
-    }
-
-    // <<
-    static Back() {
-
-    }
-
-    // |<
-    static LastSelect() {
-
-    }
-
-    // VM Save and load
-    // save internal status
-    static Save() {
-
-    }
-
-    // load
-    static Load(status) {
-
     }
 }
 KSVM.Init();

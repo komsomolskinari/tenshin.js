@@ -30,6 +30,15 @@ export default class Runtime {
             YZText.Print(text, display);
         }
     }
+    static Next(cmd) {
+        let { name, param, option } = cmd;
+        if (param.eval != undefined) {
+            let r = TJSVM.eval(cmd.param.eval);
+            // cancel jump
+            if (!r) return undefined;
+        }
+        return [param.target, param.storage]
+    }
 
     // TODO: mselect is Tenshin Ranman only command?
     // add map select option
@@ -118,12 +127,12 @@ export default class Runtime {
         this.UnpackCmd(cmd);
         // Always use arrow function, or Firefox will 'this is undefined'
         const callbacks = {
-            "mselinit": () => this.MapSelectData = [],
             "mseladd": cmd => this.MapSelectAdd(cmd),
             "seladd": cmd => this.SelectAdd(cmd),
+            "next": cmd => this.Next(cmd),
+            "mselect": cmd => this.MapSelect(cmd),
+            "select": cmd => this.Select(cmd),
             "sysjump": cmd => console.debug("Sysjump, EOF?", cmd),
-            "eval": cmd => TJSVM.eval(cmd.param.exp),
-            "begintrans": () => this.inTrans = true,
             "endtrans": cmd => this.CompileTrans(cmd),
             "newlay": cmd => YZCG.NewLay(cmd),
             "dellay": cmd => YZCG.DelLay(cmd),
@@ -131,14 +140,20 @@ export default class Runtime {
             "env": cmd => YZBgImg.ProcessEnv(cmd),
             "ev": cmd => YZCG.EV(cmd),
 
+            // has unexpected return value
+            "mselinit": () => { this.MapSelectData = []; return undefined },
+            "eval": cmd => { TJSVM.eval(cmd.param.exp); return undefined },
+            "begintrans": () => { this.inTrans = true; return undefined },
+
             // macro, native impliement
             "opmovie": async () => await YZVideo.OP(),
             "edmovie": async cmd => await YZVideo.ED(cmd)
         }
         let callname = cmd.name.toLowerCase();
         let cb = callbacks[callname];
+        let ret;
         if (cb !== undefined) {
-            await cb(cmd);
+            ret = await cb(cmd);
         }
         else {
             // Jump unimpliement cmd
@@ -175,6 +190,7 @@ export default class Runtime {
                 this.AddTrans(cmd);
             }
         }
+        return ret;
     }
 }
 
