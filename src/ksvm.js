@@ -27,17 +27,19 @@ export default class KSVM {
         this.runlock = false;
     }
 
+    /**
+     * Add a script file to VM
+     * @param {String} name file name, without extension
+     * @param {*} script compiled script
+     */
     static AddScript(name, script) {
         this.scripts[name] = script;
         // scan tags
-        let lineno = 0;
-        for (const s of script) {
-            if (s.type == "entry") {
-                if (this.tags[s.name] === undefined) this.tags[s.name] = [];
-                this.tags[s.name].push({ "script": name, "line": lineno });
-            }
-            lineno++;
-        }
+        script.forEach(s => {
+            if (s.type != "entry") return;
+            if (this.tags[s.name] === undefined) this.tags[s.name] = [];
+            this.tags[s.name].push({ "script": name, "line": lineno });
+        });
     }
 
     /**
@@ -46,15 +48,13 @@ export default class KSVM {
      * @param {String} script script name
      */
     static LocateTag(tag, script) {
-        console.log(tag, script);
-        if (script == undefined) debugger;
         script = script.match(/(.+?)\.([^.]*$|$)/i)[1];
         // No tag, return first line of script
         if (tag === undefined) {
             return { script: script, line: 0 };
         }
         const tags = this.tags[tag.substr(1)];
-        if (script === undefined) return ts[0];
+        if (script === undefined) return tags[0];
         else {
             for (const tag of tags) {
                 if (tag.script == script) return tag;
@@ -63,6 +63,9 @@ export default class KSVM {
         return undefined;
     }
 
+    /**
+     * Get current command
+     */
     static CurrentCmd() {
         return this.scripts[this.currentpos.script][this.currentpos.line]
     }

@@ -84,7 +84,6 @@ export default class YZCG {
     }
 
     static async LayerCtl(cmd) {
-        console.log('layerctl', cmd);
         let { name, option, param } = cmd;
 
         let fd = $(`#layer_${name}`);

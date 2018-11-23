@@ -20,11 +20,19 @@ async function LoadVMData() {
     ObjectMapper.LoadObject(TJSON.parse(envinit));
     let preloadps = [];
     ScriptLoadSeq.forEach(s => {
-        let sn = s.split('.')[0];
         preloadps.push(
-            $.get(FilePath.find(s)).promise()
-                .then(sc => KSParser.parse(sc))
-                .then(sp => KSVM.AddScript(sn, sp))
+            (
+                async () => {
+                    KSVM.AddScript(
+                        s.split('.')[0],
+                        KSParser.parse(
+                            await $.get(
+                                FilePath.find(s)
+                            )
+                        )
+                    );
+                }
+            )()
         );
     });
     await Promise.all(preloadps);
@@ -52,9 +60,18 @@ $(document).ready(async () => {
     scripts.forEach(s => {
         let sn = s.split('.')[0];
         preloadps.push(
-            $.get(FilePath.find(s)).promise()
-                .then(sc => KSParser.parse(sc))
-                .then(sp => KSVM.AddScript(sn, sp))
+            (
+                async () => {
+                    KSVM.AddScript(
+                        s.split('.')[0],
+                        KSParser.parse(
+                            await $.get(
+                                FilePath.find(s)
+                            )
+                        )
+                    );
+                }
+            )()
         );
     });
     await Promise.all(preloadps);
