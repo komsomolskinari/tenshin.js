@@ -4,19 +4,12 @@ import ObjectMapper from './objectmapper';
 import YZBgImg from './ui/bgimg';
 import YZSound from './ui/sound';
 import YZText from './ui/text';
-import TJSeval from './utils/tjseval';
+import TJSVM from './tjsvm';
 import YZCG from './ui/cg';
 import YZVideo from './ui/video';
 
 export default class Runtime {
     static Init() {
-        // key: var name
-        this.TJSvar = {};
-        // set tjs eval native implement hack
-        // only use when fail
-        // key: input string
-        // value: return value
-        this.TJShack = {};
         this.MapSelectData = [];
         this.SelectData = [];
 
@@ -30,7 +23,7 @@ export default class Runtime {
         let { text, name, display } = cmd;
         if (name) {
             let ch = Character.characters[name];
-            Character.voiceBase = this.TJSvar['f.voiceBase'];
+            Character.voiceBase = TJSVM.get('f.voiceBase');
             ch.Text(text, display);
         }
         else {
@@ -88,7 +81,7 @@ export default class Runtime {
         var r = prompt(s, 0);
         var ro = this.SelectData[r];
         if (ro[2] !== undefined)
-            TJSeval(ro[2], this);
+            TJSVM.eval(ro[2]);
         this.SelectData = [];
         return [ro[1], ro[3]];
     }
@@ -129,7 +122,7 @@ export default class Runtime {
             "mseladd": cmd => this.MapSelectAdd(cmd),
             "seladd": cmd => this.SelectAdd(cmd),
             "sysjump": cmd => console.debug("Sysjump, EOF?", cmd),
-            "eval": cmd => TJSeval(cmd.param.exp, this),
+            "eval": cmd => TJSVM.eval(cmd.param.exp),
             "begintrans": () => this.inTrans = true,
             "endtrans": cmd => this.CompileTrans(cmd),
             "newlay": cmd => YZCG.NewLay(cmd),

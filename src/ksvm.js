@@ -1,6 +1,6 @@
 import Runtime from "./runtime";
 import AsyncTask from "./async/asynctask";
-import TJSeval from './utils/tjseval';
+import TJSVM from './tjsvm';
 
 // when to hang up vm
 let VM_STEP = 0;
@@ -79,7 +79,7 @@ export default class KSVM {
                             // Let runtime handle these logic?
                             if (cmd.param.eval != undefined) {
                                 // tjs eval
-                                let r = TJSeval(cmd.param.eval, Runtime);
+                                let r = TJSVM.eval(cmd.param.eval);
                                 // eval false, cancel jump
                                 if (!r) break;
                             }

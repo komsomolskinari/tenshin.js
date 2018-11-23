@@ -13,21 +13,6 @@ import Preloader from "./async/preload";
 import YZCG from "./ui/cg";
 import YZVideo from "./ui/video";
 
-Runtime.TJShack = {
-    "f.all_clear_check=(sf.sakuya_clear && sf.ruri_clear && sf.sana_clear && sf.aoi_clear && sf.mahiro_clear && sf.yukari_clear)": 1,
-    "!(f.sak_flag == 5 || f.all_clear_check)": true,
-    "!kag.isRecollection": true
-};
-Runtime.TJSvar = {
-    "f.all_clear_check": true,
-    "f.sak_flag": 0,
-    "f.san_flag": 0,
-    "f.aoi_flag": 0,
-    "f.mah_flag": 0,
-    "f.rur_flag": 0,
-    "f.yuk_flag": 0,
-};
-
 async function LoadVMData() {
     //Unicode 万国码
     let ScriptLoadSeq = ['start.ks', '１.ks', '２.ks']
