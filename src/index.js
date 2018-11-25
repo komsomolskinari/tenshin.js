@@ -1,17 +1,16 @@
+import AsyncTask from "./async/asynctask";
 import Character from "./character";
 import KSVM from "./ksvm";
 import ObjectMapper from './objectmapper';
-import Runtime from "./runtime";
+import TJSVM from "./tjsvm";
 import YZBgImg from "./ui/bgimg";
+import YZCG from "./ui/cg";
 import YZSound from "./ui/sound";
 import YZText from "./ui/text";
-import AsyncTask from "./async/asynctask";
+import YZVideo from "./ui/video";
 import FilePath from './utils/filepath';
 import KSParser from "./utils/ksparser";
 import TJSON from "./utils/tjson";
-import Preloader from "./async/preload";
-import YZCG from "./ui/cg";
-import YZVideo from "./ui/video";
 
 async function LoadVMData() {
     //Unicode 万国码
@@ -37,8 +36,22 @@ async function LoadVMData() {
     return;
 }
 
-TJSVM.addObject('f');
-TJSVM.addObject('sf');
+TJSVM.addObject('f', {
+    sak_flag: 0,
+    rur_flag: 0,
+    san_flag: 0,
+    aoi_flag: 0,
+    mah_flag: 0,
+    yuk_flag: 0,
+});
+TJSVM.addObject('sf', {
+    sakuya_clear: false,
+    ruri_clear: false,
+    sana_clear: false,
+    aoi_clear: false,
+    mahiro_clear: false,
+    yukari_clear: false,
+});
 TJSVM.addObject('kag');
 
 $(document).ready(async () => {
@@ -50,8 +63,9 @@ $(document).ready(async () => {
     YZVideo.Init();
     AsyncTask.Init();
     await LoadVMData();
-    KSVM.RunFrom('start');
     $(document).click(() => KSVM.Next());
+    KSVM.RunFrom('start');
+    KSVM.Next();
     let preloadps = [];
     // TODO: let vm cache module load other script
     let scripts = Object.keys(FilePath.ls('scenario'));

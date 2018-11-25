@@ -1,11 +1,11 @@
 // runtime libs
 import Character from './character';
 import ObjectMapper from './objectmapper';
+import TJSVM from './tjsvm';
 import YZBgImg from './ui/bgimg';
+import YZCG from './ui/cg';
 import YZSound from './ui/sound';
 import YZText from './ui/text';
-import TJSVM from './tjsvm';
-import YZCG from './ui/cg';
 import YZVideo from './ui/video';
 
 export default class Runtime {
@@ -43,13 +43,14 @@ export default class Runtime {
     // TODO: mselect is Tenshin Ranman only command?
     // add map select option
     static MapSelectAdd(cmd) {
-        this.MapSelectData.push([
-            cmd.param.name,
-            cmd.param.target,
-            cmd.param.cond,
-            cmd.param.storage,
-            cmd.param.place,
-        ]);
+        let p = cmd.param;
+        this.MapSelectData.push({
+            name: p.name,
+            target: p.target,
+            cond: p.cond,
+            storage: p.storage,
+            place: p.place
+        });
     }
 
     // raise a map select
@@ -58,23 +59,25 @@ export default class Runtime {
         var n = 0;
         for (const d of this.MapSelectData) {
             s += n;
-            s += d[0];
+            s += d.name;
             s += '\n';
             n++;
         }
         var r = prompt(s, 0);
         var ro = this.MapSelectData[r];
         this.MapSelectData = [];
-        return [ro[1], ro[3]];
+        if (!ro.target && !ro.storage) return undefined;
+        return [ro.target, ro.storage];
     }
 
     static SelectAdd(cmd) {
-        this.SelectData.push([
-            cmd.param.text,
-            cmd.param.target,
-            cmd.param.exp,
-            cmd.param.storage,
-        ]);
+        let p = cmd.param;
+        this.SelectData.push({
+            text: p.text,
+            target: p.target,
+            exp: p.exp,
+            storage: p.storage
+        });
     }
 
     // raise a normal select
@@ -83,16 +86,16 @@ export default class Runtime {
         var n = 0;
         for (const d of this.SelectData) {
             s += n;
-            s += d[0];
+            s += d.text;
             s += '\n';
             n++;
         }
         var r = prompt(s, 0);
         var ro = this.SelectData[r];
-        if (ro[2] !== undefined)
-            TJSVM.eval(ro[2]);
+        if (ro.exp) TJSVM.eval(ro.exp);
         this.SelectData = [];
-        return [ro[1], ro[3]];
+        if (!ro.target && !ro.storage) return undefined;
+        return [ro.target, ro.storage];
     }
 
     static AddTrans(cmd) {

@@ -1,17 +1,5 @@
-import Runtime from "./runtime";
 import AsyncTask from "./async/asynctask";
-import TJSVM from './tjsvm';
-
-// when to hang up vm
-let VM_STEP = 0;
-let VM_SCENE = 1;
-let VM_SELECT = 2;
-let VM_NEVER = 3;
-// vm display mode
-let VM_NORMAL = 0; // standard mode
-let VM_AUTO = 1; // wait for voice end
-let VM_QUICK = 2; // fixed interval
-let VM_NONE = 3; // no output
+import Runtime from "./runtime";
 
 const VMMode = {
     Step: 0,    // stop per step
@@ -23,7 +11,7 @@ const VMMode = {
 
 export default class KSVM {
     static Init() {
-        this.mode = VMMode.Step;
+        this.mode = VMMode.Text;
         this.hang = false;
         // scripts = {name: script}
         this.scripts = {};
@@ -83,13 +71,13 @@ export default class KSVM {
      * @param {String} script script name
      */
     static LocateTag(tag, script) {
-        script = script.match(/(.+?)\.([^.]*$|$)/i)[1];
+        if (script) script = script.split('.')[0];
         // No tag, return first line of script
         if (tag === undefined) {
             return { script: script, line: 0 };
         }
         const tags = this.tags[tag.substr(1)];
-        if (script === undefined) return tags[0];
+        if (script === undefined) return (tags || [])[0];
         else {
             for (const t of tags) {
                 if (t.script == script) return t;
@@ -120,7 +108,7 @@ export default class KSVM {
         if (this.runlock) return;
         this.runlock = true;
         while (!this.hang) {
-            if (this.HitBreakPoint(this.currentpos)) debugger;
+
             if (this.CurrentCmd() === undefined) {
                 // too far
                 this.hang = true;
@@ -137,8 +125,9 @@ export default class KSVM {
                     // Okay, comand return a new position, lets use it
                     if (next !== undefined) {
                         if (this.mode == VMMode.Step) this.hang = true;
+                        let nextpos = this.LocateTag(next[0], next[1]);
+                        if (nextpos === undefined) debugger;
                         this.currentpos = this.LocateTag(next[0], next[1]);
-                        if (this.currentpos === undefined) debugger;
                     }
                     break;
                 case "text":
@@ -152,6 +141,13 @@ export default class KSVM {
                     }
                     break;
             }
+            if (this.HitBreakPoint(this.currentpos)) {
+                this.hang = true;
+                this.runlock = true;
+                debugger;
+                return;
+            }
+            if(VMMode.Step) this.hang = true;
             this.currentpos.line++;
         }
         this.runlock = false;
@@ -161,13 +157,13 @@ export default class KSVM {
     static async RunFrom(tag) {
         this.currentpos = this.tags[tag][0];
         this.runlock = false;
-        await this.Run();
     }
 
     // VM Control Functions
     // .
     static async Next() {
         this.hang = false;
+        this.mode = VMMode.Text;
         AsyncTask.Cancel();
         await this.Run();
     }
