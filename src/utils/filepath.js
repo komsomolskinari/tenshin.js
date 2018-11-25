@@ -67,6 +67,15 @@ export default class FilePath {
         let realname = this.mediatree[type][file.toLowerCase()];
         return this.find(realname, relative);
     }
+    /**
+     * Perform async read
+     * @param {String} file file to find, with/without extension
+     * @param {String} type file type, if undefined, file is with ext
+     */
+    static async read(file, type) {
+        let path = type ? this.findMedia(file, type) : this.find(file);
+        return await $.get(path);
+    }
 
     // ----- Generate index files ----- //
     /**

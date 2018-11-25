@@ -80,7 +80,7 @@ export default class Character {
     }
 
     async __LoadChunk(filename) {
-        const f = KRCSV.parse(await $.get(FilePath.find(filename)), '\t', false);
+        const f = KRCSV.parse(await FilePath.read(filename), '\t', false);
         const _fsp = filename.split('_');
         const pfx = _fsp.slice(0, _fsp.length - 1).join('_');
 
@@ -102,7 +102,7 @@ export default class Character {
     }
 
     async __LoadCoord(filename) {
-        let f = KRCSV.parse(await $.get(FilePath.find(filename)), '\t')
+        let f = KRCSV.parse(await FilePath.read(filename), '\t');
         const fvar = filename.match(/_([0-9])\./)[1];
         const _fsp = filename.split('_');
         const pfx = _fsp.slice(0, _fsp.length - 1).join('_');

@@ -16,23 +16,17 @@ import YZVideo from "./ui/video";
 async function LoadVMData() {
     //Unicode 万国码
     let ScriptLoadSeq = ['start.ks', '１.ks', '２.ks']
-    let envinit = await $.get(FilePath.find('envinit.tjs'));
+    let envinit = await FilePath.read('envinit.tjs');
     ObjectMapper.LoadObject(TJSON.parse(envinit));
     let preloadps = [];
     ScriptLoadSeq.forEach(s => {
         preloadps.push(
-            (
-                async () => {
-                    KSVM.AddScript(
-                        s.split('.')[0],
-                        KSParser.parse(
-                            await $.get(
-                                FilePath.find(s)
-                            )
-                        )
-                    );
-                }
-            )()
+            (async () => {
+                KSVM.AddScript(
+                    s.split('.')[0],
+                    KSParser.parse(await FilePath.read(s))
+                );
+            })()
         );
     });
     await Promise.all(preloadps);
@@ -43,6 +37,10 @@ async function LoadVMData() {
     return;
 }
 
+TJSVM.addObject('f');
+TJSVM.addObject('sf');
+TJSVM.addObject('kag');
+
 $(document).ready(async () => {
     await FilePath.Load();
     YZSound.Init();
@@ -51,27 +49,21 @@ $(document).ready(async () => {
     YZCG.Init();
     YZVideo.Init();
     AsyncTask.Init();
-    $(document).click(() => KSVM.Next());
     await LoadVMData();
     KSVM.RunFrom('start');
+    $(document).click(() => KSVM.Next());
     let preloadps = [];
     // TODO: let vm cache module load other script
     let scripts = Object.keys(FilePath.ls('scenario'));
     scripts.forEach(s => {
         let sn = s.split('.')[0];
         preloadps.push(
-            (
-                async () => {
-                    KSVM.AddScript(
-                        s.split('.')[0],
-                        KSParser.parse(
-                            await $.get(
-                                FilePath.find(s)
-                            )
-                        )
-                    );
-                }
-            )()
+            (async () => {
+                KSVM.AddScript(
+                    s.split('.')[0],
+                    KSParser.parse(await FilePath.read(s))
+                );
+            })()
         );
     });
     await Promise.all(preloadps);

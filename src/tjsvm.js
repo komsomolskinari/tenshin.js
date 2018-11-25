@@ -39,8 +39,3 @@ export default class TJSVM {
     }
 }
 TJSVM.Init();
-TJSVM.addObject('f');
-TJSVM.addObject('sf');
-TJSVM.addObject('kag');
-
-window.TJSVM = TJSVM;

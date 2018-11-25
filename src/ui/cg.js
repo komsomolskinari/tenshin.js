@@ -16,7 +16,7 @@ export default class YZCG {
     }
 
     static async __LoadCGList() {
-        KRCSV.parse(await $.get(FilePath.find('evdiff.csv')), ',', null)
+        KRCSV.parse(await FilePath.read('evdiff.csv'), ',', null)
             .forEach(d =>
                 this.diffdef[d[0]] = {
                     ev: d[0],
