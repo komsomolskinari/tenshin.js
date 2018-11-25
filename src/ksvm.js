@@ -13,10 +13,17 @@ let VM_AUTO = 1; // wait for voice end
 let VM_QUICK = 2; // fixed interval
 let VM_NONE = 3; // no output
 
+const VMMode = {
+    Step: 0,    // stop per step
+    Text: 1,    // stop per text
+    Auto: 2,    // stop per text, wait all async operation, and continue
+    Quick: 3,   // stop per text, continue after 20 ms?
+    Select: 4,  // stop when jump occured, shutdown ui
+}
+
 export default class KSVM {
     static Init() {
-        this.runmode = VM_SCENE;
-        this.dispmode = VM_NORMAL;
+        this.mode = VMMode.Step;
         this.hang = false;
         // scripts = {name: script}
         this.scripts = {};
@@ -25,6 +32,7 @@ export default class KSVM {
         this.currentpos = { "script": null, "line": 1 };
         this.posstack = [];
         this.runlock = false;
+        this.breakPoints = [];
     }
 
     /**
@@ -61,6 +69,14 @@ export default class KSVM {
         });
     }
 
+    static AddBreakPoint(script, line) {
+        this.breakPoints.push({ script, line });
+    }
+
+    static RemoveBreakPoint(script, line) {
+        this.breakPoints = this.breakPoints.filter(l => l.script != script || l.line != line);
+    }
+
     /**
      * Locate a KS tag
      * @param {String} tag tag name, with *
@@ -89,11 +105,22 @@ export default class KSVM {
         return this.scripts[this.currentpos.script][this.currentpos.line]
     }
 
+    static HitBreakPoint(position) {
+        //let bpeq = (p1, p2) => ((p1.script === p2.script) && (p1.line === p2.line));
+        if (this.breakPoints.length == 0) return false;
+        let cur = this.breakPoints
+            .filter(l => l.script == position.script)   // we can cache breakpoint later
+            .map(l => l.line);
+        if (cur.includes(position.line)) return true;
+        else return false;
+    }
+
     // main entry
     static async Run() {
         if (this.runlock) return;
         this.runlock = true;
         while (!this.hang) {
+            if (this.HitBreakPoint(this.currentpos)) debugger;
             if (this.CurrentCmd() === undefined) {
                 // too far
                 this.hang = true;
@@ -109,13 +136,20 @@ export default class KSVM {
                     let next = await Runtime.Call(cmd);
                     // Okay, comand return a new position, lets use it
                     if (next !== undefined) {
+                        if (this.mode == VMMode.Step) this.hang = true;
                         this.currentpos = this.LocateTag(next[0], next[1]);
                         if (this.currentpos === undefined) debugger;
                     }
                     break;
                 case "text":
                     Runtime.Text(cmd);
-                    if (this.runmode == VM_SCENE) this.hang = true;
+                    if ([
+                        VMMode.Auto,
+                        VMMode.Quick,
+                        VMMode.Text].includes(this.mode)
+                    ) {
+                        this.hang = true;
+                    }
                     break;
             }
             this.currentpos.line++;
@@ -133,8 +167,6 @@ export default class KSVM {
     // VM Control Functions
     // .
     static async Next() {
-        this.runmode = VM_SCENE;
-        this.dispmode = VM_NORMAL;
         this.hang = false;
         AsyncTask.Cancel();
         await this.Run();
