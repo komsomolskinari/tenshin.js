@@ -1,4 +1,5 @@
 // csv & tab-seprate txt parser
+import { AutoType } from "./util";
 
 export default class KRCSV {
     /**
@@ -23,16 +24,9 @@ export default class KRCSV {
         else body = lines;
         let titleline = this.ParseLine(lines[0]);
 
-
-
         let parsedLines = body.map(l => {
             // Parse line, and type convert
-            let pl = this.ParseLine(l).map(u => {
-                u = !isNaN(parseInt(u)) ? parseInt(u) : u;  // try int
-                u = !isNaN(parseFloat(u)) ? parseFloat(u) : u;  // try float
-                u = u ? u : null;   // check null
-                return u;
-            });
+            let pl = this.ParseLine(l).map(u => AutoType(u));
 
             // fill text index
             if (title) {

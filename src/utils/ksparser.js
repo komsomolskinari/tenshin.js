@@ -1,5 +1,5 @@
 // KAG Script parser
-
+import { AutoType } from './util';
 /**
  * @class KSParser
  */
@@ -211,7 +211,7 @@ export default class KSParser {
                     r = this._ident();
                     break;
             }
-            ret.value = r;
+            ret.value = AutoType(r);
         }
         return ret;
     }
@@ -254,12 +254,6 @@ export default class KSParser {
                 break;
             }
         }
-        let orig = b;
-        b = !isNaN(parseInt(b)) ? parseInt(b) : b;  // try int
-        b = !isNaN(parseFloat(b)) ? parseFloat(b) : b;  // try float
-        b = ((b + '') != orig) ? orig : b; // check for leading 0
-        b = b ? b : null;   // check null
-        // or keep string
         return b;
     }
 }
