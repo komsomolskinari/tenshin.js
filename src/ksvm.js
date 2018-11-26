@@ -116,6 +116,11 @@ export default class KSVM {
                 return;
             }
             const cmd = this.CurrentCmd();
+            if (this.HitBreakPoint(this.currentpos)) {
+                this.hang = true;
+                this.runlock = true;
+                debugger;
+            }
             // NOTE: macro is not implement, use native implement instead
             switch (cmd.type) {
                 case "entry":
@@ -141,13 +146,7 @@ export default class KSVM {
                     }
                     break;
             }
-            if (this.HitBreakPoint(this.currentpos)) {
-                this.hang = true;
-                this.runlock = true;
-                debugger;
-                return;
-            }
-            if(VMMode.Step) this.hang = true;
+            if (VMMode.Step) this.hang = true;
             this.currentpos.line++;
         }
         this.runlock = false;

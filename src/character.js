@@ -308,8 +308,8 @@ export default class Character {
 
     Image(faceOpt) {
         // select image
-        let mainId = parseInt(faceOpt.substr(0, 1))
-        let varId = parseInt(faceOpt.substr(1, 2))
+        let mainId = faceOpt.substr(0, 1);
+        let varId = faceOpt.substr(1, 2);
 
         if (!this.dressOpt) this.dressOpt = Object.keys(this.dress)[0];
 
