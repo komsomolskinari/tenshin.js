@@ -166,32 +166,19 @@ export default class KSParser {
             option: [],
             param: {}
         };
-        let k = [];
-        let v = [];
-        this._nextch();
+        let t = [];
+        // jup over 1st space
         while (this._fp < this._fstr.length) {
-            if (k.length > 10000) throw "too long";
-            let r = this._kv();
-            k.push(r[0]);
-            v.push(r[1]);
+            this._nextch();
+            if (t.length > 10000) throw "too long";
+            t.push(this._kv());
         }
 
-        for (let index = 0; index < k.length; index++) {
-            let key = k[index];
-            let value = v[index];
+        let fparam = t.filter(p => p.haveValue);
+        let fopt = t.filter(p => !p.haveValue);
 
-            // key = value
-            if (key && value) {
-                key = key.trim();
-                value = value.trim();
-                ret.param[key] = value;
-            }
-            // key
-            else if (key) {
-                key = key.trim();
-                ret.option.push(key);
-            }
-        }
+        fparam.forEach(p => ret.param[p.key] = p.value);
+        ret.option = fopt.map(p => p.key);
         return ret;
     }
 
@@ -201,9 +188,14 @@ export default class KSParser {
      * @see _ident
      */
     _kv() {
-        let ret = [];
-        ret.push(this._ident());
+        let ret = {
+            key: undefined,
+            value: undefined,
+            haveValue: false
+        };
+        ret.key = this._ident();
         if (this._nextch() == '=') {
+            ret.haveValue = true;
             this._fp++;
             let r;
             switch (this._nextch()) {
@@ -219,9 +211,8 @@ export default class KSParser {
                     r = this._ident();
                     break;
             }
-            ret.push(r);
+            ret.value = r;
         }
-        else ret.push(null);
         return ret;
     }
 
@@ -250,16 +241,26 @@ export default class KSParser {
     _ident() {
         let b = '';
         while (true) {
+            // get next char
             let nc = this._fstr[this._fp];
             this._fp++;
+            // not token char
             if (!" \t[]=".includes(nc) && nc != null) {
                 b += nc;
             }
+            // is token char
             else {
                 this._fp--;
-                return b;
+                break;
             }
         }
+        let orig = b;
+        b = !isNaN(parseInt(b)) ? parseInt(b) : b;  // try int
+        b = !isNaN(parseFloat(b)) ? parseFloat(b) : b;  // try float
+        b = ((b + '') != orig) ? orig : b; // check for leading 0
+        b = b ? b : null;   // check null
+        // or keep string
+        return b;
     }
 }
 window.KSParser = KSParser;
