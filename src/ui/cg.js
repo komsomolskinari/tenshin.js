@@ -1,6 +1,7 @@
 import ObjectMapper from "../objectmapper";
 import FilePath from "../utils/filepath";
-//import KRCSV from "../utils/krcsv";
+import Config from "../config";
+import KRCSV from "../utils/krcsv";
 export default class YZCG {
     static Init() {
         this.evfd = $('#evdiv');
@@ -8,7 +9,6 @@ export default class YZCG {
         this.evdifffd = $('#evdiff');
         this.datefd = $('#datediv');
         this.layerfd = $('#layerdiv');
-        this.imageFormat = ".png";
         this.layerlast = {};
         this.cglist = [];
         this.diffdef = {};
@@ -16,17 +16,19 @@ export default class YZCG {
     }
 
     static async __LoadCGList() {
-        KRCSV.parse(await FilePath.read('evdiff.csv'), ',', null)
+
+        const [szx, szy] = Config.Display.WindowSize;
+        KRCSV.parse(await FilePath.read(Config.Display.CGDiffFile), ',', null)
             .forEach(d =>
                 this.diffdef[d[0]] = {
                     ev: d[0],
                     base: d[1],
                     diff: d[2],
                     offset: [d[3] || 0, d[4] || 0],
-                    size: [d[5] || 1280, d[6] || 720]
+                    size: [d[5] || szx, d[6] || szy]
                 });
 
-        let ls = FilePath.ls('evimage');
+        let ls = FilePath.ls(Config.Display.CGPath);
         delete ls.diff;
         Object.keys(ls) // base images
             //.filter(l => l.match(/ev([0-9]+[a-z]+)/i)[1]) // filter only cg
@@ -78,7 +80,7 @@ export default class YZCG {
             $(`#layer_${cmd.param.name}`).remove();
             ObjectMapper.RemoveLayer(cmd.param.name);
         }
-        catch{
+        catch (e) {
 
         }
     }
@@ -121,9 +123,11 @@ export default class YZCG {
         this.layerlast[name] = { x, y, zoom }
         let rzoom = zoom / 100;
 
+        const [szx, szy] = Config.Display.WindowSize;
+
         let [curx, cury] = [origx * rzoom, origy * rzoom]
         let [cx, cy] = [curx / 2, cury / 2];
-        let [offx, offy] = [640 - cx, 360 - cy];
+        let [offx, offy] = [szx / 2 - cx, szy / 2 - cy];
         [offx, offy] = [offx + x, offy + y];
         fd
             .css('width', curx)

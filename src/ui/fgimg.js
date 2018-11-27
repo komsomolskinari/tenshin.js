@@ -2,7 +2,6 @@ import FilePath from "../utils/filepath";
 
 export default class YZFgImg {
     static Init() {
-        this.imageFormat = '.png';
     }
 
     static HideCharacter(name) {

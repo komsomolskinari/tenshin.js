@@ -11,11 +11,11 @@ import YZVideo from "./ui/video";
 import FilePath from './utils/filepath';
 import KSParser from "./utils/ksparser";
 import TJSON from "./utils/tjson";
-
+import Config from "./config";
 async function LoadVMData() {
     //Unicode 万国码
-    let ScriptLoadSeq = ['start.ks', '１.ks', '２.ks']
-    let envinit = await FilePath.read('envinit.tjs');
+    const ScriptLoadSeq = Config.Boot.InitialScripts;
+    let envinit = await FilePath.read(Config.Boot.EnvInitFile);
     ObjectMapper.LoadObject(TJSON.parse(envinit));
     let preloadps = [];
     ScriptLoadSeq.forEach(s => {
@@ -36,23 +36,8 @@ async function LoadVMData() {
     return;
 }
 
-TJSVM.addObject('f', {
-    sak_flag: 0,
-    rur_flag: 0,
-    san_flag: 0,
-    aoi_flag: 0,
-    mah_flag: 0,
-    yuk_flag: 0,
-});
-TJSVM.addObject('sf', {
-    sakuya_clear: false,
-    ruri_clear: false,
-    sana_clear: false,
-    aoi_clear: false,
-    mahiro_clear: false,
-    yukari_clear: false,
-});
-TJSVM.addObject('kag');
+Object.keys(Config.Boot.TJSVariable)
+    .forEach(k => TJSVM.addObject(k, Config.Boot.TJSVariable[k]))
 
 $(document).ready(async () => {
     await FilePath.Load();
@@ -64,11 +49,11 @@ $(document).ready(async () => {
     AsyncTask.Init();
     await LoadVMData();
     $(document).click(() => KSVM.Next());
-    KSVM.RunFrom('start');
+    KSVM.RunFrom(Config.Boot.EntryTag);
     KSVM.Next();
     let preloadps = [];
     // TODO: let vm cache module load other script
-    let scripts = Object.keys(FilePath.ls('scenario'));
+    let scripts = Object.keys(FilePath.ls(Config.Boot.ScenarioPath));
     scripts.forEach(s => {
         let sn = s.split('.')[0];
         preloadps.push(

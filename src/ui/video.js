@@ -1,6 +1,6 @@
 
 import FilePath from "../utils/filepath";
-
+import Config from "../config";
 export default class YZVideo {
     static Init() {
         this.vfd = $('#video');
@@ -9,7 +9,7 @@ export default class YZVideo {
     // all HW implement
     static async OP() {
         //Unicode 万国码
-        await this.Play('ＯＰ');
+        await this.Play(Config.Display.OPFile);
     }
     static async ED(cmd) {
         await this.Play(cmd.param.file);

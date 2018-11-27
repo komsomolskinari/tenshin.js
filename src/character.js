@@ -5,6 +5,7 @@ import YZText from "./ui/text";
 import AsyncTask from "./async/asynctask";
 import FilePath from "./utils/filepath";
 import KRCSV from "./utils/krcsv";
+import Config from "./config";
 const X = 0;
 const WIDTH = 0;
 const HORIZONTAL = 0;
@@ -29,7 +30,7 @@ export default class Character {
         this.voiceFmt = ObjectMapper.GetProperty(name).voiceFile;
         this.displayName = ObjectMapper.GetProperty(name).standName;
         // if character has no image, skip image meta
-        let fgLs = FilePath.ls(`fgimage/${name}`);
+        let fgLs = FilePath.ls(`${Config.Display.CharacterPath}/${name}`);
         /*{
         d1:{
             1:[dname1,prefix1]

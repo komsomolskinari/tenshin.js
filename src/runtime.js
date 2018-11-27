@@ -113,7 +113,7 @@ export default class Runtime {
         t[name] = ObjectMapper.TypeOf(name);
         option.forEach(element => {
             t[element] = ObjectMapper.TypeOf(element);
-            if (t[element] === undefined) {
+            /*if (t[element] === undefined) {
                 if (["msgoff", "msgon", "se", "date", "wait", "stage",
                     "beginskip", "endskip", "fadepausebgm", "fadebgm",
                     "pausebgm", "resumebgm", "opmovie", "edmovie",
@@ -121,9 +121,9 @@ export default class Runtime {
                     "playbgm", "delaydone", "white_ball", "white_ball_hide", "particle",
                     "show", "hide", "eval", "newlay", "dellay", "bgm", "env", "ev", "date"]
                     .includes(element.toLowerCase())) t[element] = "command";
-            }
+            }*/
         });
-        //console.log(t);
+        console.log(t);
     }
 
     static async Call(cmd) {

@@ -1,12 +1,12 @@
 import ObjectMapper from "../objectmapper";
 import FilePath from "../utils/filepath";
+import Config from "../config";
 
 export default class YZBgImg {
     static Init() {
         this.daytime = undefined;
         this.stage = undefined;
         this.curImg = "";
-        this.imageFormat = ".png";
         this.bgfd = $('#bgimg');
         this.camfd = $('#camera');
     }
@@ -69,9 +69,11 @@ export default class YZBgImg {
             origy = parseInt(this.bgfd.get(0).naturalHeight);
         }
 
+        const [szx, szy] = Config.Display.WindowSize
+
         let [curx, cury] = [origx * rzoom, origy * rzoom]
         let [cx, cy] = [curx / 2, cury / 2];
-        let [offx, offy] = [640 - cx, 360 - cy];
+        let [offx, offy] = [szx / 2 - cx, szy / 2 - cy];
         [offx, offy] = [offx - x / 10, offy - y / 10];
         this.bgfd
             .css('width', curx)

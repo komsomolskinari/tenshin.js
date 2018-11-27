@@ -1,3 +1,4 @@
+import Config from '../config'
 export default class FilePath {
     /**
      * Load VFS
@@ -6,9 +7,9 @@ export default class FilePath {
         if (this.loading) return;
         this.loading = true;
         this.ready = false;
-        this.mode = "nginx-json";
-        this.root = "game/";        // game root
-        this.loadpath = "game/";    // path file or game root
+        this.mode = Config.File.TreeMode;
+        this.root = Config.File.Root;           // game root
+        this.loadpath = Config.File.TreePath;   // path file or game root
         this.loading = true;
         this.tree = [];
 
