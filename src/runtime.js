@@ -15,6 +15,32 @@ export default class Runtime {
 
         this.inTrans = false;
         this.transSeq = [];
+
+        // Callback function map
+        // Always use arrow function, or Firefox will 'this is undefined'
+        this.callbacks = {
+            "mseladd": cmd => this.MapSelectAdd(cmd),
+            "seladd": cmd => this.SelectAdd(cmd),
+            "next": cmd => this.Next(cmd),
+            "mselect": cmd => this.MapSelect(cmd),
+            "select": cmd => this.Select(cmd),
+            "sysjump": cmd => console.debug("Sysjump, EOF?", cmd),
+            "endtrans": cmd => this.CompileTrans(cmd),
+            "newlay": cmd => YZCG.NewLay(cmd),
+            "dellay": cmd => YZCG.DelLay(cmd),
+            "bgm": cmd => YZSound.BGM(cmd),
+            "env": cmd => YZBgImg.ProcessEnv(cmd),
+            "ev": cmd => YZCG.EV(cmd),
+
+            // has unexpected return value
+            "mselinit": () => { this.MapSelectData = []; return undefined },
+            "eval": cmd => { TJSVM.eval(cmd.param.exp); return undefined },
+            "begintrans": () => { this.inTrans = true; return undefined },
+
+            // macro, native impliement
+            "opmovie": async () => await YZVideo.OP(),
+            "edmovie": async cmd => await YZVideo.ED(cmd)
+        }
     }
 
     // Text related commands
@@ -112,18 +138,10 @@ export default class Runtime {
         let t = {};
 
         let types = {
-            macros: [
-                "ano_view", "ret_view", "playbgm", "delaydone",
-                "white_ball", "white_ball_hide", "particle"
-            ],
-            commands: [
-                "se", "stage",
-                "beginskip", "endskip", "fadepausebgm", "fadebgm",
-                "pausebgm", "resumebgm", "eval",
-                "newlay", "dellay", "bgm", "env"
-            ],
+            commands: Object.keys(this.callbacks),
             options: [
-                "msgoff", "msgon", "show", "hide", "wait"
+                "msgoff", "msgon", "show", "hide", "wait", "resetpos", "back",
+                "stop", "sync", "beginskip", "endskip", "loop"
             ],
             drawable: [
                 "ev", "date", "env"
@@ -139,37 +157,28 @@ export default class Runtime {
                 else return undefined;
             }).filter(t => t)[0];
         });
+
+        for (const key in t) {
+            if (t.hasOwnProperty(key)) {
+                const val = t[key];
+                if (!val) {
+                    t[key] = Object.keys(types)
+                        .map(t =>
+                            types[t].includes(key.toLowerCase()) ?
+                                t :
+                                undefined
+                        )
+                        .filter(t => t)[0];
+                }
+            }
+        }
         console.log(t);
     }
 
     static async Call(cmd) {
         this.UnpackCmd(cmd);
-        // Always use arrow function, or Firefox will 'this is undefined'
-        const callbacks = {
-            "mseladd": cmd => this.MapSelectAdd(cmd),
-            "seladd": cmd => this.SelectAdd(cmd),
-            "next": cmd => this.Next(cmd),
-            "mselect": cmd => this.MapSelect(cmd),
-            "select": cmd => this.Select(cmd),
-            "sysjump": cmd => console.debug("Sysjump, EOF?", cmd),
-            "endtrans": cmd => this.CompileTrans(cmd),
-            "newlay": cmd => YZCG.NewLay(cmd),
-            "dellay": cmd => YZCG.DelLay(cmd),
-            "bgm": cmd => YZSound.BGM(cmd),
-            "env": cmd => YZBgImg.ProcessEnv(cmd),
-            "ev": cmd => YZCG.EV(cmd),
-
-            // has unexpected return value
-            "mselinit": () => { this.MapSelectData = []; return undefined },
-            "eval": cmd => { TJSVM.eval(cmd.param.exp); return undefined },
-            "begintrans": () => { this.inTrans = true; return undefined },
-
-            // macro, native impliement
-            "opmovie": async () => await YZVideo.OP(),
-            "edmovie": async cmd => await YZVideo.ED(cmd)
-        }
         let callname = cmd.name.toLowerCase();
-        let cb = callbacks[callname];
+        let cb = this.callbacks[callname];
         let ret;
         if (cb !== undefined) {
             ret = await cb(cmd);

@@ -38,7 +38,7 @@ export default {
             kag: {}
         },
         // Array<String>: Macros which use 'native' implement
-        OverrideMacros: ['swmovie','edmovie','day_full'],
+        OverrideMacros: ['swmovie','edmovie','day_full','initscene'],
         // String:
         ScenarioPath: 'scenario',
     },
