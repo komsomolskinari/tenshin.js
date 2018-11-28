@@ -1,5 +1,6 @@
 // KAG Script parser
 import { AutoType } from './util';
+import { SSL_OP_SSLEAY_080_CLIENT_DH_BUG } from 'constants';
 /**
  * @class KSParser
  */
@@ -68,8 +69,7 @@ export default class KSParser {
                     return;
                 case '[':
                     // cut to multiple function token
-                    l = l.replace(/\](.)/g, ']\n$1');
-                    l.split('\n').forEach(s => lines.push(s));
+                    lines = lines.concat(this._cutfunction(l));
                     return;
                 case '*':
                     // tag, direct pass
@@ -100,6 +100,39 @@ export default class KSParser {
             }
         }).filter(c => c !== null);
         return this.cmd;
+    }
+
+    _cutfunction(str) {
+        let depth = 0;
+        let cur = '';
+        let ret = [];
+        let rawstr = true;
+        let rs = '';
+        for (let index = 0; index < str.length; index++) {
+            const s = str[index];
+            cur += s;
+            switch (s) {
+                case '[':
+                    if (rs.length > 0) ret.push(rs);
+                    rawstr = false;
+                    depth++;
+                    break;
+                case ']':
+                    rawstr = true;
+                    rs = '';
+                    depth--;
+                    if (depth == 0) {
+                        ret.push(cur);
+                        cur = '';
+                    }
+                    break;
+                default:
+                    if (rawstr) rs += s;
+                    break;
+            }
+        }
+        if (rs.length > 0) ret.push(rs);
+        return ret;
     }
 
     /**
@@ -245,6 +278,7 @@ export default class KSParser {
             let nc = this._fstr[this._fp];
             this._fp++;
             // not token char
+            // macro.ks: [eval exp='sf["replay_"+mp.file]=true']
             if (!" \t[]=".includes(nc) && nc != null) {
                 b += nc;
             }

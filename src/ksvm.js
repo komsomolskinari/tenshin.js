@@ -15,6 +15,7 @@ export default class KSVM {
         this.hang = false;
         // scripts = {name: script}
         this.scripts = {};
+        this.macros = {};
         this.tags = {};
         // [script name, line#]
         this.currentpos = { "script": null, "line": 1 };
@@ -47,6 +48,32 @@ export default class KSVM {
             .forEach(l => {
                 this.AddTag(l.name, name, l.line)
             });
+        // scan macros
+        let inMacro = false;
+        let currentMacro = [];
+        let currentMName = '';
+        for (let index = 0; index < script.length; index++) {
+            const element = script[index];
+            if (element.name == 'macro' && element.type == 'func') {
+                if (currentMacro.length > 0) {
+                    this.AddMacro(currentMName, currentMacro);
+                }
+                currentMName = element.param.name;
+                currentMacro = [];
+                inMacro = true;
+            }
+            else if (element.name == 'endmacro' && element.type == 'func') {
+                if (currentMacro.length > 0) {
+                    this.AddMacro(currentMName, currentMacro);
+                }
+                currentMName = '';
+                currentMacro = [];
+                inMacro = false;
+            }
+            else if (inMacro) {
+                currentMacro.push(element);
+            }
+        }
     }
 
     static AddTag(name, script, line) {
@@ -55,6 +82,10 @@ export default class KSVM {
             script: script,
             line: line
         });
+    }
+
+    static AddMacro(name, script) {
+        this.macros[name] = script;
     }
 
     static AddBreakPoint(script, line) {

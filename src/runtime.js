@@ -110,18 +110,34 @@ export default class Runtime {
     static UnpackCmd(cmd) {
         let { name, option, param } = cmd;
         let t = {};
+
+        let types = {
+            macros: [
+                "ano_view", "ret_view", "playbgm", "delaydone",
+                "white_ball", "white_ball_hide", "particle"
+            ],
+            commands: [
+                "se", "stage",
+                "beginskip", "endskip", "fadepausebgm", "fadebgm",
+                "pausebgm", "resumebgm", "eval",
+                "newlay", "dellay", "bgm", "env"
+            ],
+            options: [
+                "msgoff", "msgon", "show", "hide", "wait"
+            ],
+            drawable: [
+                "ev", "date", "env"
+            ],
+        }
         t[name] = ObjectMapper.TypeOf(name);
         option.forEach(element => {
             t[element] = ObjectMapper.TypeOf(element);
-            /*if (t[element] === undefined) {
-                if (["msgoff", "msgon", "se", "date", "wait", "stage",
-                    "beginskip", "endskip", "fadepausebgm", "fadebgm",
-                    "pausebgm", "resumebgm", "opmovie", "edmovie",
-                    "initscene", "day_full", "ano_view", "ret_view",
-                    "playbgm", "delaydone", "white_ball", "white_ball_hide", "particle",
-                    "show", "hide", "eval", "newlay", "dellay", "bgm", "env", "ev", "date"]
-                    .includes(element.toLowerCase())) t[element] = "command";
-            }*/
+            if (t[element] !== undefined) return;
+            const e = element.toLowerCase();
+            t[element] = Object.keys(types).map(t => {
+                if (types[t].includes(e)) return t;
+                else return undefined;
+            }).filter(t => t)[0];
         });
         console.log(t);
     }

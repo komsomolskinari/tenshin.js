@@ -1,13 +1,23 @@
+// 本文件支持Unicode
 export default {
     File: {
+        // String: file tree root, add prefix to all ajax
         Root: 'game/',
+        // Enum: nginx-json, nginx-xml, nginx-html, apache, iis, lighttpd, hfs, json
+        //      - json：use static json file, in tree -J format
         TreeMode: 'nginx-json',
+        // String: where to start read tree information
+        //      if use json treemode, the path to index file
         TreePath: 'game/'
     },
     Boot: {
+        // Array <String>: Scripts needed to start VM
         InitialScripts: ['start.ks', '１.ks', '２.ks'],
+        // String: Which tag to start VM
         EntryTag: 'start',
+        // String:
         EnvInitFile: 'envinit.tjs',
+        // Object: TJSVM's 'Global'
         TJSVariable: {
             f: {
                 sak_flag: 0,
@@ -27,13 +37,22 @@ export default {
             },
             kag: {}
         },
+        // Array<String>: Macros which use 'native' implement
+        OverrideMacros: ['swmovie','edmovie','day_full'],
+        // String:
         ScenarioPath: 'scenario',
     },
     Display: {
+        // [Integer, Integer]: Original game window size
+        //      edit this WON'T modify the size in browser
         WindowSize: [1280, 720],
+        // String:
         OPFile: 'ＯＰ',
+        // String:
         CGPath: 'evimage',
+        // String:
         CGDiffFile: 'evdiff.csv',
+        // String:
         CharacterPath: 'fgimage',
     },
     Debug: {
