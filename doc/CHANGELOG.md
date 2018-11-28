@@ -1,5 +1,21 @@
 # 更新日志 Changelog
 
+## [v0.4.3.1] - 2018-11-28
+### 新增 Added
+- macro
+- 配置文件 Config file
+### 修复 Fixed
+- KSParser 支持 `[funtion param=]`    KSParser support `[funtion param=]`
+- KSParser自动类型转换    KSParser not always return string
+
+## [v0.4.3] - 2018-11-25
+### 新增 Added
+- 视频功能    Video
+- VM断点与单步    Breakpoint and Step in KSVM
+### 改变 Changed
+- 运行库全异步化    Async Runtime
+- 改用Function提供TJS支持    Use Function class to provide TJS functionality
+
 ## [v0.4.2] - 2018-11-21
 ### 新增 Added
 - 支持nginx (html/xml/json), HFS, Apache, lighttpd, IIS目录浏览    Directory browsing
