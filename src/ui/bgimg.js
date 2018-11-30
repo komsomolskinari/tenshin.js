@@ -1,6 +1,5 @@
 import ObjectMapper from "../objectmapper";
 import FilePath from "../utils/filepath";
-import Config from "../config";
 
 export default class YZBgImg {
     static Init() {

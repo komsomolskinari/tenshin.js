@@ -1,6 +1,5 @@
 // KAG Script parser
 import { AutoType } from './util';
-import { SSL_OP_SSLEAY_080_CLIENT_DH_BUG } from 'constants';
 /**
  * @class KSParser
  */

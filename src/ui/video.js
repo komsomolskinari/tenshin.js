@@ -1,6 +1,5 @@
-
 import FilePath from "../utils/filepath";
-import Config from "../config";
+
 export default class YZVideo {
     static Init() {
         this.vfd = $('#video');

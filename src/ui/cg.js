@@ -1,6 +1,5 @@
 import ObjectMapper from "../objectmapper";
 import FilePath from "../utils/filepath";
-import Config from "../config";
 import KRCSV from "../utils/krcsv";
 export default class YZCG {
     static Init() {

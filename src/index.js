@@ -11,7 +11,6 @@ import YZVideo from "./ui/video";
 import FilePath from './utils/filepath';
 import KSParser from "./utils/ksparser";
 import TJSON from "./utils/tjson";
-import Config from "./config";
 import YZLayerMgr from "./ui/layer";
 async function LoadVMData() {
     const ScriptLoadSeq = Config.Boot.InitialScripts;

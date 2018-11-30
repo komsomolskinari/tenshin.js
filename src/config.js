@@ -1,5 +1,5 @@
 // 本文件支持Unicode
-export default {
+window.Config = {
     File: {
         // String: file tree root, add prefix to all ajax
         Root: 'game/',
@@ -38,7 +38,7 @@ export default {
             kag: {}
         },
         // Array<String>: Macros which use 'native' implement
-        OverrideMacros: ['swmovie','edmovie','day_full','initscene'],
+        OverrideMacros: ['swmovie', 'edmovie', 'day_full', 'initscene'],
         // String:
         ScenarioPath: 'scenario',
     },

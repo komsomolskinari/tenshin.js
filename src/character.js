@@ -5,7 +5,6 @@ import YZText from "./ui/text";
 import AsyncTask from "./async/asynctask";
 import FilePath from "./utils/filepath";
 import KRCSV from "./utils/krcsv";
-import Config from "./config";
 import YZLayerMgr from "./ui/layer";
 const X = 0;
 const WIDTH = 0;

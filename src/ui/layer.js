@@ -1,4 +1,3 @@
-import Config from "../config";
 import FilePath from "../utils/filepath";
 // methods:
 // draw multiple layer
