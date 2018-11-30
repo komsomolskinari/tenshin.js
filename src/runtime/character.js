@@ -1,5 +1,4 @@
 import ObjectMapper from "../objectmapper";
-import YZFgImg from "./fgimg";
 import YZSound from "../ui/sound";
 import YZText from "../ui/text";
 import AsyncTask from "../async/asynctask";

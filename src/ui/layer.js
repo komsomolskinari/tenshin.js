@@ -105,8 +105,8 @@ class YZLayer {
                         if (!_height) {
                             // wait image loaded
                             await new Promise((resolve, reject) => {
-                                this.subfd[name].on('load', () => resolve());
-                                this.subfd[name].on('error', () => reject());
+                                this.subfd[name].one('load', () => resolve());
+                                this.subfd[name].one('error', () => reject());
                             });
                         }
                         // ok, it's now loaded
@@ -142,6 +142,8 @@ class YZLayer {
         this.fd
             .css('left', _fullLeft)
             .css('top', _fullTop)
+            .css('height', _fullHeight)
+            .css('width', _fullWidth)
             .css('transform', `scale(${this.current.zoom / 100})`);
 
         this.previous = JSON.parse(JSON.stringify(this.current));
@@ -163,7 +165,8 @@ class YZLayer {
         this.current.zoom = zoom;
     }
 }
-
+// problem: how to handle 'env', or camera layer?
+// simulate it to a normal layer?
 export default class YZLayerMgr {
     static Init() {
         YZLayer.Init();

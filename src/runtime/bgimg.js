@@ -1,12 +1,14 @@
 import ObjectMapper from "../objectmapper";
 import FilePath from "../utils/filepath";
+import YZLayerMgr from "../ui/layer";
 
 export default class YZBgImg {
     static Init() {
         this.daytime = undefined;
         this.stage = undefined;
         this.curImg = "";
-        this.bgfd = $('#bgimg');
+        this.bgname = "background";
+        //this.bgfd = $('#bgimg');
         this.camfd = $('#camera');
     }
 
@@ -26,9 +28,15 @@ export default class YZBgImg {
         }
 
         this.curImg = this.stage.image.replace('TIME', this.daytime.prefix);
-        let bgPath = FilePath.findMedia(this.curImg, 'image');
-        this.bgfd.attr('src', bgPath);
-        this.Reset();
+        //let bgPath = FilePath.findMedia(this.curImg, 'image');
+
+        YZLayerMgr.Set(this.bgname, [{ name: this.curImg }]);
+
+        //this.bgfd.attr('src', bgPath);
+        //this.Reset();
+
+        YZLayerMgr.Move(this.bgname, 0, 0);
+        YZLayerMgr.Zoom(this.bgname, 100);
         let mapped = {};
         option.filter(o => ObjectMapper.IsProperty(o)).forEach(o => {
             let t = ObjectMapper.TypeOf(o);
@@ -47,52 +55,18 @@ export default class YZBgImg {
         let xpos = param.xpos || 0;
         let ypos = param.ypos || 0;
         let zoom = param.zoom || 100;
-        this.SetZoom(zoom, xpos, ypos);
+        YZLayerMgr.Move(this.bgname, xpos, ypos);
+        YZLayerMgr.Zoom(this.bgname, zoom);
+        YZLayerMgr.Draw(this.bgname);
+        //this.SetZoom(zoom, xpos, ypos);
 
-        let blur = param.blur || null;
-        this.SetBlur(blur);
-    }
-
-    static async SetZoom(zoom, x, y) {
-        let rzoom = zoom / 100;
-        let origx = parseInt(this.bgfd.get(0).naturalWidth);
-        let origy = parseInt(this.bgfd.get(0).naturalHeight);
-        // not loaded
-        if (origx + origy <= 0) {
-            // wait image loaded
-            await new Promise((resolve, reject) => {
-                this.bgfd.on('load', () => resolve());
-                this.bgfd.on('error', () => reject());
-            })
-            origx = parseInt(this.bgfd.get(0).naturalWidth);
-            origy = parseInt(this.bgfd.get(0).naturalHeight);
-        }
-
-        const [szx, szy] = Config.Display.WindowSize
-
-        let [curx, cury] = [origx * rzoom, origy * rzoom]
-        let [cx, cy] = [curx / 2, cury / 2];
-        let [offx, offy] = [szx / 2 - cx, szy / 2 - cy];
-        [offx, offy] = [offx - x / 10, offy - y / 10];
-        this.bgfd
-            .css('width', curx)
-            .css('height', cury)
-            .css('left', offx)
-            .css('top', offy)
-
-            // remove listener, prepare for next call
-            .off('load')
-            .off('error')
+        //let blur = param.blur || null;
+        //this.SetBlur(blur);
     }
 
     static SetBlur(blur) {
         if (!blur) this.bgfd.css('filter', '');
         else this.bgfd.css('filter', `blur(${blur}px)`);
-    }
-
-    static Reset() {
-        this.SetBlur(null);
-        this.SetZoom(100, 0, 0);
     }
 
     static ProcessEnv(cmd) {
