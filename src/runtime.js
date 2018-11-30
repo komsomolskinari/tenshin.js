@@ -1,9 +1,9 @@
 // runtime libs
-import Character from './character';
+import Character from './runtime/character';
 import ObjectMapper from './objectmapper';
 import TJSVM from './tjsvm';
-import YZBgImg from './ui/bgimg';
-import YZCG from './ui/cg';
+import YZBgImg from './runtime/bgimg';
+import YZCG from './runtime/cg';
 import YZSound from './ui/sound';
 import YZText from './ui/text';
 import YZVideo from './ui/video';
