@@ -1,0 +1,1211 @@
+.
+├── AppConfig.tjs
+├── image
+│   ├── aboutdialog.webp
+│   ├── bar.webp
+│   ├── clickglyph.asd
+│   ├── clickglyph.bmp
+│   ├── deactivelogo.webp
+│   ├── dummysel_normal.webp
+│   ├── dummysel_over.webp
+│   ├── emotion
+│   │   ├── ang.webp
+│   │   ├── ase_li.webp
+│   │   ├── ase.webp
+│   │   ├── heart.webp
+│   │   ├── iki_r.webp
+│   │   ├── iki.webp
+│   │   ├── wao_r.webp
+│   │   ├── wao.webp
+│   │   ├── キラン.webp
+│   │   ├── ハート.webp
+│   │   ├── ビックリ_リバース.webp
+│   │   ├── ビックリ.webp
+│   │   ├── ビックリマーク.webp
+│   │   ├── 怒り.webp
+│   │   ├── ため息_リバース.webp
+│   │   ├── ため息.webp
+│   │   ├── 汗大.webp
+│   │   ├── 汗小_リバース.webp
+│   │   ├── 汗小.webp
+│   │   └── 音符.webp
+│   ├── kokuban.webp
+│   ├── particle10.bmp
+│   ├── particle30.bmp
+│   ├── particle50.bmp
+│   ├── sdhit_province.webp
+│   ├── sdキャラボタン_ルリ.webp
+│   ├── sdキャラボタン_まひろ.webp
+│   ├── sdキャラボタン_ルリ？.webp
+│   ├── sdキャラボタン_佐奈.webp
+│   ├── sdキャラボタン_咲夜.webp
+│   ├── sdキャラボタン_紫.webp
+│   ├── sdキャラボタン_葵.webp
+│   ├── sqscrmask.webp
+│   ├── yuzu_soft.webp
+│   ├── yuzu.webp
+│   ├── 全画面日付
+│   │   ├── 0408.webp
+│   │   ├── 0409.webp
+│   │   ├── 0415.webp
+│   │   ├── 0416.webp
+│   │   ├── 0417.webp
+│   │   ├── 0420.webp
+│   │   ├── 0429.webp
+│   │   ├── 0430.webp
+│   │   ├── 0501.webp
+│   │   ├── 0502.webp
+│   │   ├── 0518.webp
+│   │   ├── 0519.webp
+│   │   ├── 0520.webp
+│   │   ├── 0603.webp
+│   │   ├── 0604.webp
+│   │   ├── 0605.webp
+│   │   ├── 0606.webp
+│   │   ├── 0607.webp
+│   │   ├── 0608.webp
+│   │   ├── 0630.webp
+│   │   ├── 0701.webp
+│   │   ├── 0716.webp
+│   │   ├── 0717.webp
+│   │   ├── 0718.webp
+│   │   ├── 0722.webp
+│   │   ├── 0723.webp
+│   │   ├── 0724.webp
+│   │   ├── 0725.webp
+│   │   ├── 0726.webp
+│   │   ├── 0727.webp
+│   │   ├── 0729.webp
+│   │   ├── 0730.webp
+│   │   ├── 0801.webp
+│   │   ├── 0802.webp
+│   │   ├── 0803.webp
+│   │   ├── 0804.webp
+│   │   ├── 0805.webp
+│   │   ├── 0806.webp
+│   │   ├── 0807.webp
+│   │   ├── 0809.webp
+│   │   ├── 0812.webp
+│   │   ├── 0813.webp
+│   │   ├── 0814.webp
+│   │   ├── 0815.webp
+│   │   ├── 0816.webp
+│   │   ├── 0818.webp
+│   │   ├── 0819.webp
+│   │   ├── 0820.webp
+│   │   ├── 0821.webp
+│   │   ├── 0822.webp
+│   │   ├── 0823.webp
+│   │   ├── 0824.webp
+│   │   ├── 0825.webp
+│   │   ├── 0826.webp
+│   │   ├── 0830.webp
+│   │   ├── 0831.webp
+│   │   ├── 0902.webp
+│   │   ├── 0905.webp
+│   │   ├── 0906.webp
+│   │   ├── 0907.webp
+│   │   ├── 0909.webp
+│   │   ├── 0910.webp
+│   │   ├── 0912.webp
+│   │   ├── 0913.webp
+│   │   ├── 0917.webp
+│   │   ├── 0918.webp
+│   │   ├── 0919.webp
+│   │   ├── 0920.webp
+│   │   ├── 0923.webp
+│   │   ├── 0924.webp
+│   │   ├── 0925.webp
+│   │   ├── 0926.webp
+│   │   ├── 0928.webp
+│   │   ├── 0929.webp
+│   │   ├── 0930.webp
+│   │   ├── 1001.webp
+│   │   ├── 1002.webp
+│   │   ├── 1003.webp
+│   │   ├── 1004.webp
+│   │   ├── 1005.webp
+│   │   ├── 1006.webp
+│   │   ├── 1007.webp
+│   │   ├── 1008.webp
+│   │   ├── 1009.webp
+│   │   ├── 1010.webp
+│   │   ├── 1011.webp
+│   │   ├── 1012.webp
+│   │   ├── 1013.webp
+│   │   ├── 1014.webp
+│   │   ├── 1015.webp
+│   │   ├── 1016.webp
+│   │   ├── 1017.webp
+│   │   ├── 1018.webp
+│   │   ├── 1019.webp
+│   │   ├── 1020.webp
+│   │   ├── 1021.webp
+│   │   ├── 1024.webp
+│   │   ├── 1025.webp
+│   │   ├── 1027.webp
+│   │   ├── 1031.webp
+│   │   ├── 1101.webp
+│   │   ├── 1105.webp
+│   │   ├── 1107.webp
+│   │   ├── 1108.webp
+│   │   ├── 1109.webp
+│   │   ├── 1110.webp
+│   │   ├── 1111.webp
+│   │   ├── 1122.webp
+│   │   ├── 1123.webp
+│   │   ├── aoi_1.webp
+│   │   ├── aoi_2.webp
+│   │   ├── kokuban_1020.webp
+│   │   ├── mah_1.webp
+│   │   ├── mah_2.webp
+│   │   ├── rur_1.webp
+│   │   ├── rur_2.webp
+│   │   ├── sak_1.webp
+│   │   ├── sak_2.webp
+│   │   ├── sak_3.webp
+│   │   ├── san_1.webp
+│   │   ├── san_2.webp
+│   │   ├── yuk_1.webp
+│   │   └── yuk_2.webp
+│   ├── 日付
+│   │   ├── 日付0408.webp
+│   │   ├── 日付0409.webp
+│   │   ├── 日付0415.webp
+│   │   ├── 日付0416.webp
+│   │   ├── 日付0417.webp
+│   │   ├── 日付0420.webp
+│   │   ├── 日付0429.webp
+│   │   ├── 日付0430.webp
+│   │   ├── 日付0501.webp
+│   │   ├── 日付0502.webp
+│   │   ├── 日付0518.webp
+│   │   ├── 日付0519.webp
+│   │   ├── 日付0520.webp
+│   │   ├── 日付0603.webp
+│   │   ├── 日付0604.webp
+│   │   ├── 日付0605.webp
+│   │   ├── 日付0606.webp
+│   │   ├── 日付0607.webp
+│   │   ├── 日付0608.webp
+│   │   ├── 日付0630.webp
+│   │   ├── 日付0701.webp
+│   │   ├── 日付0716.webp
+│   │   ├── 日付0717.webp
+│   │   ├── 日付0718.webp
+│   │   ├── 日付0722.webp
+│   │   ├── 日付0723.webp
+│   │   ├── 日付0724.webp
+│   │   ├── 日付0725.webp
+│   │   ├── 日付0726.webp
+│   │   ├── 日付0727.webp
+│   │   ├── 日付0729.webp
+│   │   ├── 日付0730.webp
+│   │   ├── 日付0801.webp
+│   │   ├── 日付0802.webp
+│   │   ├── 日付0803.webp
+│   │   ├── 日付0804.webp
+│   │   ├── 日付0805.webp
+│   │   ├── 日付0806.webp
+│   │   ├── 日付0807.webp
+│   │   ├── 日付0809.webp
+│   │   ├── 日付0812.webp
+│   │   ├── 日付0813.webp
+│   │   ├── 日付0814.webp
+│   │   ├── 日付0815.webp
+│   │   ├── 日付0816.webp
+│   │   ├── 日付0818.webp
+│   │   ├── 日付0819.webp
+│   │   ├── 日付0820.webp
+│   │   ├── 日付0821.webp
+│   │   ├── 日付0822.webp
+│   │   ├── 日付0823.webp
+│   │   ├── 日付0824.webp
+│   │   ├── 日付0825.webp
+│   │   ├── 日付0826.webp
+│   │   ├── 日付0830.webp
+│   │   ├── 日付0831.webp
+│   │   ├── 日付0902.webp
+│   │   ├── 日付0905.webp
+│   │   ├── 日付0906.webp
+│   │   ├── 日付0907.webp
+│   │   ├── 日付0909.webp
+│   │   ├── 日付0910.webp
+│   │   ├── 日付0912.webp
+│   │   ├── 日付0913.webp
+│   │   ├── 日付0917.webp
+│   │   ├── 日付0918.webp
+│   │   ├── 日付0919.webp
+│   │   ├── 日付0920.webp
+│   │   ├── 日付0923.webp
+│   │   ├── 日付0924.webp
+│   │   ├── 日付0925.webp
+│   │   ├── 日付0926.webp
+│   │   ├── 日付0928.webp
+│   │   ├── 日付0929.webp
+│   │   ├── 日付0930.webp
+│   │   ├── 日付1001.webp
+│   │   ├── 日付1002.webp
+│   │   ├── 日付1003.webp
+│   │   ├── 日付1004.webp
+│   │   ├── 日付1005.webp
+│   │   ├── 日付1006.webp
+│   │   ├── 日付1007.webp
+│   │   ├── 日付1008.webp
+│   │   ├── 日付1009.webp
+│   │   ├── 日付1010.webp
+│   │   ├── 日付1011.webp
+│   │   ├── 日付1012.webp
+│   │   ├── 日付1013.webp
+│   │   ├── 日付1014.webp
+│   │   ├── 日付1015.webp
+│   │   ├── 日付1016.webp
+│   │   ├── 日付1017.webp
+│   │   ├── 日付1018.webp
+│   │   ├── 日付1019.webp
+│   │   ├── 日付1020.webp
+│   │   ├── 日付1021.webp
+│   │   ├── 日付1024.webp
+│   │   ├── 日付1025.webp
+│   │   ├── 日付1027.webp
+│   │   ├── 日付1031.webp
+│   │   ├── 日付1101.webp
+│   │   ├── 日付1105.webp
+│   │   ├── 日付1107.webp
+│   │   ├── 日付1108.webp
+│   │   ├── 日付1109.webp
+│   │   ├── 日付1110.webp
+│   │   ├── 日付1111.webp
+│   │   ├── 日付1122.webp
+│   │   └── 日付1123.webp
+│   ├── 曲名
+│   │   ├── muscaptions_01.webp
+│   │   ├── muscaptions_02.webp
+│   │   ├── muscaptions_03.webp
+│   │   ├── muscaptions_04.webp
+│   │   ├── muscaptions_05.webp
+│   │   ├── muscaptions_06.webp
+│   │   ├── muscaptions_07.webp
+│   │   ├── muscaptions_08.webp
+│   │   ├── muscaptions_09.webp
+│   │   ├── muscaptions_10.webp
+│   │   ├── muscaptions_11.webp
+│   │   ├── muscaptions_12.webp
+│   │   ├── muscaptions_13.webp
+│   │   ├── muscaptions_14.webp
+│   │   ├── muscaptions_15.webp
+│   │   ├── muscaptions_16.webp
+│   │   ├── muscaptions_17.webp
+│   │   ├── muscaptions_18.webp
+│   │   ├── muscaptions_19.webp
+│   │   ├── muscaptions_20.webp
+│   │   ├── muscaptions_21.webp
+│   │   ├── muscaptions_22.webp
+│   │   ├── muscaptions_23.webp
+│   │   ├── muscaptions_24.webp
+│   │   ├── muscaptions_25.webp
+│   │   ├── muscaptions_26.webp
+│   │   ├── muscaptions_27.webp
+│   │   ├── muscaptions_28.webp
+│   │   ├── muscaptions_29.webp
+│   │   ├── muscaptions_30.webp
+│   │   ├── muscaptions_31.webp
+│   │   ├── muscaptions_32.webp
+│   │   ├── muscaptions_33.webp
+│   │   ├── muscaptions_34.webp
+│   │   ├── muscaptions_35.webp
+│   │   └── muscaptions_36.webp
+│   ├── 演出用素材
+│   │   ├── うみゃい2.webp
+│   │   ├── うみゃい3.webp
+│   │   ├── baseball_gon.webp
+│   │   ├── baseball.webp
+│   │   ├── bear_line.webp
+│   │   ├── bear.webp
+│   │   ├── fox_01.webp
+│   │   ├── fox_02.webp
+│   │   ├── fox_03.webp
+│   │   ├── fox_04.webp
+│   │   ├── foxbox.webp
+│   │   ├── god_box.webp
+│   │   ├── name_千歳佐奈.webp
+│   │   ├── name_千歳眞一郎.webp
+│   │   ├── name_山吹渉.webp
+│   │   ├── name_山吹葵.webp
+│   │   ├── name_常盤まひろ.webp
+│   │   ├── name_木賊朋花.webp
+│   │   ├── name_東雲庵.webp
+│   │   ├── name_浅葱虎太郎.webp
+│   │   ├── name_烏羽紫.webp
+│   │   ├── name_老竹幹雄.webp
+│   │   ├── sak00.asd
+│   │   ├── sak00.bmp
+│   │   ├── tennis.webp
+│   │   ├── い.webp
+│   │   ├── し.webp
+│   │   ├── た.webp
+│   │   ├── ぶるま.webp
+│   │   ├── キラ☆.webp
+│   │   ├── ハンコ.webp
+│   │   ├── うみゃい.webp
+│   │   ├── イキモノ.webp
+│   │   ├── ナマモノ.webp
+│   │   ├── ライター.webp
+│   │   ├── コムローイ.webp
+│   │   ├── コンドーム.webp
+│   │   ├── ホームラン.webp
+│   │   ├── ラブレター.webp
+│   │   ├── イメージざわ.webp
+│   │   ├── イメージどーん.webp
+│   │   ├── イメージほわほわ.webp
+│   │   ├── イメージショック.webp
+│   │   ├── zone_ball.webp
+│   │   ├── zone_blur.webp
+│   │   ├── zone_up.webp
+│   │   ├── zone.webp
+│   │   ├── 一方.webp
+│   │   ├── 人間失格.webp
+│   │   ├── 卯ノ花姫.webp
+│   │   ├── 卯ノ花姫（欠）.webp
+│   │   ├── イメージ妄想.webp
+│   │   ├── 姫消失.webp
+│   │   ├── 完成.webp
+│   │   ├── 小瓶.webp
+│   │   ├── 御守.webp
+│   │   ├── 御守２.webp
+│   │   ├── 扇.webp
+│   │   ├── 打球.webp
+│   │   ├── 投球.webp
+│   │   ├── 料理開始.webp
+│   │   ├── 死体.webp
+│   │   ├── 火災_ベース.webp
+│   │   ├── 烏羽紫.webp
+│   │   ├── 焼きソバ.webp
+│   │   ├── イメージキラ緑.webp
+│   │   ├── イメージ衝撃.webp
+│   │   ├── 集中線.webp
+│   │   ├── その頃.webp
+│   │   └── イメージキラ黄.webp
+│   └── 諸注意.webp
+├── rule
+│   ├── rule_10.webp
+│   ├── rule_11.webp
+│   ├── rule_12.webp
+│   ├── rule_13.webp
+│   ├── rule_14.webp
+│   ├── rule_15.webp
+│   ├── rule_16.webp
+│   ├── rule_1.webp
+│   ├── rule_2.webp
+│   ├── rule_3.webp
+│   ├── rule_4.webp
+│   ├── rule_5.webp
+│   ├── rule_6.webp
+│   ├── rule_7.webp
+│   ├── rule_8.webp
+│   └── rule_9.webp
+├── startup.tjs
+├── sysscn
+│   ├── about.ks
+│   ├── AfterInit.tjs
+│   ├── brows.ks
+│   ├── browswindow.tjs
+│   ├── cgmode.ks
+│   ├── cgmode.tjs
+│   ├── debugutil.tjs
+│   ├── diffimage.tjs
+│   ├── dirutil.tjs
+│   ├── encyclopedia.tjs
+│   ├── end.ks
+│   ├── exmenuintf.tjs
+│   ├── first.ks
+│   ├── loadinit.ks
+│   ├── load.ks
+│   ├── MyHistoryLayer.tjs
+│   ├── MyMapSelectLayer.tjs
+│   ├── MyYesNoDialog.tjs
+│   ├── name.ks
+│   ├── name.tjs
+│   ├── option.ks
+│   ├── option.tjs
+│   ├── Override.tjs
+│   ├── pagebase.tjs
+│   ├── save.ks
+│   ├── saveload.tjs
+│   ├── scenemode.ks
+│   ├── scenemode.tjs
+│   ├── showdate.tjs
+│   ├── soundmode.ks
+│   ├── soundmode.tjs
+│   ├── system.tjs
+│   ├── title.ks
+│   ├── win32dialog.tjs
+│   └── zoommap.tjs
+├── system
+│   ├── Action.tjs
+│   ├── AffineLayer.tjs
+│   ├── AnimationLayer.tjs
+│   ├── autolabel.ks
+│   ├── BGM.tjs
+│   ├── ButtonLayer.tjs
+│   ├── CheckBoxLayer.tjs
+│   ├── check.webp
+│   ├── Conductor.tjs
+│   ├── DefaultMover.tjs
+│   ├── DialogLayer.tjs
+│   ├── EditLayer.tjs
+│   ├── ExecDialog.tjs
+│   ├── exstand.tjs
+│   ├── GraphicLayer.tjs
+│   ├── HistoryLayer.tjs
+│   ├── Initialize.tjs
+│   ├── KAGEnvBaseLayer.tjs
+│   ├── KAGEnvBGM.tjs
+│   ├── KAGEnvCharacter.tjs
+│   ├── KAGEnvImage.tjs
+│   ├── KAGEnvironment.tjs
+│   ├── KAGEnvLayer.tjs
+│   ├── KAGEnvLevelLayer.tjs
+│   ├── KAGEnvSE.tjs
+│   ├── KAGEnvSimpleLayer.tjs
+│   ├── KAGLayer.tjs
+│   ├── LayerEx.tjs
+│   ├── LineBreak.asd
+│   ├── LineBreak_a.webp
+│   ├── LineBreak.webp
+│   ├── MainWindow.tjs
+│   ├── MapSelectLayer.tjs
+│   ├── Menus.tjs
+│   ├── MessageLayer.tjs
+│   ├── Movie.tjs
+│   ├── PageBreak.asd
+│   ├── PageBreak_a.webp
+│   ├── PageBreak.webp
+│   ├── Plugin.tjs
+│   ├── psdlayer.tjs
+│   ├── RATInit.tjs
+│   ├── RATKAGParser.tjs
+│   ├── RATParser.tjs
+│   ├── RATPlayer.tjs
+│   ├── SelectLayer.tjs
+│   ├── SE.tjs
+│   ├── SliderLayer.tjs
+│   ├── standview.tjs
+│   ├── TransLayer.tjs
+│   ├── UILoader.tjs
+│   ├── UpdateConfig.tjs
+│   ├── UpdateRegion.tjs
+│   ├── Utils.tjs
+│   ├── world.tjs
+│   ├── YAML.tjs
+│   └── YesNoDialog.tjs
+├── thum
+│   ├── EDthum_aoi.webp
+│   ├── EDthum_hime.webp
+│   ├── EDthum_mahi.webp
+│   ├── EDthum_ruri.webp
+│   ├── EDthum_sana.webp
+│   ├── EDthum_yuka.webp
+│   ├── OPthum.webp
+│   ├── thum_EV0101A.webp
+│   ├── thum_EV0102A.webp
+│   ├── thum_EV0103A.webp
+│   ├── thum_EV0104A.webp
+│   ├── thum_EV0105A.webp
+│   ├── thum_EV0106A.webp
+│   ├── thum_EV0107A.webp
+│   ├── thum_EV0108A.webp
+│   ├── thum_EV0109A.webp
+│   ├── thum_EV0110AA.webp
+│   ├── thum_EV0111A.webp
+│   ├── thum_EV0112A.webp
+│   ├── thum_EV0113A.webp
+│   ├── thum_EV0114AA.webp
+│   ├── thum_EV0115A.webp
+│   ├── thum_EV0116AA.webp
+│   ├── thum_EV0201A.webp
+│   ├── thum_EV0202A.webp
+│   ├── thum_EV0203A.webp
+│   ├── thum_EV0204A.webp
+│   ├── thum_EV0205A.webp
+│   ├── thum_EV0206A.webp
+│   ├── thum_EV0207A.webp
+│   ├── thum_EV0208A.webp
+│   ├── thum_EV0209A.webp
+│   ├── thum_EV0210AA.webp
+│   ├── thum_EV0211A.webp
+│   ├── thum_EV0212A.webp
+│   ├── thum_EV0213A.webp
+│   ├── thum_EV0214AA.webp
+│   ├── thum_EV0215A.webp
+│   ├── thum_EV0216A.webp
+│   ├── thum_EV0301AA.webp
+│   ├── thum_EV0302A.webp
+│   ├── thum_EV0303A.webp
+│   ├── thum_EV0304AA.webp
+│   ├── thum_EV0305A.webp
+│   ├── thum_EV0306A.webp
+│   ├── thum_EV0307AA.webp
+│   ├── thum_EV0308AA.webp
+│   ├── thum_EV0309A.webp
+│   ├── thum_EV0310AA.webp
+│   ├── thum_EV0311AA.webp
+│   ├── thum_EV0312A.webp
+│   ├── thum_EV0313A.webp
+│   ├── thum_EV0314A.webp
+│   ├── thum_EV0315A.webp
+│   ├── thum_EV0316AA.webp
+│   ├── thum_EV0401A.webp
+│   ├── thum_EV0402A.webp
+│   ├── thum_EV0403AA.webp
+│   ├── thum_EV0404AA.webp
+│   ├── thum_EV0405A.webp
+│   ├── thum_EV0406AA.webp
+│   ├── thum_EV0407A.webp
+│   ├── thum_EV0408AA.webp
+│   ├── thum_EV0409A.webp
+│   ├── thum_EV0410A.webp
+│   ├── thum_EV0411A.webp
+│   ├── thum_EV0412A.webp
+│   ├── thum_EV0413A.webp
+│   ├── thum_EV0414DA.webp
+│   ├── thum_EV0415AA.webp
+│   ├── thum_EV0416A.webp
+│   ├── thum_EV0501A.webp
+│   ├── thum_EV0502A.webp
+│   ├── thum_EV0503A.webp
+│   ├── thum_EV0504A.webp
+│   ├── thum_EV0505A.webp
+│   ├── thum_EV0506AA.webp
+│   ├── thum_EV0507AA.webp
+│   ├── thum_EV0508AA.webp
+│   ├── thum_EV0509A.webp
+│   ├── thum_EV0510A.webp
+│   ├── thum_EV0511A.webp
+│   ├── thum_EV0512AA.webp
+│   ├── thum_EV0601A.webp
+│   ├── thum_EV0602A.webp
+│   ├── thum_EV0603AA.webp
+│   ├── thum_EV0604A.webp
+│   ├── thum_EV0605A.webp
+│   ├── thum_EV0606AA.webp
+│   ├── thum_EV0607A.webp
+│   ├── thum_EV0608A.webp
+│   ├── thum_EV0609A.webp
+│   ├── thum_EV0610A.webp
+│   ├── thum_EV0611AA.webp
+│   ├── thum_EV0612AA.webp
+│   ├── thum_EV0701A.webp
+│   ├── thum_EV0702A.webp
+│   ├── thum_EV0703AA.webp
+│   ├── thum_EV0704A.webp
+│   ├── thum_EV0705A.webp
+│   ├── thum_EV0801A.webp
+│   ├── thum_EV0802A.webp
+│   ├── thum_EV0803A.webp
+│   ├── thum_EV0804A.webp
+│   ├── thum_EV0805A.webp
+│   ├── thum_EV0806A.webp
+│   ├── thum_EV0807A.webp
+│   ├── thum_EV0808A.webp
+│   ├── thum_EV0809A.webp
+│   ├── thum_EV0810A.webp
+│   ├── thum_EV0811A.webp
+│   ├── thum_EV0812A.webp
+│   ├── thum_EV0813A.webp
+│   ├── thum_EV0814A.webp
+│   ├── thum_EV0815A.webp
+│   └── thum_EV0816A.webp
+├── tree.json
+├── tree.txt
+├── tree.xml
+└── uipsd
+    ├── backlog@ベース%base.webp
+    ├── backlog@リピート%button;normal.webp
+    ├── backlog@リピート%button;over.webp
+    ├── backlog.csv
+    ├── backlog@スライドブロック%slider;normal.webp
+    ├── backlog@上へ%button;normal.webp
+    ├── backlog@上へ%button;over.webp
+    ├── backlog@下へ%button;normal.webp
+    ├── backlog@下へ%button;over.webp
+    ├── backlog@最上へ%button;normal.webp
+    ├── backlog@最上へ%button;over.webp
+    ├── backlog@最下へ%button;normal.webp
+    ├── backlog@最下へ%button;over.webp
+    ├── backlog@閉じる%button;normal.webp
+    ├── backlog@閉じる%button;over.webp
+    ├── cgscroll.csv
+    ├── cgscroll@ベース%layer.webp
+    ├── cgscroll@スライドブロック%slider;normal.webp
+    ├── cgscroll@上へ%button;normal.webp
+    ├── cgscroll@上へ%button;over.webp
+    ├── cgscroll@下へ%button;normal.webp
+    ├── cgscroll@下へ%button;over.webp
+    ├── cgscroll@最上へ%button;normal.webp
+    ├── cgscroll@最上へ%button;over.webp
+    ├── cgscroll@最下へ%button;normal.webp
+    ├── cgscroll@最下へ%button;over.webp
+    ├── cgscroll@閉じる%button;normal.webp
+    ├── cgscroll@閉じる%button;over.webp
+    ├── dialog@ベース%base.webp
+    ├── dialog@はい%button;normal.webp
+    ├── dialog@いいえ%button;normal.webp
+    ├── dialog@はい%button;over.webp
+    ├── dialog@いいえ%button;over.webp
+    ├── dialog.csv
+    ├── dialog@ロード%layer.webp
+    ├── dialog@タイトル%layer.webp
+    ├── dialog@クイックロード%layer.webp
+    ├── dialog@上書き%layer.webp
+    ├── dialog@初期設定%layer.webp
+    ├── dialog@前の選択肢%layer.webp
+    ├── dialog@次の選択肢%layer.webp
+    ├── dialog@終了%layer.webp
+    ├── extra@1%radio;normal;ページ.webp
+    ├── extra@1%radio;on.webp
+    ├── extra@1%radio;over.webp
+    ├── extra@2%radio;normal;ページ.webp
+    ├── extra@2%radio;on.webp
+    ├── extra@2%radio;over.webp
+    ├── extra@3%radio;normal;ページ.webp
+    ├── extra@3%radio;on.webp
+    ├── extra@3%radio;over.webp
+    ├── extra@4%radio;normal;ページ.webp
+    ├── extra@4%radio;on.webp
+    ├── extra@4%radio;over.webp
+    ├── extra@5%radio;normal;ページ.webp
+    ├── extra@5%radio;on.webp
+    ├── extra@5%radio;over.webp
+    ├── extra@6%radio;normal;ページ.webp
+    ├── extra@6%radio;on.webp
+    ├── extra@6%radio;over.webp
+    ├── extra@7%radio;normal;ページ.webp
+    ├── extra@7%radio;on.webp
+    ├── extra@7%radio;over.webp
+    ├── extra@cg鑑賞%button;normal.webp
+    ├── extra@cg鑑賞%button;over.webp
+    ├── extra@cg鑑賞ベース%layer.webp
+    ├── extra.csv
+    ├── extra@dmask%layer.webp
+    ├── extra@item0%button;cover.webp
+    ├── extra@item0%button;mask.webp
+    ├── extra@item0%button;normal.webp
+    ├── extra@mustop%button;偶数.webp
+    ├── extra@mustop%button;奇数.webp
+    ├── extra@slider%slider;normal.webp
+    ├── extra@umask%layer.webp
+    ├── extra@一時停止再開%toggle;on.webp
+    ├── extra@上へ%button;normal.webp
+    ├── extra@上へ%button;over.webp
+    ├── extra@下へ%button;normal.webp
+    ├── extra@下へ%button;over.webp
+    ├── extra@停止%button;normal.webp
+    ├── extra@停止%button;over.webp
+    ├── extra@再生%button;normal.webp
+    ├── extra@再生%button;over.webp
+    ├── extra@前の曲へ%button;normal.webp
+    ├── extra@前の曲へ%button;over.webp
+    ├── extra@タイトルに戻る%button;normal.webp
+    ├── extra@タイトルに戻る%button;over.webp
+    ├── extra@最上へ%button;normal.webp
+    ├── extra@最上へ%button;over.webp
+    ├── extra@最下へ%button;normal.webp
+    ├── extra@最下へ%button;over.webp
+    ├── extra@次の曲へ%button;normal.webp
+    ├── extra@次の曲へ%button;over.webp
+    ├── extra@背景%base.webp
+    ├── extra@シーン鑑賞%button;normal.webp
+    ├── extra@シーン鑑賞%button;over.webp
+    ├── extra@シーン鑑賞ベース%layer.webp
+    ├── load@10%radio;normal;ページ.webp
+    ├── load@10%radio;on.webp
+    ├── load@10%radio;over.webp
+    ├── load@1%radio;normal;ページ.webp
+    ├── load@1%radio;on.webp
+    ├── load@1%radio;over.webp
+    ├── load@2%radio;normal;ページ.webp
+    ├── load@2%radio;on.webp
+    ├── load@2%radio;over.webp
+    ├── load@3%radio;normal;ページ.webp
+    ├── load@3%radio;on.webp
+    ├── load@3%radio;over.webp
+    ├── load@4%radio;normal;ページ.webp
+    ├── load@4%radio;on.webp
+    ├── load@4%radio;over.webp
+    ├── load@5%radio;normal;ページ.webp
+    ├── load@5%radio;on.webp
+    ├── load@5%radio;over.webp
+    ├── load@6%radio;normal;ページ.webp
+    ├── load@6%radio;on.webp
+    ├── load@6%radio;over.webp
+    ├── load@7%radio;normal;ページ.webp
+    ├── load@7%radio;on.webp
+    ├── load@7%radio;over.webp
+    ├── load@8%radio;normal;ページ.webp
+    ├── load@8%radio;on.webp
+    ├── load@8%radio;over.webp
+    ├── load@9%radio;normal;ページ.webp
+    ├── load@9%radio;on.webp
+    ├── load@9%radio;over.webp
+    ├── load@base%base.webp
+    ├── load.csv
+    ├── load@new%layer.webp
+    ├── load@page%layer;01.webp
+    ├── load@page%layer;02.webp
+    ├── load@page%layer;03.webp
+    ├── load@page%layer;04.webp
+    ├── load@page%layer;05.webp
+    ├── load@page%layer;06.webp
+    ├── load@page%layer;07.webp
+    ├── load@page%layer;08.webp
+    ├── load@page%layer;09.webp
+    ├── load@page%layer;10.webp
+    ├── load@前ページへ%button;normal.webp
+    ├── load@前ページへ%button;over.webp
+    ├── load@前の画面に戻る%button;normal.webp
+    ├── load@前の画面に戻る%button;over.webp
+    ├── load@枠10%button;over.webp
+    ├── load@枠1%button;over.webp
+    ├── load@枠1%button;サムネ.webp
+    ├── load@次ページへ%button;normal.webp
+    ├── load@次ページへ%button;over.webp
+    ├── load@セーブ画面へ%button;normal.webp
+    ├── load@セーブ画面へ%button;over.webp
+    ├── mapselect@ベース%base.webp
+    ├── mapselect.csv
+    ├── mapselect@グラウンド%layer.webp
+    ├── mapselect@load%button;normal.webp
+    ├── mapselect@load%button;over.webp
+    ├── mapselect@prev%button;normal.webp
+    ├── mapselect@prev%button;over.webp
+    ├── mapselect@qload%button;normal.webp
+    ├── mapselect@qload%button;over.webp
+    ├── mapselect@qsave%button;normal.webp
+    ├── mapselect@qsave%button;over.webp
+    ├── mapselect@save%button;normal.webp
+    ├── mapselect@save%button;over.webp
+    ├── mapselect@system%button;normal.webp
+    ├── mapselect@system%button;over.webp
+    ├── mapselect@右下フレーム%layer.webp
+    ├── mapselect@図書室%layer.webp
+    ├── mapselect@学生会室%layer.webp
+    ├── mapselect@屋上%layer.webp
+    ├── mapselect@左上フレーム%layer.webp
+    ├── mapselect@店内%layer.webp
+    ├── mapselect@廊下%layer.webp
+    ├── mapselect@教室%layer.webp
+    ├── mapselect@街角%layer.webp
+    ├── mapselect@階段%layer.webp
+    ├── mapselect@鳥瞰図%layer.webp
+    ├── qslabel.csv
+    ├── qslabel@mapqsaved%base.webp
+    ├── qslabel@quicksaved%base.webp
+    ├── save@10%radio;normal;ページ.webp
+    ├── save@10%radio;on.webp
+    ├── save@10%radio;over.webp
+    ├── save@1%radio;normal;ページ.webp
+    ├── save@1%radio;on.webp
+    ├── save@1%radio;over.webp
+    ├── save@2%radio;normal;ページ.webp
+    ├── save@2%radio;on.webp
+    ├── save@2%radio;over.webp
+    ├── save@3%radio;normal;ページ.webp
+    ├── save@3%radio;on.webp
+    ├── save@3%radio;over.webp
+    ├── save@4%radio;normal;ページ.webp
+    ├── save@4%radio;on.webp
+    ├── save@4%radio;over.webp
+    ├── save@5%radio;normal;ページ.webp
+    ├── save@5%radio;on.webp
+    ├── save@5%radio;over.webp
+    ├── save@6%radio;normal;ページ.webp
+    ├── save@6%radio;on.webp
+    ├── save@6%radio;over.webp
+    ├── save@7%radio;normal;ページ.webp
+    ├── save@7%radio;on.webp
+    ├── save@7%radio;over.webp
+    ├── save@8%radio;normal;ページ.webp
+    ├── save@8%radio;on.webp
+    ├── save@8%radio;over.webp
+    ├── save@9%radio;normal;ページ.webp
+    ├── save@9%radio;on.webp
+    ├── save@9%radio;over.webp
+    ├── save@base%base.webp
+    ├── save.csv
+    ├── save@new%layer.webp
+    ├── save@page%layer;01.webp
+    ├── save@page%layer;02.webp
+    ├── save@page%layer;03.webp
+    ├── save@page%layer;04.webp
+    ├── save@page%layer;05.webp
+    ├── save@page%layer;06.webp
+    ├── save@page%layer;07.webp
+    ├── save@page%layer;08.webp
+    ├── save@page%layer;09.webp
+    ├── save@page%layer;10.webp
+    ├── save@上書きoff%radio;normal;上書き.webp
+    ├── save@上書きoff%radio;on.webp
+    ├── save@上書きoff%radio;over.webp
+    ├── save@上書きon%radio;normal;上書き.webp
+    ├── save@上書きon%radio;on.webp
+    ├── save@上書きon%radio;over.webp
+    ├── save@前ページへ%button;normal.webp
+    ├── save@前ページへ%button;over.webp
+    ├── save@前の画面に戻る%button;normal.webp
+    ├── save@前の画面に戻る%button;over.webp
+    ├── save@枠10%button;over.webp
+    ├── save@枠1%button;over.webp
+    ├── save@枠1%button;サムネ.webp
+    ├── save@次ページへ%button;normal.webp
+    ├── save@次ページへ%button;over.webp
+    ├── save@ロード画面へ%button;normal.webp
+    ├── save@ロード画面へ%button;over.webp
+    ├── select.csv
+    ├── select@select%button;frame__off.webp
+    ├── select@select%button;frame__over.webp
+    ├── select@select%button;normal.webp
+    ├── sys_message@ベース%base.webp
+    ├── sys_message@サウンド%button;normal.webp
+    ├── sys_message@システム%button;normal.webp
+    ├── sys_message@ショートカット%button;normal.webp
+    ├── sys_message@サウンド%button;over.webp
+    ├── sys_message@システム%button;over.webp
+    ├── sys_message@ショートカット%button;over.webp
+    ├── sys_message.csv
+    ├── sys_message@help%layer;スキップ.webp
+    ├── sys_message@help%layer;ウィンドウ.webp
+    ├── sys_message@help%layer;初期カラー.webp
+    ├── sys_message@help%layer;文字.webp
+    ├── sys_message@help%layer;既読文字.webp
+    ├── sys_message@help%layer;透明度.webp
+    ├── sys_message@help%layer;テキスト速度.webp
+    ├── sys_message@help%layer;オート速度.webp
+    ├── sys_message@help%layer;選択肢後オート.webp
+    ├── sys_message@help%layer;選択肢後スキップ.webp
+    ├── sys_message@helptipspos%layer.webp
+    ├── sys_message@ウィンドウ%radio;normal;color.webp
+    ├── sys_message@ウィンドウ%radio;on.webp
+    ├── sys_message@ウィンドウ%radio;over.webp
+    ├── sys_message@初期の色に戻す%button;normal.webp
+    ├── sys_message@初期の色に戻す%button;over.webp
+    ├── sys_message@初期設定に戻す%button;normal.webp
+    ├── sys_message@初期設定に戻す%button;over.webp
+    ├── sys_message@前の画面に戻る%button;normal.webp
+    ├── sys_message@前の画面に戻る%button;over.webp
+    ├── sys_message@参考フレーム%layer.webp
+    ├── sys_message@参考ウィンドウ%layer.webp
+    ├── sys_message@後オート継続%radio;normal;選択肢a.webp
+    ├── sys_message@後スキップ継続%radio;normal;選択肢s.webp
+    ├── sys_message@後スキップ継続%radio;on.webp
+    ├── sys_message@後オート継続%radio;on.webp
+    ├── sys_message@後スキップ継続%radio;over.webp
+    ├── sys_message@後オート継続%radio;over.webp
+    ├── sys_message@後オート解除%radio;normal;選択肢a.webp
+    ├── sys_message@後スキップ解除%radio;normal;選択肢s.webp
+    ├── sys_message@後スキップ解除%radio;on.webp
+    ├── sys_message@後オート解除%radio;on.webp
+    ├── sys_message@後スキップ解除%radio;over.webp
+    ├── sys_message@後オート解除%radio;over.webp
+    ├── sys_message@タイトルに戻る%button;normal.webp
+    ├── sys_message@タイトルに戻る%button;over.webp
+    ├── sys_message@文字%radio;normal;color.webp
+    ├── sys_message@文字%radio;on.webp
+    ├── sys_message@文字%radio;over.webp
+    ├── sys_message@スキップ既読%radio;normal;スキップ.webp
+    ├── sys_message@スキップ既読%radio;on.webp
+    ├── sys_message@スキップ既読%radio;over.webp
+    ├── sys_message@既読文字%radio;normal;color.webp
+    ├── sys_message@既読文字%radio;on.webp
+    ├── sys_message@既読文字%radio;over.webp
+    ├── sys_message@スキップ解除%radio;normal;スキップ.webp
+    ├── sys_message@スキップ解除%radio;on.webp
+    ├── sys_message@スキップ解除%radio;over.webp
+    ├── sys_message@透明度ボタン%slider;normal.webp
+    ├── sys_message@テキスト速度%slider;normal.webp
+    ├── sys_shortcut@ベース%base.webp
+    ├── sys_shortcut@サウンド%button;normal.webp
+    ├── sys_shortcut@システム%button;normal.webp
+    ├── sys_shortcut@メッセージ%button;normal.webp
+    ├── sys_shortcut@サウンド%button;over.webp
+    ├── sys_shortcut@システム%button;over.webp
+    ├── sys_shortcut@メッセージ%button;over.webp
+    ├── sys_shortcut.csv
+    ├── sys_shortcut@前の画面に戻る%button;normal.webp
+    ├── sys_shortcut@前の画面に戻る%button;over.webp
+    ├── sys_shortcut@タイトルに戻る%button;normal.webp
+    ├── sys_shortcut@タイトルに戻る%button;over.webp
+    ├── sys_sound@ベース%base.webp
+    ├── sys_sound@bgm音量%slider;normal.webp
+    ├── sys_sound@システム%button;normal.webp
+    ├── sys_sound@メッセージ%button;normal.webp
+    ├── sys_sound@ショートカット%button;normal.webp
+    ├── sys_sound@システム%button;over.webp
+    ├── sys_sound@メッセージ%button;over.webp
+    ├── sys_sound@ショートカット%button;over.webp
+    ├── sys_sound@chara%layer;ルリ.webp
+    ├── sys_sound@chara%layer;まひろ.webp
+    ├── sys_sound@chara%layer;その他(女).webp
+    ├── sys_sound@chara%layer;その他(男).webp
+    ├── sys_sound@chara%layer;佐奈.webp
+    ├── sys_sound@chara%layer;咲耶.webp
+    ├── sys_sound@chara%layer;幹雄.webp
+    ├── sys_sound@chara%layer;庵.webp
+    ├── sys_sound@chara%layer;歩.webp
+    ├── sys_sound@chara%layer;眞一郎.webp
+    ├── sys_sound@chara%layer;紫.webp
+    ├── sys_sound@chara%layer;萌花.webp
+    ├── sys_sound@chara%layer;葵.webp
+    ├── sys_sound@chara%layer;虎太郎.webp
+    ├── sys_sound.csv
+    ├── sys_sound@help%layer;bgmダウン.webp
+    ├── sys_sound@help%layer;bgm音量.webp
+    ├── sys_sound@help%layer;bgv音量.webp
+    ├── sys_sound@help%layer;chその他女.webp
+    ├── sys_sound@help%layer;chその他男.webp
+    ├── sys_sound@help%layer;ch千歳佐奈.webp
+    ├── sys_sound@help%layer;ch千歳眞一郎.webp
+    ├── sys_sound@help%layer;ch卯花之佐久夜姫.webp
+    ├── sys_sound@help%layer;ch山吹渉.webp
+    ├── sys_sound@help%layer;ch山吹葵.webp
+    ├── sys_sound@help%layer;ch常盤まひろ.webp
+    ├── sys_sound@help%layer;ch木賊朋花.webp
+    ├── sys_sound@help%layer;ch東雲庵.webp
+    ├── sys_sound@help%layer;ch浅葱虎太郎.webp
+    ├── sys_sound@help%layer;ch烏羽紫.webp
+    ├── sys_sound@help%layer;ch竜胆ルリ.webp
+    ├── sys_sound@help%layer;ch老竹幹雄.webp
+    ├── sys_sound@help%layer;se音量.webp
+    ├── sys_sound@help%layer;smpその他女.webp
+    ├── sys_sound@help%layer;smpその他男.webp
+    ├── sys_sound@help%layer;smp千歳佐奈.webp
+    ├── sys_sound@help%layer;smp千歳眞一郎.webp
+    ├── sys_sound@help%layer;smp卯花之佐久夜姫.webp
+    ├── sys_sound@help%layer;smp山吹渉.webp
+    ├── sys_sound@help%layer;smp山吹葵.webp
+    ├── sys_sound@help%layer;smp常盤まひろ.webp
+    ├── sys_sound@help%layer;smp木賊朋花.webp
+    ├── sys_sound@help%layer;smp東雲庵.webp
+    ├── sys_sound@help%layer;smp浅葱虎太郎.webp
+    ├── sys_sound@help%layer;smp烏羽紫.webp
+    ├── sys_sound@help%layer;smp竜胆ルリ.webp
+    ├── sys_sound@help%layer;smp老竹幹雄.webp
+    ├── sys_sound@help%layer;voice音量.webp
+    ├── sys_sound@help%layer;volその他女.webp
+    ├── sys_sound@help%layer;volその他男.webp
+    ├── sys_sound@help%layer;vol千歳佐奈.webp
+    ├── sys_sound@help%layer;vol千歳眞一郎.webp
+    ├── sys_sound@help%layer;vol卯花之佐久夜姫.webp
+    ├── sys_sound@help%layer;vol山吹渉.webp
+    ├── sys_sound@help%layer;vol山吹葵.webp
+    ├── sys_sound@help%layer;vol常盤まひろ.webp
+    ├── sys_sound@help%layer;vol木賊朋花.webp
+    ├── sys_sound@help%layer;vol東雲庵.webp
+    ├── sys_sound@help%layer;vol浅葱虎太郎.webp
+    ├── sys_sound@help%layer;vol烏羽紫.webp
+    ├── sys_sound@help%layer;vol竜胆ルリ.webp
+    ├── sys_sound@help%layer;vol老竹幹雄.webp
+    ├── sys_sound@help%layer;ボイスカット.webp
+    ├── sys_sound@help%layer;ループ音声.webp
+    ├── sys_sound@helptipspos%layer.webp
+    ├── sys_sound@off%radio;normal;bgv.webp
+    ├── sys_sound@off%radio;on.webp
+    ├── sys_sound@off%radio;over.webp
+    ├── sys_sound@on%radio;normal;bgv.webp
+    ├── sys_sound@on%radio;on.webp
+    ├── sys_sound@on%radio;over.webp
+    ├── sys_sound@その他(女)%toggle;off__chk.webp
+    ├── sys_sound@その他(女)%toggle;off__nc.webp
+    ├── sys_sound@その他(女)%toggle;on__chk.webp
+    ├── sys_sound@その他(女)%toggle;on__nc.webp
+    ├── sys_sound@その他(女)%toggle;over.webp
+    ├── sys_sound@その他(男)%toggle;off__chk.webp
+    ├── sys_sound@その他(男)%toggle;off__nc.webp
+    ├── sys_sound@その他(男)%toggle;on__chk.webp
+    ├── sys_sound@その他(男)%toggle;on__nc.webp
+    ├── sys_sound@その他(男)%toggle;over.webp
+    ├── sys_sound@初期設定に戻す%button;normal.webp
+    ├── sys_sound@初期設定に戻す%button;over.webp
+    ├── sys_sound@前の画面に戻る%button;normal.webp
+    ├── sys_sound@前の画面に戻る%button;over.webp
+    ├── sys_sound@千歳佐奈%toggle;off__chk.webp
+    ├── sys_sound@千歳佐奈%toggle;off__nc.webp
+    ├── sys_sound@千歳佐奈%toggle;on__chk.webp
+    ├── sys_sound@千歳佐奈%toggle;on__nc.webp
+    ├── sys_sound@千歳佐奈%toggle;over.webp
+    ├── sys_sound@千歳眞一郎%toggle;off__chk.webp
+    ├── sys_sound@千歳眞一郎%toggle;off__nc.webp
+    ├── sys_sound@千歳眞一郎%toggle;on__chk.webp
+    ├── sys_sound@千歳眞一郎%toggle;on__nc.webp
+    ├── sys_sound@千歳眞一郎%toggle;over.webp
+    ├── sys_sound@卯花之佐久夜姫%toggle;off__chk.webp
+    ├── sys_sound@卯花之佐久夜姫%toggle;off__nc.webp
+    ├── sys_sound@卯花之佐久夜姫%toggle;on__chk.webp
+    ├── sys_sound@卯花之佐久夜姫%toggle;on__nc.webp
+    ├── sys_sound@卯花之佐久夜姫%toggle;over.webp
+    ├── sys_sound@山吹渉%toggle;off__chk.webp
+    ├── sys_sound@山吹渉%toggle;off__nc.webp
+    ├── sys_sound@山吹渉%toggle;on__chk.webp
+    ├── sys_sound@山吹渉%toggle;on__nc.webp
+    ├── sys_sound@山吹渉%toggle;over.webp
+    ├── sys_sound@山吹葵%toggle;off__chk.webp
+    ├── sys_sound@山吹葵%toggle;off__nc.webp
+    ├── sys_sound@山吹葵%toggle;on__chk.webp
+    ├── sys_sound@山吹葵%toggle;on__nc.webp
+    ├── sys_sound@山吹葵%toggle;over.webp
+    ├── sys_sound@常葉まひろ%toggle;off__chk.webp
+    ├── sys_sound@常葉まひろ%toggle;off__nc.webp
+    ├── sys_sound@常葉まひろ%toggle;on__chk.webp
+    ├── sys_sound@常葉まひろ%toggle;on__nc.webp
+    ├── sys_sound@常葉まひろ%toggle;over.webp
+    ├── sys_sound@タイトルに戻る%button;normal.webp
+    ├── sys_sound@タイトルに戻る%button;over.webp
+    ├── sys_sound@木賊萌花%toggle;off__chk.webp
+    ├── sys_sound@木賊萌花%toggle;off__nc.webp
+    ├── sys_sound@木賊萌花%toggle;on__chk.webp
+    ├── sys_sound@木賊萌花%toggle;on__nc.webp
+    ├── sys_sound@木賊萌花%toggle;over.webp
+    ├── sys_sound@東雲庵%toggle;off__chk.webp
+    ├── sys_sound@東雲庵%toggle;off__nc.webp
+    ├── sys_sound@東雲庵%toggle;on__chk.webp
+    ├── sys_sound@東雲庵%toggle;on__nc.webp
+    ├── sys_sound@東雲庵%toggle;over.webp
+    ├── sys_sound@浅葱虎太郎%toggle;off__chk.webp
+    ├── sys_sound@浅葱虎太郎%toggle;off__nc.webp
+    ├── sys_sound@浅葱虎太郎%toggle;on__chk.webp
+    ├── sys_sound@浅葱虎太郎%toggle;on__nc.webp
+    ├── sys_sound@浅葱虎太郎%toggle;over.webp
+    ├── sys_sound@竜胆ルリ%toggle;off__chk.webp
+    ├── sys_sound@竜胆ルリ%toggle;off__nc.webp
+    ├── sys_sound@竜胆ルリ%toggle;on__chk.webp
+    ├── sys_sound@竜胆ルリ%toggle;on__nc.webp
+    ├── sys_sound@竜胆ルリ%toggle;over.webp
+    ├── sys_sound@老竹幹雄%toggle;off__chk.webp
+    ├── sys_sound@老竹幹雄%toggle;off__nc.webp
+    ├── sys_sound@老竹幹雄%toggle;on__chk.webp
+    ├── sys_sound@老竹幹雄%toggle;on__nc.webp
+    ├── sys_sound@老竹幹雄%toggle;over.webp
+    ├── sys_sound@音声設定ボリューム%slider;disabled.webp
+    ├── sys_sound@音声設定ボリューム%slider;normal.webp
+    ├── sys_sound@音声設定再生ボタン%button;normal.webp
+    ├── sys_sound@音声設定再生ボタン%button;on.webp
+    ├── sys_sound@音声設定再生ボタン%button;over.webp
+    ├── sys_sound@音声設定再生無効%layer.webp
+    ├── sys_sound@音声設定ボリューム有効%layer.webp
+    ├── sys_sound@音声設定ボリューム無効%layer.webp
+    ├── sys_sound@鳥羽紫%toggle;off__chk.webp
+    ├── sys_sound@鳥羽紫%toggle;off__nc.webp
+    ├── sys_sound@鳥羽紫%toggle;on__chk.webp
+    ├── sys_sound@鳥羽紫%toggle;on__nc.webp
+    ├── sys_sound@鳥羽紫%toggle;over.webp
+    ├── sys_system@1024×576%radio;normal;サイズ.webp
+    ├── sys_system@1024×576%radio;on.webp
+    ├── sys_system@1024×576%radio;over.webp
+    ├── sys_system@1024×768%radio;normal;サイズ.webp
+    ├── sys_system@1024×768%radio;on.webp
+    ├── sys_system@1024×768%radio;over.webp
+    ├── sys_system@1280×720%radio;normal;サイズ.webp
+    ├── sys_system@1280×720%radio;on.webp
+    ├── sys_system@1280×720%radio;over.webp
+    ├── sys_system@1280×960%radio;normal;サイズ.webp
+    ├── sys_system@1280×960%radio;on.webp
+    ├── sys_system@1280×960%radio;over.webp
+    ├── sys_system@800×600%radio;normal;サイズ.webp
+    ├── sys_system@800×600%radio;on.webp
+    ├── sys_system@800×600%radio;over.webp
+    ├── sys_system@960×540%radio;normal;サイズ.webp
+    ├── sys_system@960×540%radio;on.webp
+    ├── sys_system@960×540%radio;over.webp
+    ├── sys_system@ベース%base.webp
+    ├── sys_system@サウンド%button;normal.webp
+    ├── sys_system@メッセージ%button;normal.webp
+    ├── sys_system@ショートカット%button;normal.webp
+    ├── sys_system@サウンド%button;over.webp
+    ├── sys_system@メッセージ%button;over.webp
+    ├── sys_system@ショートカット%button;over.webp
+    ├── sys_system.csv
+    ├── sys_system@help%layer;1024x576.webp
+    ├── sys_system@help%layer;1024x768.webp
+    ├── sys_system@help%layer;1280x720.webp
+    ├── sys_system@help%layer;1280x960.webp
+    ├── sys_system@help%layer;800x600.webp
+    ├── sys_system@help%layer;960x540.webp
+    ├── sys_system@help%layer;ワイド.webp
+    ├── sys_system@help%layer;スクエア.webp
+    ├── sys_system@help%layer;ウィンドウ.webp
+    ├── sys_system@help%layer;フルスクリーン.webp
+    ├── sys_system@help%layer;常に手前表示.webp
+    ├── sys_system@help%layer;日付表示.webp
+    ├── sys_system@help%layer;画面効果.webp
+    ├── sys_system@help%layer;背景アニメーション.webp
+    ├── sys_system@help%layer;マウスカーソル自動移動.webp
+    ├── sys_system@help%layer;表示不可.webp
+    ├── sys_system@helptipspos%layer.webp
+    ├── sys_system@off%radio;normal;onoff.webp
+    ├── sys_system@off%radio;on.webp
+    ├── sys_system@off%radio;over.webp
+    ├── sys_system@on%radio;normal;onoff.webp
+    ├── sys_system@on%radio;on.webp
+    ├── sys_system@on%radio;over.webp
+    ├── sys_system@初期設定に戻す%button;normal.webp
+    ├── sys_system@初期設定に戻す%button;over.webp
+    ├── sys_system@前の画面に戻る%button;normal.webp
+    ├── sys_system@前の画面に戻る%button;over.webp
+    ├── sys_system@タイトルに戻る%button;normal.webp
+    ├── sys_system@タイトルに戻る%button;over.webp
+    ├── sys_system@画面フル%radio;normal;画面.webp
+    ├── sys_system@画面ウィンドウ%radio;normal;画面.webp
+    ├── sys_system@画面ワイド%radio;normal;画面比.webp
+    ├── sys_system@画面スクエア%radio;normal;画面比.webp
+    ├── sys_system@画面フル%radio;on.webp
+    ├── sys_system@画面ワイド%radio;on.webp
+    ├── sys_system@画面スクエア%radio;on.webp
+    ├── sys_system@画面ウィンドウ%radio;on.webp
+    ├── sys_system@画面フル%radio;over.webp
+    ├── sys_system@画面ワイド%radio;over.webp
+    ├── sys_system@画面スクエア%radio;over.webp
+    ├── sys_system@画面ウィンドウ%radio;over.webp
+    ├── title.csv
+    ├── title@exit%button;normal.webp
+    ├── title@exit%button;over.webp
+    ├── title@extra%button;normal.webp
+    ├── title@extra%button;over.webp
+    ├── title@ロゴ%layer.webp
+    ├── title@キャラ%layer.webp
+    ├── title@load%button;normal.webp
+    ├── title@load%button;over.webp
+    ├── title@start%button;normal.webp
+    ├── title@start%button;over.webp
+    ├── title@system%button;normal.webp
+    ├── title@system%button;over.webp
+    ├── title@体験版%layer.webp
+    ├── title@背景%base.webp
+    ├── window@ウィンドウ%base.webp
+    ├── window@ハイド%button;normal.webp
+    ├── window@バックログ%button;normal.webp
+    ├── window@ハイド%button;over.webp
+    ├── window@バックログ%button;over.webp
+    ├── window.csv
+    ├── window@フレーム%layer.webp
+    ├── window@load%button;normal.webp
+    ├── window@load%button;over.webp
+    ├── window@q_oload%button;normal.webp
+    ├── window@q_oload%button;over.webp
+    ├── window@q_osave%button;normal.webp
+    ├── window@q_osave%button;over.webp
+    ├── window@save%button;normal.webp
+    ├── window@save%button;over.webp
+    ├── window@system%button;normal.webp
+    ├── window@system%button;over.webp
+    ├── window@オート%toggle;normal.webp
+    ├── window@スキップ%toggle;normal.webp
+    ├── window@オート%toggle;on.webp
+    ├── window@スキップ%toggle;on.webp
+    ├── window@オート%toggle;over.webp
+    ├── window@スキップ%toggle;over.webp
+    ├── window@前の選択肢%button;normal.webp
+    ├── window@前の選択肢%button;over.webp
+    ├── window@次の選択肢%button;normal.webp
+    └── window@次の選択肢%button;over.webp
+
+11 directories, 1197 files
