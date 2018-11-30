@@ -12,8 +12,8 @@ import FilePath from './utils/filepath';
 import KSParser from "./utils/ksparser";
 import TJSON from "./utils/tjson";
 import Config from "./config";
+import YZLayerMgr from "./ui/layer";
 async function LoadVMData() {
-    //Unicode 万国码
     const ScriptLoadSeq = Config.Boot.InitialScripts;
     let envinit = await FilePath.read(Config.Boot.EnvInitFile);
     ObjectMapper.LoadObject(TJSON.parse(envinit));
