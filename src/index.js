@@ -47,6 +47,7 @@ $(document).ready(async () => {
     YZCG.Init();
     YZVideo.Init();
     AsyncTask.Init();
+    YZLayerMgr.Init();
     await LoadVMData();
     $(document).click(() => KSVM.Next());
     KSVM.RunFrom(Config.Boot.EntryTag);

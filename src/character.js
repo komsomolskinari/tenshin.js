@@ -6,6 +6,7 @@ import AsyncTask from "./async/asynctask";
 import FilePath from "./utils/filepath";
 import KRCSV from "./utils/krcsv";
 import Config from "./config";
+import YZLayerMgr from "./ui/layer";
 const X = 0;
 const WIDTH = 0;
 const HORIZONTAL = 0;
@@ -255,12 +256,16 @@ export default class Character {
         }
         if ([KAGConst.Both, KAGConst.BU].includes(this.dispPos)) {
             this.showedInDom = true;
-            YZFgImg.DrawCharacter(this.name, imgctl);
+            YZLayerMgr.Set(this.name, imgctl)
+            //YZFgImg.DrawCharacter(this.name, imgctl);
         }
         else {
             this.showedInDom = false;
-            YZFgImg.HideCharacter(this.name);
+            YZLayerMgr.Hide(this.name);
+            //YZFgImg.HideCharacter(this.name);
         }
+        console.log(imgctl);
+        YZLayerMgr.Draw(this.name);
     }
 
     Text(text, display) {
@@ -320,34 +325,31 @@ export default class Character {
         // 35 50 75 100 120 140 bgexpand original
         const usedVer = ([1, 1, 3, 3, 3, 5, 3])[this.imageLevel];
 
-        let raw = varImg.map(v => this.coord[pfx][usedVer][v]);
-        raw = raw.map(v => {
-            return {
-                layer: v.layer,
-                offset: v.offset,
-                size: v.size,
-                zindex: 10
-            }
-        });
-        let mi = this.coord[pfx][usedVer][mainImg];
-        raw.push({
-            layer: mi.layer,
-            offset: mi.offset,
-            size: mi.size,
-            zindex: 5
-        });
 
-        let zoff = Object.keys(Character.characters).indexOf(this.name) * 10;
-
-        // conv name
-        raw = raw.map(v => {
-            return {
-                layer: ([pfx, usedVer, v.layer].join('_')),
-                offset: v.offset,
-                size: v.size,
-                zindex: v.zindex + zoff
-            }
-        });
+        let vImgs = varImg
+            .map(v => this.coord[pfx][usedVer][v])
+            .map(v => {
+                return {
+                    layer: v.layer,
+                    offset: v.offset,
+                    size: v.size
+                }
+            });
+        let mImg = this.coord[pfx][usedVer][mainImg];
+        let ctl = [{
+            layer: mImg.layer,
+            offset: mImg.offset,
+            size: mImg.size,
+        }];
+        ctl = ctl
+            .concat(vImgs)
+            .map(v => {
+                return {
+                    name: ([pfx, usedVer, v.layer].join('_')),
+                    offset: v.offset,
+                    size: v.size,
+                }
+            });
 
         let baseSize = this.coord[pfx][usedVer]['null'].size;
         // calculate coord
@@ -355,30 +357,7 @@ export default class Character {
         let zoom = scaleo.imgzoom / 100;
         if (this.imageLevel < 2) zoom = scaleo.zoom * 1.33 / 100;
         // zoom each layer
-        raw = raw.map(v => {
-            let [ox, oy] = v.offset;
-            let [sx, sy] = v.size;
-            return {
-                layer: v.layer,
-                offset: [ox * zoom, oy * zoom],
-                size: [sx * zoom, sy * zoom],
-                zindex: v.zindex
-            }
-        })
-        // move to center
-        let [bx, by] = this.center[pfx][usedVer];
-        let [centerx, centery] = [zoom * bx, zoom * by];
-        let baseOffset = [640 - centerx, 320 - centery];
-        // offset * zoom, looks better
-        if (this.imageLevel < 2) baseOffset[HORIZONTAL] += zoom * this.imageXPos;
-        else baseOffset[HORIZONTAL] += this.imageXPos;
-        let ctl = {
-            base: {
-                size: [baseSize[X] * zoom, baseSize[Y] * zoom],
-                offset: baseOffset
-            },
-            layer: raw
-        };
+        // emmmm, not now...
         return ctl;
     }
 }

@@ -20,7 +20,7 @@ class YZLayer {
             files: [],
         }
         this.current = JSON.parse(JSON.stringify(this.previous));
-        this.current.files = files;
+        this.current.files = files || [];
         this.transIn = [];
         this.transOut = [];
         this.actionSeq = [];
@@ -37,7 +37,7 @@ class YZLayer {
     }
 
     SetSubLayer(files) {
-        this.current.files = files;
+        this.current.files = files || [];
     }
 
     SetSize(width, height) {
@@ -94,8 +94,6 @@ class YZLayer {
         this.current.files.forEach(f => {
             _lock.push(
                 (async () => {
-                    // if no size set, size is undefined
-                    // same as offset
                     let { name, offset, size } = f;
                     // default offset [0,0]
                     offset = offset || [0, 0];
@@ -110,8 +108,7 @@ class YZLayer {
                             await new Promise((resolve, reject) => {
                                 this.subfd[name].on('load', () => resolve());
                                 this.subfd[name].on('error', () => reject());
-                            })
-
+                            });
                         }
                         // ok, it's now loaded
                         _width = parseInt(this.subfd[name].get(0).naturalWidth);
@@ -121,19 +118,14 @@ class YZLayer {
                         [_width, _height] = size;
                     }
                     const [_left, _top] = offset;
-                    // calculate base offset
-                    const [_realLeft, _realTop] = [
-                        (_winW - _width) / 2 - _left,
-                        (_winH - _height) / 2 - _top
-                    ];
-                    _minWidth = _realLeft < _minWidth ? _realLeft : _minWidth;
-                    _minHeight = _realTop < _minHeight ? _realTop : _minHeight;
-                    _maxWidth = (_realLeft + _width) > _maxWidth ? (_realLeft + _width) : _maxWidth;
-                    _maxHeight = (_realTop + _height) > _maxHeight ? (_realTop + _height) : _maxHeight;
+                    _minWidth = _left < _minWidth ? _left : _minWidth;
+                    _minHeight = _top < _minHeight ? _top : _minHeight;
+                    _maxWidth = (_left + _width) > _maxWidth ? (_left + _width) : _maxWidth;
+                    _maxHeight = (_top + _height) > _maxHeight ? (_top + _height) : _maxHeight;
 
                     this.subfd[name]
-                        .css('left', _realLeft)
-                        .css('top', _realTop)
+                        .css('left', _left)
+                        .css('top', _top)
                         .css('display', '');
                 })() // push an IIFE, it returns a Promise
             );
@@ -173,20 +165,22 @@ class YZLayer {
     }
 }
 
-class YZLayerMgr {
+export default class YZLayerMgr {
     static Init() {
+        YZLayer.Init();
         this.layers = {};
     }
-    // files: 'file':offset(,size)}
-    static Set(name, files, size) {
+    /**
+     * Set a layer (new or existed)
+     * @param {String} name 
+     * @param {[{name: String,offset:[Number,Number],size:[Number,Number]}]} files 
+     */
+    static Set(name, files) {
         if (!this.layers[name]) {
             this.layers[name] = new YZLayer(name, files);
         }
         else {
             this.layers[name].SetSubLayer(files);
-        }
-        if (size) {
-            this.layers[name].SetSize(size[0], size[1]);
         }
     }
 
@@ -196,16 +190,16 @@ class YZLayerMgr {
     }
 
     // apply command when draw called
-    static Draw() {
+    static Draw(name) {
         this.layers[name].Draw();
     }
 
-    static Show() {
-        this.layers[this.name].Show();
+    static Show(name) {
+        this.layers[name].Show();
     }
 
     static Hide() {
-
+        this.layers[name].Hide();
     }
 
     static Move(name, x, y) {
