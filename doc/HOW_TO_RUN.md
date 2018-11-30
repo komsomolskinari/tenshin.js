@@ -42,10 +42,12 @@
 ## 服务端
 按理说支持Unicode的都可以，已经测试过以下服务端：
 - nginx (Linux & WSL) *Windows Unicode支持有问题，不能用*
-- HFS (Windows)
+- HFS (Windows) *性能萎靡*
 - lighttpd (Windows)
-- Apache2
-- IIS
+- Apache2 (WSL)
+- IIS *要配MIME*
+- php -S *没有目录浏览*
+- npm http-server
 
 ## 浏览器
 按理说功能完善的当代浏览器都可以，不过`功能完善的当代浏览器`其实就那几个

@@ -206,7 +206,7 @@ export default class FilePath {
         let ls = await $.ajax(url, { dataType: 'text' });
         let ret = [];
         let loader = __loader_http_map[this.mode] || this.__loader__error;
-        ret = loader(ls);
+        ret = loader.call(this, ls);    // need rewrite 'this'
         let ps = [];
         for (const l of ret) {
             if (l.type == "directory") {
@@ -223,7 +223,7 @@ export default class FilePath {
 
     // ----- Loader public tools ----- //
     static __loader__table(text) {
-        return [].slice.call(
+        return [].slice.call(   // return raw array
             new DOMParser()
                 .parseFromString(text, "text/html")
                 .getElementsByTagName('table')[0]
@@ -233,10 +233,10 @@ export default class FilePath {
 
     static __loader__pre(text) {
         return new DOMParser()
-            .parseFromString(text, "text/html") // parse html
+            .parseFromString(text, "text/html")
             .getElementsByTagName('pre')[0]     // get <pre>
             .innerHTML                          // 's innerhtml
-            .split('\n')                        // as lines
+            .split(/\n|<br>|<br \/>| <br\/>/g)  // as lines
             .filter(l => l)                     // and except empty line
     }
 
@@ -245,6 +245,8 @@ export default class FilePath {
     }
 
     // ----- Loader for each httpd ----- //
+    // NOTE: If anyone wants add a new loader, please DO NOT use URL parser
+    //          it will mess encoding up
     static __loader_nginx_json(text) {
         return JSON.parse(text);
     }
@@ -266,6 +268,7 @@ export default class FilePath {
         return ret;
     }
     static __loader_nginx_html(text) {
+        console.log('nginx html autoindex will truncate long file name');
         let ret = [];
         this.__loader__pre(text).forEach(l => {
             let filename = $(l).text();
@@ -287,6 +290,7 @@ export default class FilePath {
         return ret;
     }
     static __loader_hfs(text) {
+        console.log('HFS is known have perfomance issue')
         let ret = [];
         this.__loader__table(text)
             .slice(1)
@@ -331,13 +335,15 @@ export default class FilePath {
     }
     static __loader_iis(text) {
         let ret = [];
-        this.__loader__pre(text).forEach(l => {
-            let a = $(l);
-            let name = a.text();
-            let type = a.attr('href').match(/\/$/) ?
+        this.__loader__pre(text).forEach((l, i) => {
+            if (i == 0) return; // jump first line
+            let a = new DOMParser()
+                .parseFromString(l, "text/html")
+                .getElementsByTagName('a')[0];
+            let name = a.innerText;
+            let type = a.href.match(/\/$/) ?
                 'directory' :
                 'file';
-            if (name[0] == '.') return;
             ret.push({ name, type });
         });
         return ret;
@@ -345,13 +351,15 @@ export default class FilePath {
     static __loader_apache(text) {
         let ret = [];
         this.__loader__table(text)
-            .slice(1)
+            .slice(3)      // 1: title 2: span 3: parent
             .forEach(r => {
-                let filename = r        // tr
-                    .cells[1]           // 2nd td, 1st is icon
+                let td = r       // tr
+                    .cells[1];   // 2nd td, 1st is icon
+                if (!td) return;
+                let filename = td
                     .firstElementChild  // a
-                    .href;              // .href
-                if (filename[0] == '.') return;
+                    .innerHTML;         // .href
+
                 let match = filename.match(/(.+)\/$/i);
                 if (match) {
                     ret.push({

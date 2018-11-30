@@ -13,3 +13,10 @@ export function AutoType(str) {
     // or keep string
     return b;
 }
+
+export function ParseHTML(str) {
+    return new DOMParser()
+        .parseFromString(str, "text/html")
+        .firstChild     // <html>
+        .lastChild      // <body>
+}
