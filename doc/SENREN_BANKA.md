@@ -1,6 +1,6 @@
 # 在《千恋万花》上的尝试
 Keyword: senren banka, senrenbanka, yuzusoft, m2psb
-
+[官方文档](http://www.yuzu-soft.com/products/senren/index.html)
 此处记录一点信息，以供后人参考。
 
 ## 为什么是tenshin.js而不是senren.js - 2018年9月版

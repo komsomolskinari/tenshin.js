@@ -4,7 +4,7 @@
 ![图文无关](doc/神社娘.png)
 *图文无关*
 ## 这是什么 What's this
-本项目是在当代浏览器上面跑Galgame的一点尝试，目标是在浏览器中运行[Kirikiri2引擎](https://github.com/krkrz/krkr2)的Galgame，目前尚属早期阶段，仅有基本功能。
+本项目是在当代浏览器上面跑Galgame的一点尝试，本来的目标是在浏览器中运行[Kirikiri2引擎](https://github.com/krkrz/krkr2)的Galgame，目前尚属早期阶段，仅有基本功能。
 
 This project is a experiment about running Galgame in modern browser, it's original task is running full [krkr2 engine](https://github.com/krkrz/krkr2) in browser. It's still in early state, basic functions only.
 
@@ -19,8 +19,10 @@ This project is a experiment about running Galgame in modern browser, it's origi
 2. 不考虑商业化应用，虽然有谁拿去用我也拦不住
 
 ## 文档
+- [官方文档](http://legacy.yuzu-soft.com/tenshin/)
 - [如何运行](doc/HOW_TO_RUN.md)
 - [更新日志](doc/CHANGELOG.md)
+
 ## 计划 Projects
 ### 完成 Finished
 - [x] 解析KS脚本    Parse .ks Script
@@ -30,8 +32,9 @@ This project is a experiment about running Galgame in modern browser, it's origi
 - [x] 背景音乐    BGM
 - [x] 文件系统    File System
 - [x] 图片支持    Image
+- [x] 视频支持    Video
 ### 正在工作 WIP
-- [ ] 视频支持    Video
+- [ ] 大修图片支持    Rebuild image support
 - [ ] 基本动画    Basic Animation
 ### 近期 Soon 
 - [ ] 图片特效    Image Effect
