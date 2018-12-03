@@ -172,7 +172,7 @@ export default class Runtime {
                 }
             }
         }
-        console.log(t);
+        //console.log(t);
     }
 
     static async Call(cmd) {
@@ -207,7 +207,7 @@ export default class Runtime {
                     YZBgImg.Process(cmd);
                     break;
                 case "layer":
-                    YZCG.LayerCtl(cmd);
+                    YZCG.ProcessLay(cmd);
                     break;
                 default:
                     console.warn("RuntimeCall, unimpliement cmd", cmd);

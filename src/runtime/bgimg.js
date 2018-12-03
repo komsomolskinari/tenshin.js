@@ -28,45 +28,15 @@ export default class YZBgImg {
         }
 
         this.curImg = this.stage.image.replace('TIME', this.daytime.prefix);
-        //let bgPath = FilePath.findMedia(this.curImg, 'image');
-
-        YZLayerMgr.Set(this.bgname, [{ name: this.curImg }]);
-
-        //this.bgfd.attr('src', bgPath);
-        //this.Reset();
-
+        YZLayerMgr.Set(this.bgname, [{ name: this.curImg }], "stages");
         YZLayerMgr.Move(this.bgname, 0, 0);
         YZLayerMgr.Zoom(this.bgname, 100);
-        let mapped = {};
-        option.filter(o => ObjectMapper.IsProperty(o)).forEach(o => {
-            let t = ObjectMapper.TypeOf(o);
-            if (mapped[t] === undefined) mapped[t] = [];
-            let mo = ObjectMapper.GetProperty(o);
-            if (mo.length === undefined) {
-                mapped[t].push(mo);
-            }
-            else {
-                for (const i of mo) {
-                    mapped[t].push(i);
-                }
-            }
-        });
-
         let xpos = param.xpos || 0;
         let ypos = param.ypos || 0;
         let zoom = param.zoom || 100;
         YZLayerMgr.Move(this.bgname, xpos, ypos);
         YZLayerMgr.Zoom(this.bgname, zoom);
         YZLayerMgr.Draw(this.bgname);
-        //this.SetZoom(zoom, xpos, ypos);
-
-        //let blur = param.blur || null;
-        //this.SetBlur(blur);
-    }
-
-    static SetBlur(blur) {
-        if (!blur) this.bgfd.css('filter', '');
-        else this.bgfd.css('filter', `blur(${blur}px)`);
     }
 
     static ProcessEnv(cmd) {

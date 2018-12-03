@@ -8,8 +8,9 @@ class YZLayer {
     static Init() {
         this.rootDOM = $('#camera');
     }
-    constructor(name, files) {
+    constructor(name, files, type, zindex) {
         this.name = name;
+        this.type = type;
         this.previous = {
             width: 0,
             height: 0,
@@ -18,6 +19,7 @@ class YZLayer {
             zoom: 100,
             files: [],
         }
+        this.drawlock = false;
         this.current = JSON.parse(JSON.stringify(this.previous));
         this.current.files = files || [];
         this.transIn = [];
@@ -29,13 +31,16 @@ class YZLayer {
         // generate div if not exist
         if (this.fd.length == 0) {
             YZLayer.rootDOM.append(
-                $('<div>').attr('id', `layer_${this.name}`)
+                $('<div>')
+                    .attr('id', `layer_${this.name}`)
+                    .css('z-index', zindex)
             )
             this.fd = $(`#layer_${this.name}`);
         }
     }
 
     SetSubLayer(files) {
+        // maybe diff here
         this.current.files = files || [];
     }
 
@@ -47,12 +52,15 @@ class YZLayer {
     // when [begintrans] called, do not exec Draw()
     // when [endtrans %TRANS%] called, set trans, then Draw()
     async Draw() {
+        if (this.drawlock) return;
+        this.drawlock = true;
         // cancel all animation
         this.fd.finish();
         let oldLayers = this.previous.files.map(l => l.name);
         let newLayers = this.current.files.map(l => l.name);
         let deleted = oldLayers.filter(l => !newLayers.includes(l));
         let added = newLayers.filter(l => !oldLayers.includes(l));
+        console.log(this.previous, this.current, deleted, added);
         oldLayers.forEach(f => this.subfd[f].stop());
 
         added.forEach(f => {
@@ -140,6 +148,7 @@ class YZLayer {
         ]
         // set main zoom, offset
         this.fd
+            .css('display', '')
             .css('left', _fullLeft)
             .css('top', _fullTop)
             .css('height', _fullHeight)
@@ -147,6 +156,11 @@ class YZLayer {
             .css('transform', `scale(${this.current.zoom / 100})`);
 
         this.previous = JSON.parse(JSON.stringify(this.current));
+        this.drawlock = false;
+    }
+
+    Hide() {
+        this.fd.css('display', 'none');
     }
 
     // clear DOM .etc
@@ -171,15 +185,19 @@ export default class YZLayerMgr {
     static Init() {
         YZLayer.Init();
         this.layers = {};
+        this.type2zindex = {
+            stages: 1,
+            characters: 5
+        };
     }
     /**
      * Set a layer (new or existed)
      * @param {String} name 
      * @param {[{name: String,offset:[Number,Number],size:[Number,Number]}]} files 
      */
-    static Set(name, files) {
+    static Set(name, files, type) {
         if (!this.layers[name]) {
-            this.layers[name] = new YZLayer(name, files);
+            this.layers[name] = new YZLayer(name, files, type, this.type2zindex[type]);
         }
         else {
             this.layers[name].SetSubLayer(files);
@@ -197,10 +215,10 @@ export default class YZLayerMgr {
     }
 
     static Show(name) {
-        this.layers[name].Show();
+        this.layers[name].Draw();
     }
 
-    static Hide() {
+    static Hide(name) {
         this.layers[name].Hide();
     }
 

@@ -74,9 +74,6 @@ export default class Character {
         let pms = [];
         files.filter(f => f.match(/info\.txt$/)).forEach(f => pms.push(this.__LoadChunk(f)));
         files.filter(f => f.match(/[0-9]\.txt$/)).forEach(f => pms.push(this.__LoadCoord(f)));
-        await Promise.all(pms);
-        // calc center offset. Magic here
-        this.__CalcCenter();
     }
 
     async __LoadChunk(filename) {
@@ -122,52 +119,10 @@ export default class Character {
         })
     }
 
-    // Known issue: see キツネ服耳ありポーズＡ, cannot handle these coordinate 
-    __CalcCenter() {
-        // for each variable's face image, calculate center coord.
-        let pfxs = Object.keys(this.face);
-
-        for (const pfx of pfxs) {
-            let faces = this.face[pfx];
-            // all avaliable face, flatten faces
-            let flist = [];
-            for (const key in faces) {
-                if (faces.hasOwnProperty(key)) {
-                    const element = faces[key];
-                    for (const face of element) {
-                        flist.push(face);
-                    }
-                }
-            }
-            flist = flist.filter((val, idx, self) => self.indexOf(val) === idx);
-
-            this.center[pfx] = {};
-
-            let vars = Object.keys(this.coord[pfx]);
-
-            for (const v of vars) {
-                let layers = Object.keys(this.coord[pfx][v]);
-                layers = layers.filter(l => flist.includes(l));
-                let centers = layers.map(l => {
-                    let ldata = this.coord[pfx][v][l];
-                    let [loffx, loffy] = ldata.offset;
-                    let [lsizex, lsizey] = ldata.size;
-                    let lcntr = [loffx + lsizex / 2, loffy + lsizey / 2];
-                    return lcntr;
-                });
-                let lcount = centers.length;
-                let center = centers.reduce((p, c) => {
-                    return [p[0] + c[0], p[1] + c[1]];
-                }, [0, 0]);
-
-                this.center[pfx][v] = [center[0] / lcount, center[1] / lcount];
-            }
-        }
-    }
     //
     // o- nextvoice: generate a new voice channel, play voice, delete it
     // o- stopvoice: ?
-    // op bvoice: set to bvoice channel/ clear bvoice channel
+    // o- bvoice: set to bvoice channel/ clear bvoice channel
     // -p [x]voice: modify next voice, if number, change curVoice
     // -p [?]delayrun: do it when voice play to arg
     // o- [?]sync: sync with what?
@@ -175,6 +130,7 @@ export default class Character {
         let { name, option, param } = cmd;
         if (name !== this.name) return;
 
+        // let upper runtime handle this, it's public option
         // delayrun: just set a delay to timeline
         // TODO: use eventlistener to channel instead of cmd
         // or calculate
@@ -240,7 +196,7 @@ export default class Character {
         }
     }
 
-    ProcessImageCmd(option) {
+    async ProcessImageCmd(option) {
         let allDress = Object.keys(this.dress);
         let dOpt = option.filter(o => allDress.includes(o))[0];
         if (dOpt) {
@@ -250,19 +206,15 @@ export default class Character {
         let imgctl;
         if (fOpt) {
             imgctl = this.Image(fOpt);
-            //this.dispPos = KAGConst.Both;
         }
         if ([KAGConst.Both, KAGConst.BU].includes(this.dispPos)) {
             this.showedInDom = true;
-            YZLayerMgr.Set(this.name, imgctl)
-            //YZFgImg.DrawCharacter(this.name, imgctl);
+            await YZLayerMgr.Set(this.name, imgctl, "characters")
         }
         else {
             this.showedInDom = false;
             YZLayerMgr.Hide(this.name);
-            //YZFgImg.HideCharacter(this.name);
         }
-        console.log(imgctl);
         YZLayerMgr.Draw(this.name);
     }
 
