@@ -177,6 +177,7 @@ export default class KSVM {
                     }
                     break;
             }
+            console.debug(cmd);
             if (VMMode.Step) this.hang = true;
             this.currentpos.line++;
         }

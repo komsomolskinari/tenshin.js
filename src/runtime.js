@@ -25,7 +25,7 @@ export default class Runtime {
             "mselect": cmd => this.MapSelect(cmd),
             "select": cmd => this.Select(cmd),
             "sysjump": cmd => console.debug("Sysjump, EOF?", cmd),
-            "endtrans": cmd => this.CompileTrans(cmd),
+            //"endtrans": cmd => this.CompileTrans(cmd),
             "newlay": cmd => YZCG.NewLay(cmd),
             "dellay": cmd => YZCG.DelLay(cmd),
             "bgm": cmd => YZSound.BGM(cmd),
@@ -35,7 +35,7 @@ export default class Runtime {
             // has unexpected return value
             "mselinit": () => { this.MapSelectData = []; return undefined },
             "eval": cmd => { TJSVM.eval(cmd.param.exp); return undefined },
-            "begintrans": () => { this.inTrans = true; return undefined },
+            //"begintrans": () => { this.inTrans = true; return undefined },
 
             // macro, native impliement
             "opmovie": async () => await YZVideo.OP(),
@@ -124,14 +124,6 @@ export default class Runtime {
         return [ro.target, ro.storage];
     }
 
-    static AddTrans(cmd) {
-
-    }
-
-    static CompileTrans(cmd) {
-        this.inTrans = false;
-    }
-
     // Experimental command parser prototype
     static UnpackCmd(cmd) {
         let { name, option, param } = cmd;
@@ -192,10 +184,10 @@ export default class Runtime {
                 "playbgm", "delaydone", "white_ball", "white_ball_hide", "particle"]
                 .includes(cmd.name.toLowerCase())) return;
 
-            let chobj = Character.characters[cmd.name];
+            /*let chobj = Character.characters[cmd.name];
             if (chobj !== undefined) {
                 chobj.Process(cmd);
-            }
+            }*/
             switch (ObjectMapper.TypeOf(cmd)) {
                 case "characters":
                     Character.characters[cmd.name].Process(cmd);
@@ -212,10 +204,6 @@ export default class Runtime {
                 default:
                     console.warn("RuntimeCall, unimpliement cmd", cmd);
                     break;
-            }
-
-            if (this.inTrans) {
-                this.AddTrans(cmd);
             }
         }
         return ret;

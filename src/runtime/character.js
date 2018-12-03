@@ -209,7 +209,7 @@ export default class Character {
         }
         if ([KAGConst.Both, KAGConst.BU].includes(this.dispPos)) {
             this.showedInDom = true;
-            await YZLayerMgr.Set(this.name, imgctl, "characters")
+            await YZLayerMgr.Set(this.name, imgctl, "characters");
         }
         else {
             this.showedInDom = false;
@@ -275,7 +275,6 @@ export default class Character {
         // 35 50 75 100 120 140 bgexpand original
         const usedVer = ([1, 1, 3, 3, 3, 5, 3])[this.imageLevel];
 
-
         let vImgs = varImg
             .map(v => this.coord[pfx][usedVer][v])
             .map(v => {
@@ -300,12 +299,6 @@ export default class Character {
                     size: v.size,
                 }
             });
-
-        let baseSize = this.coord[pfx][usedVer]['null'].size;
-        // calculate coord
-        let scaleo = ObjectMapper.innerobj.levels[this.imageLevel];
-        let zoom = scaleo.imgzoom / 100;
-        if (this.imageLevel < 2) zoom = scaleo.zoom * 1.33 / 100;
         // zoom each layer
         // emmmm, not now...
         return ctl;

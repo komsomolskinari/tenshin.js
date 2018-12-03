@@ -16,18 +16,14 @@ async function LoadVMData() {
     const ScriptLoadSeq = Config.Boot.InitialScripts;
     let envinit = await FilePath.read(Config.Boot.EnvInitFile);
     ObjectMapper.LoadObject(TJSON.parse(envinit));
-    let preloadps = [];
-    ScriptLoadSeq.forEach(s => {
-        preloadps.push(
-            (async () => {
-                KSVM.AddScript(
-                    s.split('.')[0],
-                    KSParser.parse(await FilePath.read(s))
-                );
-            })()
-        );
-    });
-    await Promise.all(preloadps);
+    await Promise.all(ScriptLoadSeq.map(s =>
+        (async () =>
+            KSVM.AddScript(
+                s.split('.')[0],
+                KSParser.parse(await FilePath.read(s))
+            )
+        )()
+    ));
     // TODO: too many async task in new Character()
     // Slow it down? Or let other task run first?
     Object.keys(ObjectMapper.innerobj.characters)
@@ -51,20 +47,15 @@ $(document).ready(async () => {
     $(document).click(() => KSVM.Next());
     KSVM.RunFrom(Config.Boot.EntryTag);
     KSVM.Next();
-    let preloadps = [];
     // TODO: let vm cache module load other script
     let scripts = Object.keys(FilePath.ls(Config.Boot.ScenarioPath));
-    scripts.forEach(s => {
-        let sn = s.split('.')[0];
-        preloadps.push(
-            (async () => {
-                KSVM.AddScript(
-                    s.split('.')[0],
-                    KSParser.parse(await FilePath.read(s))
-                );
-            })()
-        );
-    });
-    await Promise.all(preloadps);
+    await Promise.all(scripts.map(s =>
+        (async () =>
+            KSVM.AddScript(
+                s.split('.')[0],
+                KSParser.parse(await FilePath.read(s))
+            )
+        )()
+    ));
     console.debug("cache ok");
 });

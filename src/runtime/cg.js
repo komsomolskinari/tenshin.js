@@ -79,15 +79,14 @@ export default class YZCG {
         y = parseInt(y);
         zoom = parseInt(zoom);
         this.layerlast[name] = { x, y, zoom };
-        let lname = param.name;
-        YZLayerMgr.Zoom(lname, zoom);
-        YZLayerMgr.Move(lname, x, y);
+        YZLayerMgr.Zoom(name, zoom);
+        YZLayerMgr.Move(name, x, y);
 
         if (option.includes('show')) {
-            YZLayerMgr.Show(lname);
+            YZLayerMgr.Show(name);
         }
         if (option.includes('hide')) {
-            YZLayerMgr.Hide(lname);
+            YZLayerMgr.Hide(name);
         }
     }
 

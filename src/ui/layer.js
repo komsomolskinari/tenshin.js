@@ -4,6 +4,52 @@ import FilePath from "../utils/filepath";
 //     with or without coordinate offset
 // layer zoom and positioning
 
+// Sub layer operation
+class YZSubLayer {
+    constructor(name, parent) {
+        this.name = name;
+        parent.append(
+            $('<img>').attr('id', `sublayer_${this.name}`)
+        );
+        this.fd = $(`#sublayer_${this.name}`);
+        this.fd
+            .css('display', 'none')
+            .attr('src', FilePath.findMedia(this.name, 'image'));
+    }
+
+    Draw(offset) {
+        const [_left, _top] = offset;
+        this.fd
+            .css('left', _left)
+            .css('top', _top)
+            .css('display', '');
+    }
+
+    Delete() {
+        this.fd.remove();
+    }
+
+    async GetSize() {
+        let _width;
+        let _height = parseInt(this.fd.get(0).naturalHeight);
+        // not loaded
+        if (!_height) {
+            // wait image loaded
+            await new Promise((resolve, reject) => {
+                this.fd.one('load', () => resolve());
+                this.fd.one('error', () => reject());
+            });
+        }
+        // ok, it's now loaded
+        _width = parseInt(this.fd.get(0).naturalWidth);
+        _height = parseInt(this.fd.get(0).naturalHeight);
+        return [_width, _height];
+    }
+    ZIndex(z) {
+        this.fd.css('z-index', z);
+    }
+}
+
 class YZLayer {
     static Init() {
         this.rootDOM = $('#camera');
@@ -27,7 +73,7 @@ class YZLayer {
         this.actionSeq = [];
 
         this.fd = $(`#layer_${this.name}`);
-        this.subfd = {};
+        this.sublayer = {};
         // generate div if not exist
         if (this.fd.length == 0) {
             YZLayer.rootDOM.append(
@@ -58,36 +104,29 @@ class YZLayer {
         this.fd.finish();
         let oldLayers = this.previous.files.map(l => l.name);
         let newLayers = this.current.files.map(l => l.name);
+        if (newLayers.length == 0) {
+            this.current.files = this.previous.files;
+            console.log('!no change!')
+        }
         let deleted = oldLayers.filter(l => !newLayers.includes(l));
         let added = newLayers.filter(l => !oldLayers.includes(l));
-        console.log(this.previous, this.current, deleted, added);
-        oldLayers.forEach(f => this.subfd[f].stop());
+        console.log(this.name, oldLayers, newLayers, deleted, added);
+        //oldLayers.forEach(f => this.subfd[f].finish());
 
-        added.forEach(f => {
-            this.fd.append(
-                $('<img>').attr('id', `sublayer_${this.name}_${f}`)
-            );
-            this.subfd[f] = $(`#sublayer_${this.name}_${f}`)
-        });
+        added.forEach(f => this.sublayer[f] = new YZSubLayer(f, this.fd));
 
         // execute transOut
         // Apply for all missing layer
         // in fact not executed here now...
         deleted.forEach(f => {
-            this.subfd[f].remove()
-            delete this.subfd[f];
+            this.sublayer[f].Delete()
+            delete this.sublayer[f];
+            console.log('no layer', f);
         })
 
         // fix z-index
         newLayers.forEach((f, i) => {
-            this.subfd[f].css('z-index', i);
-        })
-
-        // load image
-        added.forEach(f => {
-            this.subfd[f]
-                .attr('src', FilePath.findMedia(f, 'image'))
-                .attr('display', 'none');
+            this.sublayer[f].ZIndex(i);
         })
         // execute transIn
         // Apply for all added layer
@@ -97,50 +136,30 @@ class YZLayer {
         let _minWidth = 10000;
         const [_winW, _winH] = Config.Display.WindowSize;
 
-        let _lock = []; // promises here
-        this.current.files.forEach(f => {
-            _lock.push(
-                (async () => {
-                    let { name, offset, size } = f;
-                    // default offset [0,0]
-                    offset = offset || [0, 0];
-                    // get size when loaded
-                    let _width;
-                    let _height = parseInt(this.subfd[name].get(0).naturalHeight);
-                    // need get size
-                    if (!size) {
-                        // not loaded
-                        if (!_height) {
-                            // wait image loaded
-                            await new Promise((resolve, reject) => {
-                                this.subfd[name].one('load', () => resolve());
-                                this.subfd[name].one('error', () => reject());
-                            });
-                        }
-                        // ok, it's now loaded
-                        _width = parseInt(this.subfd[name].get(0).naturalWidth);
-                        _height = parseInt(this.subfd[name].get(0).naturalHeight);
-                    }
-                    else {
-                        [_width, _height] = size;
-                    }
-                    const [_left, _top] = offset;
-                    _minWidth = _left < _minWidth ? _left : _minWidth;
-                    _minHeight = _top < _minHeight ? _top : _minHeight;
-                    _maxWidth = (_left + _width) > _maxWidth ? (_left + _width) : _maxWidth;
-                    _maxHeight = (_top + _height) > _maxHeight ? (_top + _height) : _maxHeight;
+        await Promise.all(this.current.files.map(f =>
+            (async () => {
+                let { name, offset, size } = f;
+                // default offset [0,0]
+                offset = offset || [0, 0];
+                // get size when loaded
+                let _width;
+                let _height;
+                // need get size
+                if (!size) [_width, _height] = await this.sublayer[name].GetSize();
+                else[_width, _height] = size;
 
-                    this.subfd[name]
-                        .css('left', _left)
-                        .css('top', _top)
-                        .css('display', '');
-                })() // push an IIFE, it returns a Promise
-            );
-        });
-        await Promise.all(_lock); // wait all promise
+                const [_left, _top] = offset;
+                _minWidth = _left < _minWidth ? _left : _minWidth;
+                _minHeight = _top < _minHeight ? _top : _minHeight;
+                _maxWidth = (_left + _width) > _maxWidth ? (_left + _width) : _maxWidth;
+                _maxHeight = (_top + _height) > _maxHeight ? (_top + _height) : _maxHeight;
+
+                this.sublayer[name].Draw(offset);
+            })() // Wait an IIFE, it returns a Promise
+        ));  // and Promise wait all... );})()));
+
         // when all draw complete
         // start animation
-        console.log(_minWidth, _minHeight, _maxWidth, _maxHeight);
         const [_fullWidth, _fullHeight] = [_maxWidth - _minWidth, _maxHeight - _minHeight]
         const [_fullLeft, _fullTop] = [
             (_winW - _fullWidth) / 2 - _minWidth + this.current.left,
@@ -200,7 +219,7 @@ export default class YZLayerMgr {
             this.layers[name] = new YZLayer(name, files, type, this.type2zindex[type]);
         }
         else {
-            this.layers[name].SetSubLayer(files);
+            if (files && files.length > 0) this.layers[name].SetSubLayer(files);
         }
     }
 
