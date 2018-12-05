@@ -1,5 +1,25 @@
 import TJSVM from "../tjsvm";
+import YZSelectUI from "../ui/select";
 
+export class YZSelectData {
+    /**
+     * 
+     * @param {String} text Text to show
+     * @param {[String,String]} dest When selected, dest position
+     * @param {String} operation When selected, TJS to run (when map, only when true, show this option)
+     * @param {*} mapplace On which position
+     */
+    constructor(text, dest, operation, mapplace) {
+        this.text = text;
+        this.dest = dest;
+        this.operation = operation;
+        this.mapplace = mapplace;
+        if (!dest[0] && !dest[1]) this.dest = undefined;
+    }
+}
+
+
+// all select logic here
 export default class YZSelect {
     static Init() {
         this.MapSelectData = [];
@@ -9,58 +29,33 @@ export default class YZSelect {
     // add map select option
     static MapSelectAdd(cmd) {
         let p = cmd.param;
-        this.MapSelectData.push({
-            name: p.name,
-            target: p.target,
-            cond: p.cond,
-            storage: p.storage,
-            place: p.place
-        });
+        this.MapSelectData.push(
+            new YZSelectData(p.name, [p.target, p.storage], p.cond, p.place)
+        );
     }
 
     // raise a map select
     static async MapSelect() {
-        var s = "Map:\n";
-        var n = 0;
-        for (const d of this.MapSelectData) {
-            s += n;
-            s += d.name;
-            s += '\n';
-            n++;
-        }
-        var r = prompt(s, 0);
-        var ro = this.MapSelectData[r];
+        let ro = await YZSelectUI.MSelect(this.MapSelectData);
         this.MapSelectData = [];
-        if (!ro.target && !ro.storage) return undefined;
-        return [ro.target, ro.storage];
+        if (!ro.dest) return undefined;
+        return ro.dest;
     }
 
     static SelectAdd(cmd) {
         let p = cmd.param;
-        this.SelectData.push({
-            text: p.text,
-            target: p.target,
-            exp: p.exp,
-            storage: p.storage
-        });
+        this.SelectData.push(
+            new YZSelectData(p.text, [p.target, p.storage], p.exp, p.storage)
+        );
     }
 
     // raise a normal select
     static async Select() {
-        var s = "";
-        var n = 0;
-        for (const d of this.SelectData) {
-            s += n;
-            s += d.text;
-            s += '\n';
-            n++;
-        }
-        var r = prompt(s, 0);
-        var ro = this.SelectData[r];
-        if (ro.exp) TJSVM.eval(ro.exp);
+        let ro = await YZSelectUI.Select(this.SelectData);
+        if (ro.operation) TJSVM.eval(ro.operation);
         this.SelectData = [];
-        if (!ro.target && !ro.storage) return undefined;
-        return [ro.target, ro.storage];
+        if (!ro.dest) return undefined;
+        return [ro.dest];
     }
 
     static Next(cmd) {
