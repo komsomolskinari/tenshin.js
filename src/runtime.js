@@ -1,6 +1,5 @@
 // runtime libs
 import Character from './runtime/character';
-import ObjectMapper from './objectmapper';
 import TJSVM from './tjsvm';
 import YZBgImg from './runtime/bgimg';
 import YZCG from './runtime/cg';
@@ -8,6 +7,7 @@ import YZSound from './ui/sound';
 import YZText from './ui/text';
 import YZVideo from './ui/video';
 import YZSelect from './runtime/select';
+import YZLayerHandler from './runtime/layerhandler';
 
 export default class Runtime {
     static Init() {
@@ -69,27 +69,8 @@ export default class Runtime {
                 "playbgm", "delaydone", "white_ball", "white_ball_hide", "particle"]
                 .includes(cmd.name.toLowerCase())) return;
 
-            /*let chobj = Character.characters[cmd.name];
-            if (chobj !== undefined) {
-                chobj.Process(cmd);
-            }*/
-            switch (ObjectMapper.TypeOf(cmd)) {
-                case "characters":
-                    Character.characters[cmd.name].Process(cmd);
-                    break;
-                case "times":
-                    YZBgImg.SetDaytime(cmd.name);
-                    break;
-                case "stages":
-                    YZBgImg.Process(cmd);
-                    break;
-                case "layer":
-                    YZCG.ProcessLay(cmd);
-                    break;
-                default:
-                    console.warn("RuntimeCall, unimpliement cmd", cmd);
-                    break;
-            }
+            if (YZLayerHandler.isLayer(cmd)) YZLayerHandler.Process(cmd);
+            else console.warn("RuntimeCall, unimpliement cmd", cmd);
         }
         return ret;
     }

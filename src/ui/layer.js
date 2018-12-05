@@ -106,11 +106,9 @@ class YZLayer {
         let newLayers = this.current.files.map(l => l.name);
         if (newLayers.length == 0) {
             this.current.files = this.previous.files;
-            console.log('!no change!')
         }
         let deleted = oldLayers.filter(l => !newLayers.includes(l));
         let added = newLayers.filter(l => !oldLayers.includes(l));
-        console.log(this.name, oldLayers, newLayers, deleted, added);
         //oldLayers.forEach(f => this.subfd[f].finish());
 
         added.forEach(f => this.sublayer[f] = new YZSubLayer(f, this.fd));
@@ -121,7 +119,6 @@ class YZLayer {
         deleted.forEach(f => {
             this.sublayer[f].Delete()
             delete this.sublayer[f];
-            console.log('no layer', f);
         })
 
         // fix z-index
@@ -224,7 +221,9 @@ export default class YZLayerMgr {
     }
 
     static Delete(name) {
-        this.layers[name].Delete();
+        const t = this.layers[name];
+        if (!t) return;
+        t.Delete();
         delete this.layers[name];
     }
 

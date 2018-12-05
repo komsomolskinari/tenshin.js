@@ -33,12 +33,12 @@ This project is a experiment about running Galgame in modern browser, it's origi
 - [x] 文件系统    File System
 - [x] 图片支持    Image
 - [x] 视频支持    Video
+- [x] 改进的选择支    Improved Select
 ### 正在工作 WIP
 - [ ] 大修图片支持    Rebuild image support
 - [ ] 基本动画    Basic Animation
 ### 近期 Soon 
 - [ ] 图片特效    Image Effect
-- [ ] 改进的选择支    Improved Select
 - [ ] 存档    Save And Load
 - [ ] 自动播放    Auto Play
 ### 可能要鸽 Sooo......oon
