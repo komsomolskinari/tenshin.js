@@ -187,8 +187,8 @@ class YZLayer {
     }
 
     Move(left, top) {
-        this.current.left = left;
-        this.current.top = top;
+        if (left !== undefined) this.current.left = left;
+        if (top !== undefined) this.current.top = top;
     }
 
     Zoom(zoom) {

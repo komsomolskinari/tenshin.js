@@ -1,7 +1,7 @@
 import TJSVM from "../tjsvm";
 import YZSelectUI from "../ui/select";
 
-export class YZSelectData {
+class YZSelectData {
     /**
      * 
      * @param {String} text Text to show

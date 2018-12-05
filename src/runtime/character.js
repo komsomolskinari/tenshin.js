@@ -135,9 +135,9 @@ export default class Character {
         // TODO: use eventlistener to channel instead of cmd
         // or calculate
         if (param.delayrun) {
-            delete cmd.param.delayrun;
-            console.debug('Delay exec command', cmd);
-            AsyncTask.Add(() => this.Process(cmd), undefined, 2000);
+            //delete cmd.param.delayrun;
+            //console.debug('Delay exec command', cmd);
+            //AsyncTask.Add(() => this.Process(cmd), undefined, 2000);
             return;
         }
 
@@ -185,15 +185,12 @@ export default class Character {
         // if standName !== name, we need call another character's Image()
         // TODO: Update imageLevel, imageXPos
 
+        let runner = this
         if (this.displayName && this.displayName !== this.name) {
             let dispch = Character.characters[this.displayName];
-            if (dispch) {
-                dispch.ProcessImageCmd(option);
-            }
+            if (dispch) runner = dispch;
         }
-        else {
-            this.ProcessImageCmd(option);
-        }
+        return runner.ProcessImageCmd(option);
     }
 
     async ProcessImageCmd(option) {
@@ -203,7 +200,7 @@ export default class Character {
             this.dressOpt = dOpt;
         }
         let fOpt = option.filter(o => o.match(/^[0-9]{3}$/) != null)[0];
-        let imgctl;
+        let imgctl = [];
         if (fOpt) {
             imgctl = this.Image(fOpt);
         }
@@ -216,6 +213,7 @@ export default class Character {
             YZLayerMgr.Hide(this.name);
         }
         YZLayerMgr.Draw(this.name);
+        return { name: this.name, layer: imgctl };
     }
 
     Text(text, display) {

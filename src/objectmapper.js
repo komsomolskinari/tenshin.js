@@ -38,5 +38,23 @@ export default class ObjectMapper {
         if (!cmd.param) return this.name2type[cmd];
         return this.name2type[cmd.name];
     }
+
+    static ConvertAll(option) {
+        let mapped = {};
+        option.filter(o => this.IsProperty(o)).forEach(o => {
+            let t = this.TypeOf(o);
+            if (mapped[t] === undefined) mapped[t] = [];
+            let mo = this.GetProperty(o);
+            if (mo.length === undefined) {
+                mapped[t].push(mo);
+            }
+            else {
+                for (const i of mo) {
+                    mapped[t].push(i);
+                }
+            }
+        });
+        return mapped;
+    }
 }
 ObjectMapper.Init();

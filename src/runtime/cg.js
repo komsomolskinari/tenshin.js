@@ -83,6 +83,7 @@ export default class YZCG {
         if (option.includes('hide')) {
             YZLayerMgr.Hide(name);
         }
+        return { name: name, layer: [] };
     }
 
     static EV(cmd) {

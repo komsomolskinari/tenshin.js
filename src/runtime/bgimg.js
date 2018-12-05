@@ -37,6 +37,7 @@ export default class YZBgImg {
         YZLayerMgr.Move(this.bgname, xpos, ypos);
         YZLayerMgr.Zoom(this.bgname, zoom);
         YZLayerMgr.Draw(this.bgname);
+        return { name: this.bgname, layer: [{ name: this.curImg }] };
     }
 
     static ProcessEnv(cmd) {
