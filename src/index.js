@@ -1,17 +1,12 @@
-import AsyncTask from "./async/asynctask";
-import Character from "./runtime/character";
+import Init from "./init";
 import KSVM from "./ksvm";
 import ObjectMapper from './objectmapper';
+import Character from "./runtime/character";
 import TJSVM from "./tjsvm";
-import YZBgImg from "./runtime/bgimg";
-import YZCG from "./runtime/cg";
-import YZSound from "./ui/sound";
-import YZText from "./ui/text";
-import YZVideo from "./ui/video";
 import FilePath from './utils/filepath';
 import KSParser from "./utils/ksparser";
 import TJSON from "./utils/tjson";
-import YZLayerMgr from "./ui/layer";
+
 async function LoadVMData() {
     const ScriptLoadSeq = Config.Boot.InitialScripts;
     let envinit = await FilePath.read(Config.Boot.EnvInitFile);
@@ -35,14 +30,7 @@ Object.keys(Config.Boot.TJSVariable)
     .forEach(k => TJSVM.addObject(k, Config.Boot.TJSVariable[k]))
 
 $(document).ready(async () => {
-    await FilePath.Load();
-    YZSound.Init();
-    YZText.Init();
-    YZBgImg.Init();
-    YZCG.Init();
-    YZVideo.Init();
-    AsyncTask.Init();
-    YZLayerMgr.Init();
+    await Init();
     await LoadVMData();
     $(document).click(() => KSVM.Next());
     KSVM.RunFrom(Config.Boot.EntryTag);

@@ -7,23 +7,18 @@ import YZCG from './runtime/cg';
 import YZSound from './ui/sound';
 import YZText from './ui/text';
 import YZVideo from './ui/video';
+import YZSelect from './runtime/select';
 
 export default class Runtime {
     static Init() {
-        this.MapSelectData = [];
-        this.SelectData = [];
-
-        this.inTrans = false;
-        this.transSeq = [];
-
         // Callback function map
         // Always use arrow function, or Firefox will 'this is undefined'
         this.callbacks = {
-            "mseladd": cmd => this.MapSelectAdd(cmd),
-            "seladd": cmd => this.SelectAdd(cmd),
-            "next": cmd => this.Next(cmd),
-            "mselect": cmd => this.MapSelect(cmd),
-            "select": cmd => this.Select(cmd),
+            "mseladd": cmd => YZSelect.MapSelectAdd(cmd),
+            "seladd": cmd => YZSelect.SelectAdd(cmd),
+            "next": cmd => YZSelect.Next(cmd),
+            "mselect": cmd => YZSelect.MapSelect(cmd),
+            "select": cmd => YZSelect.Select(cmd),
             "sysjump": cmd => console.debug("Sysjump, EOF?", cmd),
             //"endtrans": cmd => this.CompileTrans(cmd),
             "newlay": cmd => YZCG.NewLay(cmd),
@@ -56,123 +51,13 @@ export default class Runtime {
             YZText.Print(text, display);
         }
     }
-    static Next(cmd) {
-        let { name, param, option } = cmd;
-        if (param.eval != undefined) {
-            let r = TJSVM.eval(cmd.param.eval);
-            // cancel jump
-            if (!r) return undefined;
-        }
-        return [param.target, param.storage]
-    }
-
-    // TODO: mselect is Tenshin Ranman only command?
-    // add map select option
-    static MapSelectAdd(cmd) {
-        let p = cmd.param;
-        this.MapSelectData.push({
-            name: p.name,
-            target: p.target,
-            cond: p.cond,
-            storage: p.storage,
-            place: p.place
-        });
-    }
-
-    // raise a map select
-    static async MapSelect() {
-        var s = "Map:\n";
-        var n = 0;
-        for (const d of this.MapSelectData) {
-            s += n;
-            s += d.name;
-            s += '\n';
-            n++;
-        }
-        var r = prompt(s, 0);
-        var ro = this.MapSelectData[r];
-        this.MapSelectData = [];
-        if (!ro.target && !ro.storage) return undefined;
-        return [ro.target, ro.storage];
-    }
-
-    static SelectAdd(cmd) {
-        let p = cmd.param;
-        this.SelectData.push({
-            text: p.text,
-            target: p.target,
-            exp: p.exp,
-            storage: p.storage
-        });
-    }
-
-    // raise a normal select
-    static async Select() {
-        var s = "";
-        var n = 0;
-        for (const d of this.SelectData) {
-            s += n;
-            s += d.text;
-            s += '\n';
-            n++;
-        }
-        var r = prompt(s, 0);
-        var ro = this.SelectData[r];
-        if (ro.exp) TJSVM.eval(ro.exp);
-        this.SelectData = [];
-        if (!ro.target && !ro.storage) return undefined;
-        return [ro.target, ro.storage];
-    }
-
-    // Experimental command parser prototype
-    static UnpackCmd(cmd) {
-        let { name, option, param } = cmd;
-        let t = {};
-
-        let types = {
-            commands: Object.keys(this.callbacks),
-            options: [
-                "msgoff", "msgon", "show", "hide", "wait", "resetpos", "back",
-                "stop", "sync", "beginskip", "endskip", "loop"
-            ],
-            drawable: [
-                "ev", "date", "env"
-            ],
-        }
-        t[name] = ObjectMapper.TypeOf(name);
-        option.forEach(element => {
-            t[element] = ObjectMapper.TypeOf(element);
-            if (t[element] !== undefined) return;
-            const e = element.toLowerCase();
-            t[element] = Object.keys(types).map(t => {
-                if (types[t].includes(e)) return t;
-                else return undefined;
-            }).filter(t => t)[0];
-        });
-
-        for (const key in t) {
-            if (t.hasOwnProperty(key)) {
-                const val = t[key];
-                if (!val) {
-                    t[key] = Object.keys(types)
-                        .map(t =>
-                            types[t].includes(key.toLowerCase()) ?
-                                t :
-                                undefined
-                        )
-                        .filter(t => t)[0];
-                }
-            }
-        }
-        //console.log(t);
-    }
 
     static async Call(cmd) {
-        this.UnpackCmd(cmd);
         let callname = cmd.name.toLowerCase();
         let cb = this.callbacks[callname];
         let ret;
         if (cb !== undefined) {
+            // don't rewrite 'this' here
             ret = await cb(cmd);
         }
         else {

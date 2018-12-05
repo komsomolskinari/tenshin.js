@@ -4,11 +4,6 @@ import KRCSV from "../utils/krcsv";
 import YZLayerMgr from "../ui/layer";
 export default class YZCG {
     static Init() {
-        this.evfd = $('#evdiv');
-        this.evbasefd = $('#evbase');
-        this.evdifffd = $('#evdiff');
-        this.datefd = $('#datediv');
-        this.layerfd = $('#layerdiv');
         this.layerlast = {};
         this.cglist = [];
         this.diffdef = {};
@@ -92,44 +87,28 @@ export default class YZCG {
 
     static EV(cmd) {
         let { name, option, param } = cmd;
-
         let evs = option.filter(o => this.cglist.includes(o));
         if (evs.length == 0) {
             evs = option.filter(o => FilePath.findMedia(o, 'image'));
-            if (evs.length == 0) console.warn('CG.EV: no ev', cmd);
-            else {
-                this.evdifffd.css('display', 'none');
-                this.evbasefd
-                    .attr('src', FilePath.findMedia(evs[0], 'image'))
-                    .css('display', '');
+            if (evs.length == 0) {
+                console.warn('CG.EV: no ev', cmd);
+                return;
+            }
+        }
+        let def = this.diffdef[evs[0]];
+        let layers = [];
+        if (def) {
+            layers.push({ name: def.base });
+            if (def.diff) {
+                layers.push({ name: def.diff, offset: def.offset });
             }
         }
         else {
-            let def = this.diffdef[evs[0]];
-            this.evbasefd
-                .attr('src', FilePath.findMedia(def.base.toUpperCase(), 'image'))
-                .css('display', '');
-            if (def.diff) {
-                this.evdifffd
-                    .attr('src', FilePath.findMedia(def.diff.toUpperCase(), 'image'))
-                    .css('display', '')
-                    .css('left', def.offset[0])
-                    .css('top', def.offset[1])
-                //.css('width', lszx)
-                //.css('height', lszy);
-            }
-            else this.evdifffd.css('display', 'none');
+            layers.push({ name: evs[0] });
         }
-
-        if (option.includes('hide')) {
-            this.evfd.css('display', 'none');
-        }
-        else
-            this.evfd.css('display', '');
-    }
-
-    static Date(cmd) {
-        let { name, option, param } = cmd;
+        YZLayerMgr.Set('background', layers);
+        if (option.includes('hide')) YZLayerMgr.Hide('background');
+        else YZLayerMgr.Show('background');
     }
 }
 window.YZCG = YZCG;
