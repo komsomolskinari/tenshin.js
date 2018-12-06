@@ -55,7 +55,7 @@ export default class YZSelect {
         if (ro.operation) TJSVM.eval(ro.operation);
         this.SelectData = [];
         if (!ro.dest) return undefined;
-        return [ro.dest];
+        return ro.dest;
     }
 
     static Next(cmd) {

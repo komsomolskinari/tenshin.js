@@ -42,7 +42,6 @@ export default class TJSON {
                 break;
         }
         // so all 'object' goes here
-        let r = '';
         if (Array.isArray(obj)) { // []
             let subs = obj
                 .map(o => this.stringify(o))
@@ -52,12 +51,12 @@ export default class TJSON {
         if (obj === null) { // null
             return 'null'
         }
-
+        // this is for {} , or  %[]
         let s = Object.keys(obj).map(k => {
             let vs = this.stringify(obj[k]);
             if (vs === undefined) return undefined;
             else return `"${k}"=>${vs}`;
-        });
+        }).filter(i => i !== undefined);
         return `%[${s.join(',')}]`;
     }
 
