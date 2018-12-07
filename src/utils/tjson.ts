@@ -1,5 +1,9 @@
+/// <reference path="./parser.d.ts" />
+
+
 // Kirikiri TPV JavaScript Object Notation to JSON
 // TJSON: JSON of TJS, TJS is JavaScript(TM) like language, like JavaScript, it has JSON.
+
 /**
  * @class TJSON Parser, 
  */
@@ -10,7 +14,7 @@ export default class TJSON {
      * @param {String} str
      * @return {*}
      */
-    static parse(str) {
+    static parse(str: string) {
         return new TJSON()._parse(str);
     }
     /**
@@ -19,7 +23,7 @@ export default class TJSON {
      * @param {*} obj
      * @return {String}
      */
-    static stringify(obj) {
+    static stringify(obj: any): string {
         switch (typeof (obj)) {
             case "boolean": // true & false
                 if (obj) return 'true';
@@ -52,7 +56,7 @@ export default class TJSON {
             return 'null'
         }
         // this is for {} , or  %[]
-        let s = Object.keys(obj).map(k => {
+        let s: string[] = Object.keys(obj).map(k => {
             let vs = this.stringify(obj[k]);
             if (vs === undefined) return undefined;
             else return `"${k}"=>${vs}`;
@@ -67,7 +71,7 @@ export default class TJSON {
      * @param {Boolean} step Step to next char
      * @returns {String}
      */
-    _nextnechar(step) {
+    private _nextnechar(step?: boolean) {
         let ret = null;
         for (; this.ptr < this.str.length; this.ptr++) {
             if (!" \f\n\r\t\v".includes(this.str[this.ptr])) {
@@ -79,13 +83,16 @@ export default class TJSON {
         return ret;
     }
 
+    str: string = '';
+    ptr: number = 0;
+    obj: JSONObject = null;
     /**
      * Parse TJSON to object, just like JSON.Parse
      * @public @static
      * @param {String} str TJSON string
-     * @returns {Object}
+     * @returns {PrimitiveObject}
      */
-    _parse(str) {
+    private _parse(str: string): JSONObject {
         this.str = ''
         this.ptr = 0;
         this.obj = null;
@@ -94,8 +101,7 @@ export default class TJSON {
         let lines = str.split('\n');
         for (let index = 0; index < lines.length; index++) {
             let element = lines[index];
-            element = element.trim('\r');
-
+            element = element.replace(/^\r+|\r+$/g, '');
             // remove comment so we neednt parse it
             let idx = element.indexOf('//')
             this.str += idx >= 0 ? element.substring(0, idx) : element;
@@ -108,7 +114,7 @@ export default class TJSON {
      * Get next 'value', map to _obj() _array() _string()
      * @private @static
      */
-    _value() {
+    private _value(): JSONObject {
         let r;
         switch (this._nextnechar()) {
             case '%':
@@ -130,17 +136,17 @@ export default class TJSON {
      * Get next 'Object' (%[key1=>value1,...])
      * @private @static
      */
-    _obj() {
-        let r = {};
+    private _obj(): PrimitiveObject {
+        let r: PrimitiveObject = {};
         if (this._nextnechar(true) != '%') throw "fail";
         if (this._nextnechar(true) != '[') throw "fail";
         let lp = null;
-        let br = true;
+        let br: boolean = true;
         read_token:
         while (br) {
             if (this._nextnechar() != ']') {
                 lp = this._pair();
-                r[lp[0]] = lp[1];
+                r[lp.key] = lp.value;
             }
             else {
                 this.ptr++;
@@ -162,7 +168,7 @@ export default class TJSON {
      * Get next 'Array' ([value1,...])
      * @private @static
      */
-    _array() {
+    private _array(): Array<any> {
         let r = [];
         if (this._nextnechar(true) != '[') throw "fail";
         let br = true;
@@ -191,9 +197,9 @@ export default class TJSON {
      * Get next 'key-value pair' (key1=>value1)
      * @private @static
      */
-    _pair() {
-        let r = [];
-        r.push(this._string());
+    private _pair(): KeyValuePair {
+        let r: KeyValuePair = { key: '', value: '' };
+        r.key = this._string();
         switch (this._nextnechar(true)) {
             case '=':
                 if (this._nextnechar(true) != '>') {
@@ -205,12 +211,12 @@ export default class TJSON {
             default:
                 throw "fail";
         }
-        r.push(this._value());
+        r.value = this._value();
         // forward predict
         if (!",]".includes(this._nextnechar())) {
             // with type, drop type info
-            r.pop();
-            r.push(this._value());
+            delete r.value;
+            r.value = this._value();
         }
         return r;
     }
@@ -219,7 +225,7 @@ export default class TJSON {
      * Get next 'String', have some hack to work with non standard tjson
      * @private @static
      */
-    _string() {
+    private _string(): string {
         let r = '';
         let type = this._nextnechar();
         if (!"\"'".includes(type)) type = " \f\n\r\t\v,\"':[]";
@@ -232,4 +238,4 @@ export default class TJSON {
         return r;
     }
 }
-window.TJSON = TJSON;
+//window.TJSON = TJSON;

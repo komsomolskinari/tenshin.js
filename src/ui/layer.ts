@@ -1,4 +1,14 @@
 import FilePath from "../utils/filepath";
+
+interface YZLayerData {
+    width: number,
+    height: number,
+    left: number,
+    top: number,
+    zoom: number,
+    files: LayerInfo[],
+}
+
 // methods:
 // draw multiple layer
 //     with or without coordinate offset
@@ -6,7 +16,9 @@ import FilePath from "../utils/filepath";
 
 // Sub layer operation
 class YZSubLayer {
-    constructor(name, parent) {
+    name: string;
+    fd: JQuery<HTMLElement>;
+    constructor(name: string, parent: JQuery<HTMLElement>) {
         this.name = name;
         parent.append(
             $('<img>').attr('id', `sublayer_${this.name}`)
@@ -17,8 +29,8 @@ class YZSubLayer {
             .attr('src', FilePath.findMedia(this.name, 'image'));
     }
 
-    Draw(offset) {
-        const [_left, _top] = offset;
+    Draw(offset: Point) {
+        const { x: _left, y: _top } = offset;
         this.fd
             .css('left', _left)
             .css('top', _top)
@@ -30,8 +42,9 @@ class YZSubLayer {
     }
 
     async GetSize() {
+        let elm = this.fd.get(0) as HTMLImageElement;
         let _width;
-        let _height = parseInt(this.fd.get(0).naturalHeight);
+        let _height = elm.naturalHeight;
         // not loaded
         if (!_height) {
             // wait image loaded
@@ -41,20 +54,41 @@ class YZSubLayer {
             });
         }
         // ok, it's now loaded
-        _width = parseInt(this.fd.get(0).naturalWidth);
-        _height = parseInt(this.fd.get(0).naturalHeight);
+        _width = elm.naturalWidth;
+        _height = elm.naturalHeight;
         return [_width, _height];
     }
-    ZIndex(z) {
+    ZIndex(z: number) {
         this.fd.css('z-index', z);
     }
 }
 
 class YZLayer {
+    static rootDOM: JQuery<HTMLElement>;
     static Init() {
         this.rootDOM = $('#camera');
     }
-    constructor(name, files, type, zindex) {
+
+    name: string;
+    type: string;
+    previous: YZLayerData = {
+        width: 0,
+        height: 0,
+        left: 0,    // relative offset with center
+        top: 0,     // ......
+        zoom: 100,
+        files: [],
+    }
+    drawlock: boolean = false;
+    current: YZLayerData;
+    transIn: any[] = [];
+    transOut: any[] = [];
+    actionSeq: any[] = [];
+
+    fd: JQuery<HTMLElement>;
+    sublayer: { [name: string]: YZSubLayer } = {};
+
+    constructor(name: string, files: LayerInfo[], type: string, zindex: number) {
         this.name = name;
         this.type = type;
         this.previous = {
@@ -85,12 +119,12 @@ class YZLayer {
         }
     }
 
-    SetSubLayer(files) {
+    SetSubLayer(files: LayerInfo[]) {
         // maybe diff here
         this.current.files = files || [];
     }
 
-    SetSize(width, height) {
+    SetSize(width: number, height: number) {
         this.current.height = height;
         this.current.width = width;
     }
@@ -137,15 +171,18 @@ class YZLayer {
             (async () => {
                 let { name, offset, size } = f;
                 // default offset [0,0]
-                offset = offset || [0, 0];
+                offset = offset || { x: 0, y: 0 };
                 // get size when loaded
                 let _width;
                 let _height;
                 // need get size
                 if (!size) [_width, _height] = await this.sublayer[name].GetSize();
-                else[_width, _height] = size;
+                else {
+                    size.x = _width;
+                    size.y = _height;
+                }
 
-                const [_left, _top] = offset;
+                const { x: _left, y: _top } = offset;
                 _minWidth = _left < _minWidth ? _left : _minWidth;
                 _minHeight = _top < _minHeight ? _top : _minHeight;
                 _maxWidth = (_left + _width) > _maxWidth ? (_left + _width) : _maxWidth;
@@ -186,32 +223,36 @@ class YZLayer {
         this.fd.remove();
     }
 
-    Move(left, top) {
+    Move(left: number, top: number) {
         if (left !== undefined) this.current.left = left;
         if (top !== undefined) this.current.top = top;
     }
 
-    Zoom(zoom) {
+    Zoom(zoom: number) {
         this.current.zoom = zoom;
     }
 }
 // problem: how to handle 'env', or camera layer?
 // simulate it to a normal layer?
 export default class YZLayerMgr {
-    static Init() {
-        YZLayer.Init();
-        this.layers = {};
-        this.type2zindex = {
+    static layers: {
+        [name: string]: YZLayer
+    } = {};
+    static type2zindex: {
+        [type: string]: number
+    } = {
             stages: 1,
             characters: 5
         };
+    static Init() {
+        YZLayer.Init();
     }
     /**
      * Set a layer (new or existed)
      * @param {String} name 
      * @param {[{name: String,offset:[Number,Number],size:[Number,Number]}]} files 
      */
-    static Set(name, files, type) {
+    static Set(name: string, files: LayerInfo[], type?: string) {
         if (!this.layers[name]) {
             this.layers[name] = new YZLayer(name, files, type, this.type2zindex[type]);
         }
@@ -220,7 +261,7 @@ export default class YZLayerMgr {
         }
     }
 
-    static Delete(name) {
+    static Delete(name: string) {
         const t = this.layers[name];
         if (!t) return;
         t.Delete();
@@ -228,23 +269,23 @@ export default class YZLayerMgr {
     }
 
     // apply command when draw called
-    static Draw(name) {
+    static Draw(name: string) {
         this.layers[name].Draw();
     }
 
-    static Show(name) {
+    static Show(name: string) {
         this.layers[name].Draw();
     }
 
-    static Hide(name) {
+    static Hide(name: string) {
         this.layers[name].Hide();
     }
 
-    static Move(name, x, y) {
+    static Move(name: string, x: number, y: number) {
         this.layers[name].Move(x, y);
     }
 
-    static Zoom(name, zoom) {
+    static Zoom(name: string, zoom: number) {
         this.layers[name].Zoom(zoom);
     }
 
@@ -253,5 +294,3 @@ export default class YZLayerMgr {
 
     }
 }
-window.YZLayer = YZLayer;
-window.YZLayerMgr = YZLayerMgr;

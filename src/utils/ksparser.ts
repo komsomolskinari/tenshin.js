@@ -1,5 +1,8 @@
+/// <reference path="./parser.d.ts" />
+
 // KAG Script parser
 import { AutoType } from './util';
+
 /**
  * @class KSParser
  */
@@ -12,7 +15,7 @@ export default class KSParser {
      * @see _text
      * @see _func
      */
-    static parse(str) {
+    static parse(str: string) {
         return new KSParser()._parse(str);
     }
 
@@ -22,7 +25,7 @@ export default class KSParser {
      * @param {Object} obj KS AST
      * @return {String} script string
      */
-    static stringify(obj) {
+    static stringify(obj: [KSLine]) {
         return obj.reduce((str, line) => {
             let l;
             switch (line.type) {
@@ -57,8 +60,10 @@ export default class KSParser {
         }, "");
     }
 
-    _parse(str) {
-        let lines = [];
+    cmd: KSLine[];
+
+    private _parse(str: string) {
+        let lines: string[] = [];
         // scan1, check line type
         str.split('\n').forEach(l => {
             l = l.trim();
@@ -101,10 +106,10 @@ export default class KSParser {
         return this.cmd;
     }
 
-    _cutfunction(str) {
+    private _cutfunction(str: string): string[] {
         let depth = 0;
         let cur = '';
-        let ret = [];
+        let ret: string[] = [];
         let rawstr = true;
         let rs = '';
         for (let index = 0; index < str.length; index++) {
@@ -138,10 +143,9 @@ export default class KSParser {
      * Parse text line
      * @private @static
      * @param {String} str
-     * @returns {{type:string,name:string,display:string,text:string}}
      */
-    _text(str) {
-        let ret = {
+    private _text(str: string) {
+        let ret: KSLine = {
             type: "text",
             name: null,
             display: null,
@@ -168,12 +172,14 @@ export default class KSParser {
         return ret;
     }
 
+    _fp: number;
+    _fstr: string;
     /**
      * Get next char
      * @private
      * @param {Boolean} inc Step to next
      */
-    _nextch(inc) {
+    private _nextch(inc?: boolean) {
         while (" \f\n\r\t\v".includes(this._fstr[this._fp])) this._fp++;
         let ret = this._fstr[this._fp];
         if (this._fp >= this._fstr.length) ret = null;
@@ -189,10 +195,10 @@ export default class KSParser {
      * @see _kv
      * @see _ident
      */
-    _func(str) {
+    private _func(str: string) {
         this._fstr = str.substr(1, str.length - 2).trim();
         this._fp = 0;
-        let ret = {
+        let ret: KSLine = {
             type: "func",
             name: this._ident(),
             option: [],
@@ -219,8 +225,12 @@ export default class KSParser {
      * @see _str
      * @see _ident
      */
-    _kv() {
-        let ret = {
+    private _kv() {
+        let ret: {
+            key: string,
+            value: JSONObject,
+            haveValue: boolean
+        } = {
             key: undefined,
             value: undefined,
             haveValue: false
@@ -253,7 +263,7 @@ export default class KSParser {
      * @private @static
      * @param {String} sep Separators
      */
-    _str(sep) {
+    private _str(sep: string) {
         let b = '';
         while (true) {
             let nc = this._nextch(true);
@@ -270,7 +280,7 @@ export default class KSParser {
      * Parse identifier
      * @private
      */
-    _ident() {
+    private _ident() {
         let b = '';
         while (true) {
             // get next char
@@ -290,4 +300,4 @@ export default class KSParser {
         return b;
     }
 }
-window.KSParser = KSParser;
+//window.KSParser = KSParser;

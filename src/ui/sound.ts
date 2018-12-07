@@ -1,25 +1,28 @@
 import FilePath from '../utils/filepath'
 
 export default class YZSound {
+    static channels: {
+        [name: string]: JQuery<HTMLElement>
+    };
+
     static Init() {
         this.channels = {
             voice: $('#voice'),
             se: $('#se'),
             bgm: $('#bgm')
         }
-        this.charsq = {}
     }
 
-    static BGM(cmd) {
+    static BGM(cmd: KSLine) {
         let fadetime = 0;
-        if (cmd.param.time) fadetime = cmd.param.time / 1000;
+        if (cmd.param.time) fadetime = cmd.param.time as number / 1000;
 
         if (cmd.option.includes('stop')) {
             this.AudioChannelCtl('bgm', null, { '-1': ['pause', 0, fadetime] })
         }
         else {
             if (!cmd.param.storage) return;
-            let realbgm = cmd.param.storage.replace(/bgm/i, 'BGM');
+            let realbgm = (cmd.param.storage as string).replace(/bgm/i, 'BGM');
             // TODO: generate loop info
             let ctl = { '-1': ['start', fadetime] };
             this.AudioChannelCtl('bgm', realbgm, ctl)
@@ -30,7 +33,7 @@ export default class YZSound {
      * Output voice
      * @param {String} src Source
      */
-    static Voice(src) {
+    static Voice(src: string) {
         let ctl = { '-1': ['start', 0] }
         this.AudioChannelCtl('voice', src, ctl)
     }
@@ -49,7 +52,7 @@ export default class YZSound {
      * @param {String} aname Audio name, if null, not change
      * @param {*} playctl Play Control
      */
-    static AudioChannelCtl(channel, aname, playctl) {
+    static AudioChannelCtl(channel: string, aname: string, playctl: any) {
         let ch = this.channels[channel];
         let s = ch.attr('src');
         let asrc = null;
@@ -64,21 +67,21 @@ export default class YZSound {
             if (playctl.hasOwnProperty(key)) {
                 const element = playctl[key];
                 let f = () => { };
-
+                const elm: HTMLAudioElement = ch.get(0) as HTMLAudioElement;
                 switch (element[0]) {
                     case 'start':
                         f = () => {
-                            ch[0].play().catch(e => { });
+                            elm.play().catch(e => { });
                         }
                         break;
                     case 'pause':
                         f = () => {
-                            ch[0].pause();
+                            elm.pause();
                         }
                         break;
                     case 'volume':
                         f = () => {
-                            ch[0].volume = element[1];
+                            elm.volume = element[1];
                         }
                 }
                 if (parseInt(key) == -1) {

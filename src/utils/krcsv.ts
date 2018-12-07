@@ -9,7 +9,7 @@ export default class KRCSV {
      * @param {String} mode Seprator char
      * @param {*} title Title line, when null, no title
      */
-    static parse(txt, mode, title) {
+    static parse(txt: string, mode: string, title?: string[] | null | boolean) {
         let lines = txt.split('\n').filter(l => l.length > 0);
         if (mode === undefined) mode = this.GuessMode(lines);
         if (mode != ',') lines = lines.map(l => l.replace(new RegExp(mode, 'g'), ','));
@@ -26,7 +26,7 @@ export default class KRCSV {
 
         let parsedLines = body.map(l => {
             // Parse line, and type convert
-            let pl = this.ParseLine(l).map(u => AutoType(u));
+            let pl: any = this.ParseLine(l).map(u => AutoType(u));
 
             // fill text index
             if (title) {
@@ -43,14 +43,14 @@ export default class KRCSV {
      * Guess a line array is Tab-CSV or normal CSV
      * @param {[String]} lines Line array
      */
-    static GuessMode(lines) {
+    static GuessMode(lines: string[]): string {
         if (lines.every(l => l.indexOf('\t') >= 0)) return '\t';
         else return ',';
     }
 
     // copy from https://stackoverflow.com/questions/8493195/how-can-i-parse-a-csv-string-with-javascript-which-contains-comma-in-data
     // Return array of string values, or NULL if CSV string not well formed.
-    static ParseLine(text) {
+    static ParseLine(text: string) {
         let re_valid = /^\s*(?:'[^'\\]*(?:\\[\S\s][^'\\]*)*'|"[^"\\]*(?:\\[\S\s][^"\\]*)*"|[^,'"\s\\]*(?:\s+[^,'"\s\\]+)*)\s*(?:,\s*(?:'[^'\\]*(?:\\[\S\s][^'\\]*)*'|"[^"\\]*(?:\\[\S\s][^"\\]*)*"|[^,'"\s\\]*(?:\s+[^,'"\s\\]+)*)\s*)*$/;
         let re_value = /(?!\s*$)\s*(?:'([^'\\]*(?:\\[\S\s][^'\\]*)*)'|"([^"\\]*(?:\\[\S\s][^"\\]*)*)"|([^,'"\s\\]*(?:\s+[^,'"\s\\]+)*))\s*(?:,|$)/g;
         // Return NULL if input string is not well formed CSV string.
@@ -70,4 +70,4 @@ export default class KRCSV {
         return a;
     };
 }
-window.KRCSV = KRCSV;
+//window.KRCSV = KRCSV;

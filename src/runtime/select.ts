@@ -1,7 +1,17 @@
 import TJSVM from "../tjsvm";
 import YZSelectUI from "../ui/select";
 
-class YZSelectData {
+interface JumpDest {
+    script: string,
+    target: string
+};
+
+export class YZSelectData {
+
+    text: string;
+    dest: JumpDest;
+    operation: string;
+    mapplace: any;
     /**
      * 
      * @param {String} text Text to show
@@ -9,28 +19,37 @@ class YZSelectData {
      * @param {String} operation When selected, TJS to run (when map, only when true, show this option)
      * @param {*} mapplace On which position
      */
-    constructor(text, dest, operation, mapplace) {
+    constructor(text: string, dest: JumpDest, operation: string, mapplace: any) {
         this.text = text;
         this.dest = dest;
         this.operation = operation;
         this.mapplace = mapplace;
-        if (!dest[0] && !dest[1]) this.dest = undefined;
+        if (!dest.script && !dest.target) this.dest = undefined;
     }
 }
 
-
 // all select logic here
 export default class YZSelect {
-    static Init() {
-        this.MapSelectData = [];
-        this.SelectData = [];
+    static MapSelectData: YZSelectData[] = [];
+    static SelectData: YZSelectData[] = [];
+
+    static MapSelectInit() {
+        this.MapSelectData = []
     }
+
     // TODO: mselect is Tenshin Ranman only command?
     // add map select option
-    static MapSelectAdd(cmd) {
+    static MapSelectAdd(cmd: KSLine) {
         let p = cmd.param;
         this.MapSelectData.push(
-            new YZSelectData(p.name, [p.target, p.storage], p.cond, p.place)
+            new YZSelectData(
+                p.name as string,
+                {
+                    script: p.storage as string,
+                    target: p.target as string
+                },
+                p.cond as string,
+                p.place)
         );
     }
 
@@ -42,10 +61,17 @@ export default class YZSelect {
         return ro.dest;
     }
 
-    static SelectAdd(cmd) {
+    static SelectAdd(cmd: KSLine) {
         let p = cmd.param;
         this.SelectData.push(
-            new YZSelectData(p.text, [p.target, p.storage], p.exp, p.storage)
+            new YZSelectData(
+                p.text as string,
+                {
+                    script: p.storage as string,
+                    target: p.target as string
+                },
+                p.exp as string,
+                p.storage)
         );
     }
 
@@ -58,14 +84,13 @@ export default class YZSelect {
         return ro.dest;
     }
 
-    static Next(cmd) {
+    static Next(cmd: KSLine) {
         let { name, param, option } = cmd;
         if (param.eval != undefined) {
-            let r = TJSVM.eval(cmd.param.eval);
+            let r = TJSVM.eval(cmd.param.eval as string);
             // cancel jump
             if (!r) return undefined;
         }
         return [param.target, param.storage]
     }
 }
-YZSelect.Init();

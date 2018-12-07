@@ -1,3 +1,5 @@
+/// <reference path="config.d.ts" />
+
 import Init from "./init";
 import KSVM from "./ksvm";
 import ObjectMapper from './objectmapper';

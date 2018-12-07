@@ -3,10 +3,24 @@ import FilePath from "../utils/filepath";
 import KRCSV from "../utils/krcsv";
 import YZLayerMgr from "../ui/layer";
 export default class YZCG {
+    static layerlast: {
+        [name: string]: {
+            x: number,
+            y: number,
+            zoom: number
+        }
+    } = {};
+    static cglist: string[] = [];
+    static diffdef: {
+        [name: string]: {
+            base: string,
+            diff: string,
+            ev: string,
+            offset: [number, number],
+            size: [number, number],
+        }
+    } = {};
     static Init() {
-        this.layerlast = {};
-        this.cglist = [];
-        this.diffdef = {};
         this.__LoadCGList();
     }
 
@@ -38,41 +52,38 @@ export default class YZCG {
         this.cglist = Object.keys(this.diffdef);
     }
 
-    static NewLay(cmd) {
+    static NewLay(cmd: KSLine) {
         let { name, option, param } = cmd;
-        let lname = param.name;
-        let lfile = param.file;
+        let lname = param.name as string;
+        let lfile = param.file as string;
         if (!lfile) return;
         this.layerlast[lname] = {
             x: 0,
             y: 0,
             zoom: 100
         }
-        YZLayerMgr.Set(lname, [{ name: lfile, offset: [0, 0] }]);
+        YZLayerMgr.Set(lname, [{ name: lfile, offset: { x: 0, y: 0 } }]);
         this.ProcessLay({
             name: lname,
             option: option,
             param: param
-        });
+        } as KSLine);
         ObjectMapper.AddLayer(lname);
     }
 
-    static DelLay(cmd) {
-        YZLayerMgr.Delete(cmd.param.name);
-        ObjectMapper.RemoveLayer(cmd.param.name);
+    static DelLay(cmd: KSLine) {
+        YZLayerMgr.Delete(cmd.param.name as string);
+        ObjectMapper.RemoveLayer(cmd.param.name as string);
     }
 
-    static ProcessLay(cmd) {
+    static ProcessLay(cmd: KSLine) {
         let { name, option, param } = cmd;
 
         let last = this.layerlast[name];
-        let x = (param.xpos !== undefined) ? param.xpos : last.x;
-        let y = (param.ypos !== undefined) ? param.ypos : last.y;
+        let x = (param.xpos !== undefined) ? param.xpos as number : last.x;
+        let y = (param.ypos !== undefined) ? param.ypos as number : last.y;
         // TODO: coordinate convert
-        let zoom = param.zoom || last.zoom;
-        x = parseInt(x);
-        y = parseInt(y);
-        zoom = parseInt(zoom);
+        let zoom = param.zoom as number || last.zoom;
         this.layerlast[name] = { x, y, zoom };
         YZLayerMgr.Zoom(name, zoom);
         YZLayerMgr.Move(name, x, y);
@@ -83,14 +94,14 @@ export default class YZCG {
         if (option.includes('hide')) {
             YZLayerMgr.Hide(name);
         }
-        return { name: name, layer: [] };
+        return { name: name, layer: [] as LayerInfo[] };
     }
 
-    static EV(cmd) {
+    static EV(cmd: KSLine) {
         let { name, option, param } = cmd;
-        let evs = option.filter(o => this.cglist.includes(o));
+        let evs: string[] = (option as string[]).filter(o => this.cglist.includes(o));
         if (evs.length == 0) {
-            evs = option.filter(o => FilePath.findMedia(o, 'image'));
+            evs = (option as string[]).filter(o => FilePath.findMedia(o, 'image'));
             if (evs.length == 0) {
                 console.warn('CG.EV: no ev', cmd);
                 return;
@@ -101,7 +112,7 @@ export default class YZCG {
         if (def) {
             layers.push({ name: def.base });
             if (def.diff) {
-                layers.push({ name: def.diff, offset: def.offset });
+                layers.push({ name: def.diff, offset: { x: def.offset[0], y: def.offset[1] } });
             }
         }
         else {
@@ -112,4 +123,4 @@ export default class YZCG {
         else YZLayerMgr.Show('background');
     }
 }
-window.YZCG = YZCG;
+//window.YZCG = YZCG;

@@ -1,17 +1,36 @@
+enum ItemType { file = "file", directory = "directory" }
+interface DirItem {
+    name: string,
+    type: ItemType,
+    contents?: DirItem[]
+}
+
+interface FindIndex {
+    [name: string]: string[]
+}
+
+interface MediaIndex {
+    [type: string]: { [name: string]: string }
+}
+
 export default class FilePath {
+    static loading: boolean = false;
+
+    static ready: boolean = false;
+    static mode: ConfigTreeMode = Config.File.TreeMode;
+    static root: string = Config.File.Root;           // game root
+    static loadpath: string = Config.File.TreePath;   // path file or game root
+    static tree: DirItem[] = [];
+    static idxtree: IndexItem;
+    static findtree: FindIndex;
+    static mediatree: MediaIndex;
     /**
      * Load VFS
      */
     static async Load() {
         if (this.loading) return;
         this.loading = true;
-        this.ready = false;
-        this.mode = Config.File.TreeMode;
-        this.root = Config.File.Root;           // game root
-        this.loadpath = Config.File.TreePath;   // path file or game root
-        this.loading = true;
         this.tree = [];
-
         this.root = this.root.substr(this.root.length - 1) == '/' ?
             this.root :
             this.root + '/';
@@ -35,7 +54,7 @@ export default class FilePath {
      * @param {String} dir String, target directory
      * @returns {*} FileTree, undefine if dir not exist
      */
-    static ls(dir) {
+    static ls(dir: string) {
         if (!this.ready) return undefined;
         if (dir === undefined) dir = '';
         let units = dir.split('/').filter(u => u);
@@ -48,9 +67,9 @@ export default class FilePath {
      * @param {Boolean} relative return path without root directory
      * @returns {String} path
      */
-    static find(file, relative) {
+    static find(file: string, relative?: boolean): string {
         if (!this.ready) return undefined;
-        if (relative === true) return this.findtree[file];
+        if (relative === true) return this.findtree[file][0];
         let treeItem = (this.findtree[file] || [])[0];
         if (treeItem) return (`${this.root}/${treeItem}`).replace(/\/+/g, '/');
         else return undefined;
@@ -63,16 +82,16 @@ export default class FilePath {
      * @param {Boolean} relative return path without root directory
      * @returns {String} path
      */
-    static findMedia(file, type, relative) {
+    static findMedia(file: string, type: string, relative?: boolean): string {
         let realname = this.mediatree[type][file.toLowerCase()];
         return this.find(realname, relative);
     }
     /**
      * Perform async read
-     * @param {String} file file to find, with/without extension
-     * @param {String} type file type, if undefined, file is with ext
+     * @param  file file to find, with/without extension
+     * @param  type file type, if undefined, file is with ext
      */
-    static async read(file, type) {
+    static async read(file: string, type?: string) {
         let path = type ? this.findMedia(file, type) : this.find(file);
         return await $.get(path);
     }
@@ -82,13 +101,13 @@ export default class FilePath {
      * generate ls's index
      * @param {*} tree fs tree
      */
-    static _genindex(tree) {
-        let r = {}
-        tree.forEach(e => {
-            if (e.type == "directory") {
+    static _genindex(tree: DirItem[]): IndexItem {
+        let r: IndexItem = {}
+        tree.forEach((e: DirItem) => {
+            if (e.type == ItemType.directory) {
                 r[e.name] = this._genindex(e.contents);
             }
-            else r[e.name] = 0;
+            else r[e.name] = null;
         });
         return r;
     }
@@ -97,8 +116,14 @@ export default class FilePath {
      * generate findmedia's index
      * @param {[String]} findlist find tree in list format
      */
-    static _genmedia(findlist) {
-        let r = {
+    static _genmedia(findlist: string[]) {
+        let r: {
+            image: { [key: string]: string },
+            video: { [key: string]: string },
+            audio: { [key: string]: string },
+            script: { [key: string]: string },
+            other: { [key: string]: string },
+        } = {
             image: {},
             video: {},
             audio: {},
@@ -144,10 +169,10 @@ export default class FilePath {
      * @param {*} tree fs tree
      * @param {String} dir start directory
      */
-    static _genfind(tree, dir) {
-        let ret = {};
-        tree.forEach(e => {
-            if (e.type == "file") {
+    static _genfind(tree: DirItem[], dir: string): FindIndex {
+        let ret: FindIndex = {};
+        tree.forEach((e: DirItem) => {
+            if (e.type == ItemType.file) {
                 if (ret[e.name] === undefined)
                     ret[e.name] = [];
                 ret[e.name].push(`${dir}/${e.name}`)
@@ -164,7 +189,7 @@ export default class FilePath {
      * Load VFS directory
      * @param {*} url 
      */
-    static async __loader(url) {
+    static async __loader(url: string) {
         /*
         [
             {
@@ -175,7 +200,9 @@ export default class FilePath {
         ]
         */
 
-        const __loader_http_map = {
+        const __loader_http_map: {
+            [mode: string]: (str: string) => DirItem[]
+        } = {
             'nginx': this.__loader_nginx_html,
             'nginx-json': this.__loader_nginx_json,
             'nginx-xml': this.__loader_nginx_xml,
@@ -191,38 +218,32 @@ export default class FilePath {
         // linux:   tree --charset ascii
         //          tree -J (ok)
         //          tree -X
-        const __loader_file_map = {
+        const __loader_file_map: { [prop: string]: (str: string) => DirItem[] } = {
             'json': this.__loader_tree_json,
-            'xml': this.__loader__error,
-            'tree': this.__loader__error,
+            // 'xml': this.__loader__error,
+            // 'tree': this.__loader__error,
         }
 
-        if (!Object.keys(__loader_http_map).includes(this.mode)) {
+        if (!Object.keys(__loader_http_map).includes(String(this.mode))) {
             let text = await $.ajax(url, { dataType: 'text' });
             return __loader_file_map[this.mode](text);
         }
 
         // get raw data, so we can parse it next
-        let ls = await $.ajax(url, { dataType: 'text' });
-        let ret = [];
+        let ls: string = await $.ajax(url, { dataType: 'text' });
+        let ret: DirItem[] = [];
         let loader = __loader_http_map[this.mode] || this.__loader__error;
         ret = loader.call(this, ls);    // need rewrite 'this'
-        let ps = [];
-        for (const l of ret) {
-            if (l.type == "directory") {
-                ps.push(
-                    this.__loader(url + l.name + '/')
-                        .then((arg) => l.contents = arg)
-                );
-            }
-            else l["contents"] = null;
-        }
-        await Promise.all(ps)
+
+        await Promise.all(ret.filter(l => l.type == ItemType.directory).map((l, i) =>
+            (
+                async () => ret[i].contents = await this.__loader(url + l.name + '/')
+            )()
+        ));
         return ret;
     }
 
-    // ----- Loader public tools ----- //
-    static __loader__table(text) {
+    static __loader__table(text: string) {
         return [].slice.call(   // return raw array
             new DOMParser()
                 .parseFromString(text, "text/html")
@@ -231,7 +252,7 @@ export default class FilePath {
         )
     }
 
-    static __loader__pre(text) {
+    static __loader__pre(text: string) {
         return new DOMParser()
             .parseFromString(text, "text/html")
             .getElementsByTagName('pre')[0]     // get <pre>
@@ -247,29 +268,29 @@ export default class FilePath {
     // ----- Loader for each httpd ----- //
     // NOTE: If anyone wants add a new loader, please DO NOT use URL parser
     //          it will mess encoding up
-    static __loader_nginx_json(text) {
+    static __loader_nginx_json(text: string) {
         return JSON.parse(text);
     }
-    static __loader_nginx_xml(text) {
-        let ret = [];
+    static __loader_nginx_xml(text: string) {
+        let ret: DirItem[] = [];
         let ngxml = $.parseXML(text);
         $(ngxml).find('directory').each((idx, elm) => {
             ret.push({
                 name: $(elm).text(),
-                type: 'directory'
+                type: ItemType.directory
             })
         });
         $(ngxml).find('file').each((idx, elm) => {
             ret.push({
                 name: $(elm).text(),
-                type: 'file'
+                type: ItemType.file
             })
         });
         return ret;
     }
-    static __loader_nginx_html(text) {
+    static __loader_nginx_html(text: string) {
         console.log('nginx html autoindex will truncate long file name');
-        let ret = [];
+        let ret: DirItem[] = [];
         this.__loader__pre(text).forEach(l => {
             let filename = $(l).text();
             if (filename[0] == '.') return;
@@ -277,64 +298,64 @@ export default class FilePath {
             if (match) {
                 ret.push({
                     name: match[1],
-                    type: 'directory'
+                    type: ItemType.directory
                 });
             }
             else {
                 ret.push({
                     name: filename,
-                    type: 'file'
+                    type: ItemType.file
                 });
             }
         });
         return ret;
     }
-    static __loader_hfs(text) {
+    static __loader_hfs(text: string) {
         console.log('HFS is known have perfomance issue')
-        let ret = [];
+        let ret: DirItem[] = [];
         this.__loader__table(text)
             .slice(1)
-            .forEach(r => {
-                let filename = r        // tr
+            .forEach((r: HTMLTableRowElement) => {
+                let filename = (r       // tr
                     .cells[0]           // 1st td
-                    .firstElementChild  // input
+                    .firstElementChild as HTMLInputElement)
                     .value;             // .value
                 if (filename[0] == '.') return;
                 let match = filename.match(/(.+)\/$/i);
                 if (match) {
                     ret.push({
                         name: match[1],
-                        type: 'directory'
+                        type: ItemType.directory
                     });
                 }
                 else {
                     ret.push({
                         name: filename,
-                        type: 'file'
+                        type: ItemType.file
                     });
                 }
             });
         return ret;
     }
-    static __loader_lighttpd(text) {
-        let ret = [];
+    static __loader_lighttpd(text: string) {
+        let ret: DirItem[] = [];
         this.__loader__table(text)
             .slice(1)
-            .forEach(r => {
+            .forEach((r: HTMLTableRowElement) => {
                 let type = [].includes.call(r.classList, 'd') ?
-                    'directory' :
-                    'file';
-                let name = r            // tr
-                    .cells[0]           // 1st td
-                    .firstElementChild  // a
-                    .innerText;         // text
+                    ItemType.directory :
+                    ItemType.file;
+                let name = (r   // tr
+                    .cells[0]   // 1st td
+                    .firstElementChild as HTMLAnchorElement)
+                    .innerText; // text
                 if (name[0] == '.') return;
                 ret.push({ name, type });
             });
         return ret;
     }
-    static __loader_iis(text) {
-        let ret = [];
+    static __loader_iis(text: string) {
+        let ret: DirItem[] = [];
         this.__loader__pre(text).forEach((l, i) => {
             if (i == 0) return; // jump first line
             let a = new DOMParser()
@@ -342,44 +363,43 @@ export default class FilePath {
                 .getElementsByTagName('a')[0];
             let name = a.innerText;
             let type = a.href.match(/\/$/) ?
-                'directory' :
-                'file';
+                ItemType.directory :
+                ItemType.file;
             ret.push({ name, type });
         });
         return ret;
     }
-    static __loader_apache(text) {
-        let ret = [];
+    static __loader_apache(text: string) {
+        let ret: DirItem[] = [];
         this.__loader__table(text)
             .slice(3)      // 1: title 2: span 3: parent
-            .forEach(r => {
+            .forEach((r: HTMLTableRowElement) => {
                 let td = r       // tr
                     .cells[1];   // 2nd td, 1st is icon
                 if (!td) return;
                 let filename = td
                     .firstElementChild  // a
-                    .innerHTML;         // .href
+                    .innerHTML;
 
                 let match = filename.match(/(.+)\/$/i);
                 if (match) {
                     ret.push({
                         name: match[1],
-                        type: 'directory'
+                        type: ItemType.directory
                     });
                 }
                 else {
                     ret.push({
                         name: filename,
-                        type: 'file'
+                        type: ItemType.file
                     });
                 }
             });
         return ret;
     }
 
-    static __loader_tree_json(text) {
+    static __loader_tree_json(text: string) {
         let obj = JSON.parse(text);
         return obj[0].contents;
     }
 }
-window.FilePath = FilePath

@@ -1,11 +1,10 @@
-import TJSVM from "../tjsvm";
+import { YZSelectData } from "../runtime/select";
 
 export default class YZSelectUI {
-    static async Select(data) {
-        let r = await new Promise((resolve, reject) => {
-            data.forEach((d, i) =>
+    static async Select(data: YZSelectData[]) {
+        let r: number = await new Promise((resolve, reject) => {
+            data.forEach((d: YZSelectData, i: number) =>
                 $('#selectlist').append(
-
                     $('<li>')
                         .attr('id', `select_option_${i}`)
                         .text(d.text)
@@ -17,7 +16,7 @@ export default class YZSelectUI {
         return data[r];
     }
 
-    static async MSelect(data) {
+    static async MSelect(data: YZSelectData[]) {
         return await this.Select(data);
     }
 }

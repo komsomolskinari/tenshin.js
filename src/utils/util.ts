@@ -3,8 +3,8 @@
  * @param {*} str 
  */
 
-export function AutoType(str) {
-    let b = str + '';
+export function AutoType(str: string): string | number | null {
+    let b: any = str + '';
     let orig = b;
     b = !isNaN(parseInt(b)) ? parseInt(b) : b;  // try int
     b = !isNaN(parseFloat(b)) ? parseFloat(b) : b;  // try float
@@ -14,7 +14,7 @@ export function AutoType(str) {
     return b;
 }
 
-export function ParseHTML(str) {
+export function ParseHTML(str: string): ChildNode {
     return new DOMParser()
         .parseFromString(str, "text/html")
         .firstChild     // <html>

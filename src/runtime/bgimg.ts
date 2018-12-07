@@ -3,6 +3,14 @@ import FilePath from "../utils/filepath";
 import YZLayerMgr from "../ui/layer";
 
 export default class YZBgImg {
+
+    static daytime: any = undefined;
+    static stage: any = undefined;
+    static curImg = "";
+    static bgname = "background";
+    //this.bgfd = $('#bgimg');
+    static camfd = $('#camera');
+
     static Init() {
         this.daytime = undefined;
         this.stage = undefined;
@@ -12,17 +20,17 @@ export default class YZBgImg {
         this.camfd = $('#camera');
     }
 
-    static SetDaytime(time) {
+    static SetDaytime(time: any) {
         if (ObjectMapper.TypeOf(time) == "times")
             this.daytime = ObjectMapper.GetProperty(time);
     }
 
-    static Process(cmd) {
+    static Process(cmd: KSLine) {
         let { name, option, param } = cmd;
         this.stage = ObjectMapper.GetProperty(name);
 
         // inline time
-        let inlineTime = (option.filter(o => ObjectMapper.TypeOf(o) == "times") || [])[0];
+        let inlineTime = (option.filter(o => ObjectMapper.TypeOf(o as string) == "times") || [])[0];
         if (inlineTime) {
             this.SetDaytime(inlineTime);
         }
@@ -31,16 +39,16 @@ export default class YZBgImg {
         YZLayerMgr.Set(this.bgname, [{ name: this.curImg }], "stages");
         YZLayerMgr.Move(this.bgname, 0, 0);
         YZLayerMgr.Zoom(this.bgname, 100);
-        let xpos = param.xpos || 0;
-        let ypos = param.ypos || 0;
-        let zoom = param.zoom || 100;
+        let xpos = param.xpos as number || 0;
+        let ypos = param.ypos as number || 0;
+        let zoom = param.zoom as number || 100;
         YZLayerMgr.Move(this.bgname, xpos, ypos);
         YZLayerMgr.Zoom(this.bgname, zoom);
         YZLayerMgr.Draw(this.bgname);
         return { name: this.bgname, layer: [{ name: this.curImg }] };
     }
 
-    static ProcessEnv(cmd) {
+    static ProcessEnv(cmd: KSLine) {
         let { name, option, param } = cmd;
         if (option.includes("resetcamera")) {
             // reset and return
@@ -48,13 +56,13 @@ export default class YZBgImg {
             return;
         }
 
-        let cx = parseInt(param.camerax || 0);
-        let cy = parseInt(param.cameray || 0);
-        let zoom = parseInt(param.camerazoom || 100);
+        let cx = param.camerax as number || 0;
+        let cy = param.cameray as number || 0;
+        let zoom = param.camerazoom as number || 100;
         this.SetEnvZoom(zoom, cx, cy);
     }
 
-    static SetEnvZoom(zoom, x, y) {
+    static SetEnvZoom(zoom: number, x: number, y: number) {
         this.camfd
             // horizontal axis is reversed
             .css('left', -x * 0.3)

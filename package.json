@@ -1,6 +1,6 @@
 {
   "name": "tenshin.js",
-  "version": "0.4.3.2-notwork",
+  "version": "0.4.4-notwork",
   "description": "天神乱漫，Javascript实现",
   "main": "index.js",
   "scripts": {
@@ -15,12 +15,13 @@
   "homepage": "https://github.com/studentmain/tenshin.js",
   "repository": "https://github.com/studentmain/tenshin.js",
   "dependencies": {
+    "@types/jquery": "^3.3.23",
     "jquery": "^3.3.1",
     "webpack": "^4.26.1"
   },
   "devDependencies": {
     "ts-loader": "^5.3.1",
-    "typescript": "^3.2.1",
+    "typescript": "^3.2.2",
     "webpack-cli": "^3.1.2"
   }
 }

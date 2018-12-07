@@ -1,35 +1,34 @@
+/// <reference path="./public.d.ts" />
+
 import AsyncTask from "./async/asynctask";
 import Runtime from "./runtime";
-
-const VMMode = {
-    Step: 0,    // stop per step
-    Text: 1,    // stop per text
-    Auto: 2,    // stop per text, wait all async operation, and continue
-    Quick: 3,   // stop per text, continue after 20 ms?
-    Select: 4,  // stop when jump occured, shutdown ui
-}
-
+import { VMMode } from "./const";
 export default class KSVM {
-    static Init() {
-        this.mode = VMMode.Text;
-        this.hang = false;
-        // scripts = {name: script}
-        this.scripts = {};
-        this.macros = {};
-        this.tags = {};
-        // [script name, line#]
-        this.currentpos = { "script": null, "line": 1 };
-        this.posstack = [];
-        this.runlock = false;
-        this.breakPoints = [];
-    }
+    static mode = VMMode.Text;
+    static hang = false;
+    // scripts = {name: script}
+    static scripts: {
+        [name: string]: KSLine[]
+    } = {};
+    static macros: {
+        [name: string]: KSLine[]
+    } = {};
+    static tags: {
+        [name: string]: VMPosition[]
+    } = {};
+    // [script name, line#]
+    static currentpos: VMPosition = { "script": null, "line": 1 };
+    static posstack: VMPosition[] = [];
+    static runlock = false;
+    static breakPoints: VMPosition[] = [];
+
 
     /**
      * Add a script file to VM
      * @param {String} name file name, without extension
      * @param {*} script compiled script
      */
-    static AddScript(name, script) {
+    static AddScript(name: string, script: KSLine[]) {
         if (Object.keys(this.scripts).includes(name)) {
             console.debug(`AddScript: duplicate script ${name}`)
             return;
@@ -58,7 +57,7 @@ export default class KSVM {
                 if (currentMacro.length > 0) {
                     this.AddMacro(currentMName, currentMacro);
                 }
-                currentMName = element.param.name;
+                currentMName = String(element.param.name);
                 currentMacro = [];
                 inMacro = true;
             }
@@ -76,7 +75,7 @@ export default class KSVM {
         }
     }
 
-    static AddTag(name, script, line) {
+    static AddTag(name: string, script: string, line: number) {
         if (this.tags[name] === undefined) this.tags[name] = [];
         this.tags[name].push({
             script: script,
@@ -84,15 +83,15 @@ export default class KSVM {
         });
     }
 
-    static AddMacro(name, script) {
+    static AddMacro(name: string, script: KSLine[]) {
         this.macros[name] = script;
     }
 
-    static AddBreakPoint(script, line) {
+    static AddBreakPoint(script: string, line: number) {
         this.breakPoints.push({ script, line });
     }
 
-    static RemoveBreakPoint(script, line) {
+    static RemoveBreakPoint(script: string, line: number) {
         this.breakPoints = this.breakPoints.filter(l => l.script != script || l.line != line);
     }
 
@@ -101,7 +100,7 @@ export default class KSVM {
      * @param {String} tag tag name, with *
      * @param {String} script script name
      */
-    static LocateTag(tag, script) {
+    static LocateTag(tag: string, script: string) {
         if (script) script = script.split('.')[0];
         // No tag, return first line of script
         if (tag === undefined) {
@@ -120,11 +119,11 @@ export default class KSVM {
     /**
      * Get current command
      */
-    static CurrentCmd() {
+    static CurrentCmd(): KSLine {
         return this.scripts[this.currentpos.script][this.currentpos.line]
     }
 
-    static HitBreakPoint(position) {
+    static HitBreakPoint(position: VMPosition) {
         //let bpeq = (p1, p2) => ((p1.script === p2.script) && (p1.line === p2.line));
         if (this.breakPoints.length == 0) return false;
         let cur = this.breakPoints
@@ -185,7 +184,7 @@ export default class KSVM {
     }
 
     // run from *tag, used for playback
-    static async RunFrom(tag) {
+    static async RunFrom(tag: string) {
         this.currentpos = this.tags[tag][0];
         this.runlock = false;
     }
@@ -199,5 +198,3 @@ export default class KSVM {
         await this.Run();
     }
 }
-KSVM.Init();
-window.KSVM = KSVM;

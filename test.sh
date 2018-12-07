@@ -1,7 +1,7 @@
 #! /bin/sh
 
 #./appendix/tree.py game/ > tree.json
-webpack --mode none src/index.js --output index.js
+webpack
 cp node_modules/jquery/dist/jquery.min.js jquery.min.js
 cp src/index.html index.html
 cp src/index.css index.css

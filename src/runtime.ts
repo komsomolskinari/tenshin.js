@@ -10,15 +10,16 @@ import YZSelect from './runtime/select';
 import YZLayerHandler from './runtime/layerhandler';
 
 export default class Runtime {
-    static Init() {
-        // Callback function map
-        // Always use arrow function, or Firefox will 'this is undefined'
-        this.callbacks = {
+    // Callback function map
+    // Always use arrow function, or Firefox will 'this is undefined'
+    static callbacks: {
+        [prop: string]: (a: KSLine) => any
+    } = {
             "mseladd": cmd => YZSelect.MapSelectAdd(cmd),
             "seladd": cmd => YZSelect.SelectAdd(cmd),
             "next": cmd => YZSelect.Next(cmd),
-            "mselect": async cmd => await YZSelect.MapSelect(cmd),
-            "select": async cmd => await YZSelect.Select(cmd),
+            "mselect": async cmd => await YZSelect.MapSelect(),
+            "select": async cmd => await YZSelect.Select(),
             "sysjump": cmd => console.debug("Sysjump, EOF?", cmd),
             //"endtrans": cmd => this.CompileTrans(cmd),
             "newlay": cmd => YZCG.NewLay(cmd),
@@ -28,19 +29,19 @@ export default class Runtime {
             "ev": cmd => YZCG.EV(cmd),
 
             // has unexpected return value
-            "mselinit": () => { this.MapSelectData = []; return undefined },
-            "eval": cmd => { TJSVM.eval(cmd.param.exp); return undefined },
+            "mselinit": () => YZSelect.MapSelectInit(),
+            "eval": cmd => { TJSVM.eval(cmd.param.exp as string); return undefined },
             //"begintrans": () => { this.inTrans = true; return undefined },
 
             // macro, native impliement
             "opmovie": async () => await YZVideo.OP(),
             "edmovie": async cmd => await YZVideo.ED(cmd)
         }
-    }
+
 
     // Text related commands
     // 
-    static Text(cmd) {
+    static Text(cmd: KSLine) {
         let { text, name, display } = cmd;
         if (name) {
             let ch = Character.characters[name];
@@ -52,7 +53,7 @@ export default class Runtime {
         }
     }
 
-    static async Call(cmd) {
+    static async Call(cmd: KSLine) {
         let callname = cmd.name.toLowerCase();
         let cb = this.callbacks[callname];
         let ret;
@@ -75,5 +76,3 @@ export default class Runtime {
         return ret;
     }
 }
-
-Runtime.Init();
