@@ -14,10 +14,10 @@ export class YZSelectData {
     mapplace: any;
     /**
      * 
-     * @param {String} text Text to show
-     * @param {[String,String]} dest When selected, dest position
-     * @param {String} operation When selected, TJS to run (when map, only when true, show this option)
-     * @param {*} mapplace On which position
+     * @param text Text to show
+     * @param dest When selected, dest position
+     * @param operation When selected, TJS to run (when map, only when true, show this option)
+     * @param mapplace On which position
      */
     constructor(text: string, dest: JumpDest, operation: string, mapplace: any) {
         this.text = text;

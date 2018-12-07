@@ -49,8 +49,8 @@ export default class Character {
             [subvariant: string]: {
                 [layername: string]: {
                     layer: string,
-                    offset: [number, number],
-                    size: [number, number]
+                    offset: Point,
+                    size: Point
                 }
             }
         }
@@ -128,8 +128,8 @@ export default class Character {
         f.forEach(l => {
             const [, lname, loffx, loffy, lsizex, lsizey, , , , lid] = l;
             this.coord[pfx][fvar][lname] = {
-                offset: [loffx, loffy],
-                size: [lsizex, lsizey],
+                offset: { x: loffx, y: loffy },
+                size: { x: lsizex, y: lsizey },
                 layer: lid
             };
         })
@@ -296,15 +296,15 @@ export default class Character {
             .map(v => {
                 return {
                     name: v.layer,
-                    offset: { x: v.offset[0], y: v.offset[1] },
-                    size: { x: v.size[0], y: v.size[1] },
+                    offset: v.offset,
+                    size: v.size,
                 }
             });
         let mImg = this.coord[pfx][usedVer][mainImg];
         let ctl: LayerInfo[] = [{
             name: mImg.layer,
-            offset: { x: mImg.offset[0], y: mImg.offset[1] },
-            size: { x: mImg.size[0], y: mImg.size[1] },
+            offset: mImg.offset,
+            size: mImg.size,
         }];
         ctl = ctl
             .concat(vImgs)

@@ -124,9 +124,9 @@ class YZLayer {
         this.current.files = files || [];
     }
 
-    SetSize(width: number, height: number) {
-        this.current.height = height;
-        this.current.width = width;
+    SetSize(size: Point) {
+        this.current.height = size.y;
+        this.current.width = size.x;
     }
 
     // when [begintrans] called, do not exec Draw()
@@ -223,9 +223,9 @@ class YZLayer {
         this.fd.remove();
     }
 
-    Move(left: number, top: number) {
-        if (left !== undefined) this.current.left = left;
-        if (top !== undefined) this.current.top = top;
+    Move(pos: Point) {
+        if (pos.x !== undefined) this.current.left = pos.x;
+        if (pos.y !== undefined) this.current.top = pos.y;
     }
 
     Zoom(zoom: number) {
@@ -281,8 +281,8 @@ export default class YZLayerMgr {
         this.layers[name].Hide();
     }
 
-    static Move(name: string, x: number, y: number) {
-        this.layers[name].Move(x, y);
+    static Move(name: string, pos: Point) {
+        this.layers[name].Move(pos);
     }
 
     static Zoom(name: string, zoom: number) {

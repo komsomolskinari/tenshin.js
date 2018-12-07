@@ -37,12 +37,12 @@ export default class YZBgImg {
 
         this.curImg = this.stage.image.replace('TIME', this.daytime.prefix);
         YZLayerMgr.Set(this.bgname, [{ name: this.curImg }], "stages");
-        YZLayerMgr.Move(this.bgname, 0, 0);
+        YZLayerMgr.Move(this.bgname, { x: 0, y: 0 });
         YZLayerMgr.Zoom(this.bgname, 100);
         let xpos = param.xpos as number || 0;
         let ypos = param.ypos as number || 0;
         let zoom = param.zoom as number || 100;
-        YZLayerMgr.Move(this.bgname, xpos, ypos);
+        YZLayerMgr.Move(this.bgname, { x: xpos, y: ypos });
         YZLayerMgr.Zoom(this.bgname, zoom);
         YZLayerMgr.Draw(this.bgname);
         return { name: this.bgname, layer: [{ name: this.curImg }] };

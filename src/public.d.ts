@@ -5,8 +5,14 @@ declare interface VMPosition {
 
 
 declare interface Point {
-    x: number,
-    y: number
+    /**
+     * @property x left, width
+     */
+    x: number,  // left, width
+    /**
+     * @property y top, height
+     */
+    y: number   // top, height
 }
 
 declare interface LayerInfo {
