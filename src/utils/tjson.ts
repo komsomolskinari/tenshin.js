@@ -5,7 +5,7 @@
 // TJSON: JSON of TJS, TJS is JavaScript(TM) like language, like JavaScript, it has JSON.
 
 /**
- * @class TJSON Parser, 
+ * @class TJSON Parser,
  */
 export default class TJSON {
     /**
@@ -26,8 +26,8 @@ export default class TJSON {
     static stringify(obj: any): string {
         switch (typeof (obj)) {
             case "boolean": // true & false
-                if (obj) return 'true';
-                else return 'false';
+                if (obj) return "true";
+                else return "false";
                 break;
             case "number": // 123
                 return String(obj);
@@ -47,21 +47,21 @@ export default class TJSON {
         }
         // so all 'object' goes here
         if (Array.isArray(obj)) { // []
-            let subs = obj
+            const subs = obj
                 .map(o => this.stringify(o))
                 .filter(o => o !== undefined);
-            return `[${subs.join(',')}]`;
+            return `[${subs.join(",")}]`;
         }
         if (obj === null) { // null
-            return 'null'
+            return "null";
         }
         // this is for {} , or  %[]
-        let s: string[] = Object.keys(obj).map(k => {
-            let vs = this.stringify(obj[k]);
+        const s: string[] = Object.keys(obj).map(k => {
+            const vs = this.stringify(obj[k]);
             if (vs === undefined) return undefined;
             else return `"${k}"=>${vs}`;
         }).filter(i => i !== undefined);
-        return `%[${s.join(',')}]`;
+        return `%[${s.join(",")}]`;
     }
 
 
@@ -72,20 +72,20 @@ export default class TJSON {
      * @returns {String}
      */
     private _nextnechar(step?: boolean) {
-        let ret = null;
+        let ret;
         for (; this.ptr < this.str.length; this.ptr++) {
             if (!" \f\n\r\t\v".includes(this.str[this.ptr])) {
                 ret = this.str[this.ptr];
                 break;
             }
         }
-        if (step == true) this.ptr++;
+        if (step === true) this.ptr++;
         return ret;
     }
 
-    str: string = '';
-    ptr: number = 0;
-    obj: JSONObject = null;
+    str = "";
+    ptr = 0;
+    obj: JSONObject = undefined;
     /**
      * Parse TJSON to object, just like JSON.Parse
      * @public @static
@@ -93,17 +93,17 @@ export default class TJSON {
      * @returns {PrimitiveObject}
      */
     private _parse(str: string): JSONObject {
-        this.str = ''
+        this.str = "";
         this.ptr = 0;
-        this.obj = null;
+        this.obj = undefined;
 
-        if (str === undefined) return null;
-        let lines = str.split('\n');
-        for (let index = 0; index < lines.length; index++) {
-            let element = lines[index];
-            element = element.replace(/^\r+|\r+$/g, '');
+        if (str === undefined) return undefined;
+        const lines = str.split("\n");
+
+        for (const line of lines) {
+            const element = line.replace(/^\r+|\r+$/g, "");
             // remove comment so we neednt parse it
-            let idx = element.indexOf('//')
+            const idx = element.indexOf("//");
             this.str += idx >= 0 ? element.substring(0, idx) : element;
         }
         this.obj = this._value();
@@ -117,14 +117,14 @@ export default class TJSON {
     private _value(): JSONObject {
         let r;
         switch (this._nextnechar()) {
-            case '%':
+            case "%":
                 r = this._obj();
                 break;
-            case '[':
+            case "[":
                 r = this._array();
                 break;
-            case null:
-                throw "fail";
+            case undefined:
+                throw new Error("fail");
             default:
                 r = this._string();
                 break;
@@ -137,14 +137,14 @@ export default class TJSON {
      * @private @static
      */
     private _obj(): PrimitiveObject {
-        let r: PrimitiveObject = {};
-        if (this._nextnechar(true) != '%') throw "fail";
-        if (this._nextnechar(true) != '[') throw "fail";
-        let lp = null;
-        let br: boolean = true;
+        const r: PrimitiveObject = {};
+        if (this._nextnechar(true) !== "%") throw new Error("fail");
+        if (this._nextnechar(true) !== "[") throw new Error("fail");
+        let lp;
+        const br = true;
         read_token:
         while (br) {
-            if (this._nextnechar() != ']') {
+            if (this._nextnechar() !== "]") {
                 lp = this._pair();
                 r[lp.key] = lp.value;
             }
@@ -153,12 +153,12 @@ export default class TJSON {
                 break read_token;
             }
             switch (this._nextnechar(true)) {
-                case ',':
+                case ",":
                     break;
-                case ']':
+                case "]":
                     break read_token;
                 default:
-                    throw "fail";
+                    throw new Error("fail");
             }
         }
         return r;
@@ -168,13 +168,13 @@ export default class TJSON {
      * Get next 'Array' ([value1,...])
      * @private @static
      */
-    private _array(): Array<any> {
-        let r = [];
-        if (this._nextnechar(true) != '[') throw "fail";
-        let br = true;
+    private _array(): any[] {
+        const r = [];
+        if (this._nextnechar(true) !== "[") throw new Error("fail");
+        const br = true;
         read_token:
         while (br) {
-            if (this._nextnechar() != ']') {
+            if (this._nextnechar() !== "]") {
                 r.push(this._value());
             }
             else {
@@ -182,12 +182,12 @@ export default class TJSON {
                 break read_token;
             }
             switch (this._nextnechar(true)) {
-                case ',':
+                case ",":
                     break;
-                case ']':
+                case "]":
                     break read_token;
                 default:
-                    throw "fail";
+                    throw new Error("fail");
             }
         }
         return r;
@@ -198,18 +198,18 @@ export default class TJSON {
      * @private @static
      */
     private _pair(): KeyValuePair {
-        let r: KeyValuePair = { key: '', value: '' };
+        const r: KeyValuePair = { key: "", value: "" };
         r.key = this._string();
         switch (this._nextnechar(true)) {
-            case '=':
-                if (this._nextnechar(true) != '>') {
-                    throw "fail"
+            case "=":
+                if (this._nextnechar(true) !== ">") {
+                    throw new Error("fail");
                 }
                 break;
-            case ':':
+            case ":":
                 break;
             default:
-                throw "fail";
+                throw new Error("fail");
         }
         r.value = this._value();
         // forward predict
@@ -226,7 +226,7 @@ export default class TJSON {
      * @private @static
      */
     private _string(): string {
-        let r = '';
+        let r = "";
         let type = this._nextnechar();
         if (!"\"'".includes(type)) type = " \f\n\r\t\v,\"':[]";
         else this.ptr++;
@@ -238,4 +238,4 @@ export default class TJSON {
         return r;
     }
 }
-//window.TJSON = TJSON;
+// window.TJSON = TJSON;

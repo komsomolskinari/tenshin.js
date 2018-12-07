@@ -1,9 +1,9 @@
 export default class ObjectMapper {
-    static objs: string[] = []
+    static objs: string[] = [];
     static name2type: {
         [name: string]: string
-    } = {}
-    static innerobj: any = null;
+    } = {};
+    static innerobj: any = undefined;
     // Object data cache
     static odatacache = {};
 
@@ -17,7 +17,7 @@ export default class ObjectMapper {
     }
 
     static AddLayer(layer: string) {
-        this.name2type[layer] = 'layer'
+        this.name2type[layer] = "layer";
     }
 
     static RemoveLayer(layer: string) {
@@ -26,7 +26,7 @@ export default class ObjectMapper {
 
     static GetProperty(str: string) {
         if (!this.IsProperty(str)) return undefined;
-        let t = this.TypeOf(str);
+        const t = this.TypeOf(str);
         return this.innerobj[t][str];
     }
 
@@ -39,13 +39,13 @@ export default class ObjectMapper {
     }
 
     static ConvertAll(option: any[]) {
-        let mapped: {
+        const mapped: {
             [key: string]: any
         } = {};
         option.filter(o => this.IsProperty(o)).forEach(o => {
-            let t = this.TypeOf(o);
+            const t = this.TypeOf(o);
             if (mapped[t] === undefined) mapped[t] = [];
-            let mo = this.GetProperty(o);
+            const mo = this.GetProperty(o);
             if (mo.length === undefined) {
                 mapped[t].push(mo);
             }

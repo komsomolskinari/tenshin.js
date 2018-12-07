@@ -2,21 +2,21 @@ import { YZSelectData } from "../runtime/select";
 
 export default class YZSelectUI {
     static async Select(data: YZSelectData[]) {
-        let r: number = await new Promise((resolve, reject) => {
+        const r: number = await new Promise((resolve, reject) => {
             data.forEach((d: YZSelectData, i: number) =>
-                $('#selectlist').append(
-                    $('<li>')
-                        .attr('id', `select_option_${i}`)
+                $("#selectlist").append(
+                    $("<li>")
+                        .attr("id", `select_option_${i}`)
                         .text(d.text)
-                        .one('click', () => resolve(i))
+                        .one("click", () => resolve(i))
                 )
-            )
+            );
         });
-        $('#selectlist').html('');
+        $("#selectlist").html("");
         return data[r];
     }
 
     static async MSelect(data: YZSelectData[]) {
-        return await this.Select(data);
+        return this.Select(data);
     }
 }

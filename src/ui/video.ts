@@ -4,7 +4,7 @@ export default class YZVideo {
     static vfd: JQuery<HTMLElement>;
 
     static Init() {
-        this.vfd = $('#video');
+        this.vfd = $("#video");
     }
 
     // all HW implement
@@ -16,16 +16,16 @@ export default class YZVideo {
     }
 
     static async Play(src: string) {
-        this.vfd.attr('src', FilePath.findMedia(src, 'video'));
+        this.vfd.attr("src", FilePath.findMedia(src, "video"));
 
-        let pm = new Promise((resolve, reject) => {
-            this.vfd.one('ended', () => resolve());
-            $(document).one('click', () => resolve());
+        const pm = new Promise((resolve, reject) => {
+            this.vfd.one("ended", () => resolve());
+            $(document).one("click", () => resolve());
         });
-        let elm = this.vfd.get(0) as HTMLAudioElement;
+        const elm = this.vfd.get(0) as HTMLAudioElement;
         elm.play();
         await pm;
         elm.pause();
-        this.vfd.attr('src', '');
+        this.vfd.attr("src", "");
     }
 }

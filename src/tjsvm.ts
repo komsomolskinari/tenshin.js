@@ -8,12 +8,12 @@ export default class TJSVM {
 
     /**
      * evaluate a tjs function
-     * @param {String} str 
+     * @param {String} str
      */
     static eval(str: string): any {
-        let func = new Function(...this.params, "'use strict;'; return " + str);
+        const func = new Function(...this.params, "'use strict;'; return " + str);
         // manually bind params
-        let funcWithParam = this.params.reduce((f, p) => f.bind(undefined, this.objs[p]), func);
+        const funcWithParam = this.params.reduce((f, p) => f.bind(undefined, this.objs[p]), func);
         return funcWithParam();
     }
     /**
@@ -32,7 +32,7 @@ export default class TJSVM {
      */
     static get(name: string): any {
         return name
-            .split('.')
+            .split(".")
             .reduce((p, c) => p === undefined ? undefined : p[c], this.objs);
     }
 }

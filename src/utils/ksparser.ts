@@ -1,7 +1,7 @@
 /// <reference path="./parser.d.ts" />
 
 // KAG Script parser
-import { AutoType } from './util';
+import { AutoType } from "./util";
 
 /**
  * @class KSParser
@@ -10,8 +10,8 @@ export default class KSParser {
     /**
      * KS script to KS 'AST'
      * @public
-     * @param {String} str KS script string to parse
-     * @return {Object} KS AST
+     * @param str KS script string to parse
+     * @return KS AST
      * @see _text
      * @see _func
      */
@@ -22,41 +22,41 @@ export default class KSParser {
     /**
      * KS script to KS 'AST'
      * @public
-     * @param {Object} obj KS AST
-     * @return {String} script string
+     * @param obj KS AST
+     * @return script string
      */
     static stringify(obj: [KSLine]) {
         return obj.reduce((str, line) => {
             let l;
             switch (line.type) {
                 case "entry":
-                    l = '*' + line.name;
+                    l = "*" + line.name;
                     break;
                 case "text":
-                    let _name = '';
-                    if (line.name != null) {
+                    let _name = "";
+                    if (line.name !== undefined) {
                         _name = line.name;
-                        if (line.display != null) _name += ('/' + line.display);
+                        if (line.display !== undefined) _name += ("/" + line.display);
                         _name = `【${_name}】`;
                     }
                     l = _name + line.text;
                     break;
                 case "func":
-                    let optstr = line.option.join(' ');
-                    let paramstr = Object.keys(line.param)
+                    const optstr = line.option.join(" ");
+                    const paramstr = Object.keys(line.param)
                         .map(p => `${p}=${line.param[p]}`)
-                        .join(' ');
+                        .join(" ");
 
-                    let ls = [line.name];
+                    const ls = [line.name];
                     if (optstr) ls.push(optstr);
                     if (paramstr) ls.push(paramstr);
-                    l = `[${ls.join(' ')}]`
+                    l = `[${ls.join(" ")}]`;
                     break;
                 default:
-                    l = '';
+                    l = "";
                     break;
             }
-            return str + l + '\n';
+            return str + l + "\n";
         }, "");
     }
 
@@ -65,17 +65,17 @@ export default class KSParser {
     private _parse(str: string) {
         let lines: string[] = [];
         // scan1, check line type
-        str.split('\n').forEach(l => {
+        str.split("\n").forEach(l => {
             l = l.trim();
             switch (l[0]) {
-                case ';':
+                case ";":
                     // ignore coments
                     return;
-                case '[':
+                case "[":
                     // cut to multiple function token
                     lines = lines.concat(this._cutfunction(l));
                     return;
-                case '*':
+                case "*":
                     // tag, direct pass
                     lines.push(l);
                     return;
@@ -90,44 +90,43 @@ export default class KSParser {
         this.cmd = lines.map(c => {
             c = c.trim();
             switch (c[0]) {
-                case ';': // ignore comment line
-                    return null;
-                case '[': // type:func
+                case ";": // ignore comment line
+                    return undefined;
+                case "[": // type:func
                     return this._func(c);
-                case '*': // type:entry *tag|comment
-                    let tag = c.substr(1).trim().split('|')[0];
+                case "*": // type:entry *tag|comment
+                    const tag = c.substr(1).trim().split("|")[0];
                     if (tag) return { type: "entry", name: tag };
-                    else return null;
+                    else return undefined;
                 default: // type:text
                     if (c) return this._text(c);
-                    else return null;
+                    else return undefined;
             }
-        }).filter(c => c !== null);
+        }).filter(c => c !== undefined);
         return this.cmd;
     }
 
     private _cutfunction(str: string): string[] {
         let depth = 0;
-        let cur = '';
-        let ret: string[] = [];
+        let cur = "";
+        const ret: string[] = [];
         let rawstr = true;
-        let rs = '';
-        for (let index = 0; index < str.length; index++) {
-            const s = str[index];
+        let rs = "";
+        for (const s of str) {
             cur += s;
             switch (s) {
-                case '[':
+                case "[":
                     if (rs.length > 0) ret.push(rs);
                     rawstr = false;
                     depth++;
                     break;
-                case ']':
+                case "]":
                     rawstr = true;
-                    rs = '';
+                    rs = "";
                     depth--;
-                    if (depth == 0) {
+                    if (depth === 0) {
                         ret.push(cur);
-                        cur = '';
+                        cur = "";
                     }
                     break;
                 default:
@@ -145,22 +144,22 @@ export default class KSParser {
      * @param {String} str
      */
     private _text(str: string) {
-        let ret: KSLine = {
+        const ret: KSLine = {
             type: "text",
-            name: null,
-            display: null,
-            text: null
-        }
+            name: undefined,
+            display: undefined,
+            text: undefined
+        };
 
         // have name
-        if (str.indexOf('【') == 0) {
-            let fname = str.split('】')[0].replace('【', '').trim();
-            ret.text = str.split('】')[1].trim();
+        if (str.indexOf("【") === 0) {
+            const fname = str.split("】")[0].replace("【", "").trim();
+            ret.text = str.split("】")[1].trim();
 
             // need rewrite name
-            if (fname.indexOf('/') >= 0) {
-                ret.name = fname.split('/')[0];
-                ret.display = fname.split('/')[1];
+            if (fname.indexOf("/") >= 0) {
+                ret.name = fname.split("/")[0];
+                ret.display = fname.split("/")[1];
             }
             else {
                 ret.name = fname;
@@ -182,8 +181,8 @@ export default class KSParser {
     private _nextch(inc?: boolean) {
         while (" \f\n\r\t\v".includes(this._fstr[this._fp])) this._fp++;
         let ret = this._fstr[this._fp];
-        if (this._fp >= this._fstr.length) ret = null;
-        if (inc == true) this._fp++;
+        if (this._fp >= this._fstr.length) ret = undefined;
+        if (inc === true) this._fp++;
         return ret;
     }
 
@@ -198,22 +197,22 @@ export default class KSParser {
     private _func(str: string) {
         this._fstr = str.substr(1, str.length - 2).trim();
         this._fp = 0;
-        let ret: KSLine = {
+        const ret: KSLine = {
             type: "func",
             name: this._ident(),
             option: [],
             param: {}
         };
-        let t = [];
+        const t = [];
         // jup over 1st space
         while (this._fp < this._fstr.length) {
             this._nextch();
-            if (t.length > 10000) throw "too long";
+            if (t.length > 10000) throw new Error("too long");
             t.push(this._kv());
         }
 
-        let fparam = t.filter(p => p.haveValue);
-        let fopt = t.filter(p => !p.haveValue);
+        const fparam = t.filter(p => p.haveValue);
+        const fopt = t.filter(p => !p.haveValue);
 
         fparam.forEach(p => ret.param[p.key] = p.value);
         ret.option = fopt.map(p => p.key);
@@ -226,7 +225,7 @@ export default class KSParser {
      * @see _ident
      */
     private _kv() {
-        let ret: {
+        const ret: {
             key: string,
             value: JSONObject,
             haveValue: boolean
@@ -236,7 +235,7 @@ export default class KSParser {
             haveValue: false
         };
         ret.key = this._ident();
-        if (this._nextch() == '=') {
+        if (this._nextch() === "=") {
             ret.haveValue = true;
             this._fp++;
             let r;
@@ -245,9 +244,9 @@ export default class KSParser {
                     this._fp++;
                     r = this._str('"');
                     break;
-                case '\'':
+                case "'":
                     this._fp++;
-                    r = this._str('\'');
+                    r = this._str("'");
                     break;
                 default:
                     r = this._ident();
@@ -264,10 +263,10 @@ export default class KSParser {
      * @param {String} sep Separators
      */
     private _str(sep: string) {
-        let b = '';
+        let b = "";
         while (true) {
-            let nc = this._nextch(true);
-            if (!sep.includes(nc) && nc != null) {
+            const nc = this._nextch(true);
+            if (!sep.includes(nc) && nc !== undefined) {
                 b += nc;
             }
             else {
@@ -281,14 +280,14 @@ export default class KSParser {
      * @private
      */
     private _ident() {
-        let b = '';
+        let b = "";
         while (true) {
             // get next char
-            let nc = this._fstr[this._fp];
+            const nc = this._fstr[this._fp];
             this._fp++;
             // not token char
             // macro.ks: [eval exp='sf["replay_"+mp.file]=true']
-            if (!" \t[]=".includes(nc) && nc != null) {
+            if (!" \t[]=".includes(nc) && nc !== undefined) {
                 b += nc;
             }
             // is token char
@@ -300,4 +299,4 @@ export default class KSParser {
         return b;
     }
 }
-//window.KSParser = KSParser;
+// window.KSParser = KSParser;

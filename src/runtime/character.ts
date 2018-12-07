@@ -1,35 +1,27 @@
 import ObjectMapper from "../objectmapper";
 import YZSound from "../ui/sound";
 import YZText from "../ui/text";
-import AsyncTask from "../async/asynctask";
 import FilePath from "../utils/filepath";
 import KRCSV from "../utils/krcsv";
 import YZLayerMgr from "../ui/layer";
+import { KAGConst } from "../const";
+
 const X = 0;
 const WIDTH = 0;
 const HORIZONTAL = 0;
 const Y = 1;
 const HEIGHT = 1;
 const VERTICAL = 1;
-const KAGConst = {
-    Both: "KAGEnvImage.BOTH",
-    BU: "KAGEnvImage.BU",
-    Clear: "KAGEnvImage.CLEAR",
-    Face: "KAGEnvImage.FACE",
-    Invisible: "KAGEnvImage.INVISIBLE",
-    DispPosition: "KAGEnvironment.DISPPOSITION",
-    XPosition: "KAGEnvironment.XPOSITION",
-    Level: "KAGEnvironment.LEVEL"
-}
+
 export default class Character {
 
     static voiceBase = "";
     static characters: {
         [name: string]: Character
-    } = {}
+    } = {};
 
     name: string;
-    currentVoice: number = 1;
+    currentVoice = 1;
     nextVoice: string = undefined;
     voiceFmt: string;
     displayName: string;
@@ -56,11 +48,11 @@ export default class Character {
         }
     } = {};
 
-    imageLevel: number = 1;
-    imageXPos: number = 0;
+    imageLevel = 1;
+    imageXPos = 0;
     dispPos: string = KAGConst.Both;
-    showedInDom: boolean = false;
-    dressOpt: string = "";
+    showedInDom = false;
+    dressOpt = "";
 
 
     constructor(name: string) {
@@ -70,7 +62,7 @@ export default class Character {
         this.voiceFmt = ObjectMapper.GetProperty(name).voiceFile;
         this.displayName = ObjectMapper.GetProperty(name).standName;
         // if character has no image, skip image meta
-        let fgLs = FilePath.ls(`${Config.Display.CharacterPath}/${name}`);
+        const fgLs = FilePath.ls(`${Config.Display.CharacterPath}/${name}`);
         this.dress = {};
         this.face = {};
         this.coord = {};
@@ -81,49 +73,54 @@ export default class Character {
         this.showedInDom = false;
         this.dressOpt = "";
         Character.characters[name] = this;
-        if (fgLs != undefined) this.__LoadImageInfo(fgLs);
+        if (fgLs !== undefined) this.__LoadImageInfo(fgLs);
     }
 
     async __LoadImageInfo(list: IndexItem) {
-        let files = Object.keys(list);
+        const files = Object.keys(list);
         // load all data, limit rate here, or it will block pipe
-        let pms = [];
+        const pms = [];
         files.filter(f => f.match(/info\.txt$/)).forEach(f => pms.push(this.__LoadChunk(f)));
         files.filter(f => f.match(/[0-9]\.txt$/)).forEach(f => pms.push(this.__LoadCoord(f)));
     }
 
     async __LoadChunk(filename: string) {
-        const f = KRCSV.parse(await FilePath.read(filename), '\t', false);
-        const _fsp = filename.split('_');
-        const pfx = _fsp.slice(0, _fsp.length - 1).join('_');
+        const f = KRCSV.parse(await FilePath.read(filename), "\t", false);
+        const _fsp = filename.split("_");
+        const pfx = _fsp.slice(0, _fsp.length - 1).join("_");
 
-        if (this.face[pfx] === undefined)
+        if (this.face[pfx] === undefined) {
             this.face[pfx] = {};
+        }
 
-        f.filter(l => l.length == 5).forEach(l => {
-            let [, dname, , dno, dvstr] = l;
-            if (this.dress[dname] === undefined)
+        f.filter(l => l.length === 5).forEach(l => {
+            const [, dname, , dno, dvstr] = l;
+            if (this.dress[dname] === undefined) {
                 this.dress[dname] = {};
+            }
             this.dress[dname][dno] = [dvstr, pfx];
-        })
-        f.filter(l => l.length == 4).forEach(l => {
-            let [, fno, , fvstr] = l;
-            if (this.face[pfx][fno] == undefined)
+        });
+        f.filter(l => l.length === 4).forEach(l => {
+            const [, fno, , fvstr] = l;
+            if (this.face[pfx][fno] === undefined) {
                 this.face[pfx][fno] = [];
+            }
             this.face[pfx][fno].push(fvstr);
-        })
+        });
     }
 
     async __LoadCoord(filename: string) {
-        let f = KRCSV.parse(await FilePath.read(filename), '\t');
+        const f = KRCSV.parse(await FilePath.read(filename), "\t");
         const fvar = filename.match(/_([0-9])\./)[1];
-        const _fsp = filename.split('_');
-        const pfx = _fsp.slice(0, _fsp.length - 1).join('_');
+        const _fsp = filename.split("_");
+        const pfx = _fsp.slice(0, _fsp.length - 1).join("_");
 
-        if (this.coord[pfx] === undefined)
+        if (this.coord[pfx] === undefined) {
             this.coord[pfx] = {};
-        if (this.coord[pfx][fvar] === undefined)
+        }
+        if (this.coord[pfx][fvar] === undefined) {
             this.coord[pfx][fvar] = {};
+        }
 
         f.forEach(l => {
             const [, lname, loffx, loffy, lsizex, lsizey, , , , lid] = l;
@@ -132,7 +129,7 @@ export default class Character {
                 size: { x: lsizex, y: lsizey },
                 layer: lid
             };
-        })
+        });
     }
 
     //
@@ -143,7 +140,7 @@ export default class Character {
     // -p [?]delayrun: do it when voice play to arg
     // o- [?]sync: sync with what?
     Process(cmd: KSLine) {
-        let { name, option, param } = cmd;
+        const { name, option, param } = cmd;
         if (name !== this.name) return;
 
         // let upper runtime handle this, it's public option
@@ -151,9 +148,9 @@ export default class Character {
         // TODO: use eventlistener to channel instead of cmd
         // or calculate
         if (param.delayrun) {
-            //delete cmd.param.delayrun;
-            //console.debug('Delay exec command', cmd);
-            //AsyncTask.Add(() => this.Process(cmd), undefined, 2000);
+            // delete cmd.param.delayrun;
+            // console.debug('Delay exec command', cmd);
+            // AsyncTask.Add(() => this.Process(cmd), undefined, 2000);
             return;
         }
 
@@ -167,13 +164,13 @@ export default class Character {
             }
         }
 
-        let mapped: {
+        const mapped: {
             [key: string]: any
         } = {};
         option.filter(o => ObjectMapper.IsProperty(o as string)).forEach(o => {
-            let t = ObjectMapper.TypeOf(o as string);
+            const t = ObjectMapper.TypeOf(o as string);
             if (mapped[t] === undefined) mapped[t] = [];
-            let mo = ObjectMapper.GetProperty(o as string);
+            const mo = ObjectMapper.GetProperty(o as string);
             if (mo.length === undefined) {
                 mapped[t].push(mo);
             }
@@ -199,30 +196,30 @@ export default class Character {
                 default:
                     break;
             }
-        })
+        });
         // if standName !== name, we need call another character's Image()
         // TODO: Update imageLevel, imageXPos
 
-        let runner: Character = this
+        let runner: Character = Character.characters[this.name];
         if (this.displayName && this.displayName !== this.name) {
-            let dispch = Character.characters[this.displayName];
+            const dispch = Character.characters[this.displayName];
             if (dispch) runner = dispch;
         }
         return runner.ProcessImageCmd(option);
     }
 
     async ProcessImageCmd(option: any[]) {
-        let allDress = Object.keys(this.dress);
-        let dOpt = option.filter(o => allDress.includes(o))[0];
+        const allDress = Object.keys(this.dress);
+        const dOpt = option.filter(o => allDress.includes(o))[0];
         if (dOpt) {
             this.dressOpt = dOpt;
         }
-        let fOpt = option.filter(o => o.match(/^[0-9]{3}$/) != null)[0];
+        const fOpt = option.filter(o => o.match(/^[0-9]{3}$/) !== undefined)[0];
         let imgctl: LayerInfo[] = [];
         if (fOpt) {
             imgctl = this.Image(fOpt);
         }
-        if ([KAGConst.Both, KAGConst.BU].includes(this.dispPos)) {
+        if ([KAGConst.Both, KAGConst.BU].includes(this.dispPos as KAGConst)) {
             this.showedInDom = true;
             await YZLayerMgr.Set(this.name, imgctl, "characters");
         }
@@ -245,7 +242,7 @@ export default class Character {
     }
 
     /**
-     * 
+     *
      * @param {*} seq Alternate seq id, only apply non-nuber
      */
     Voice(seq?: string) {
@@ -269,38 +266,38 @@ export default class Character {
                 stxt = this.voiceFmt;
                 // TODO: real printf
                 stxt = stxt
-                    .replace('%s', Character.voiceBase)
-                    .replace('%03d', String(s).padStart(3, '0'));
+                    .replace("%s", Character.voiceBase)
+                    .replace("%03d", String(s).padStart(3, "0"));
             }
         }
         // drop extension
-        stxt = (stxt as string).replace(/\.[a-z0-9]{2,5}$/i, '');
+        stxt = (stxt as string).replace(/\.[a-z0-9]{2,5}$/i, "");
         YZSound.Voice(stxt);
     }
 
     Image(faceOpt: string) {
         // select image
-        let mainId = faceOpt.substr(0, 1);
-        let varId = faceOpt.substr(1, 2);
+        const mainId = faceOpt.substr(0, 1);
+        const varId = faceOpt.substr(1, 2);
 
         if (!this.dressOpt) this.dressOpt = Object.keys(this.dress)[0];
 
-        let [mainImg, pfx] = this.dress[this.dressOpt][mainId];
-        let varImg = this.face[pfx][varId];
+        const [mainImg, pfx] = this.dress[this.dressOpt][mainId];
+        const varImg = this.face[pfx][varId];
         if (varImg === undefined) return;
         // 35 50 75 100 120 140 bgexpand original
         const usedVer = ([1, 1, 3, 3, 3, 5, 3])[this.imageLevel];
 
-        let vImgs: LayerInfo[] = varImg
+        const vImgs: LayerInfo[] = varImg
             .map(v => this.coord[pfx][usedVer][v])
             .map(v => {
                 return {
                     name: v.layer,
                     offset: v.offset,
                     size: v.size,
-                }
+                };
             });
-        let mImg = this.coord[pfx][usedVer][mainImg];
+        const mImg = this.coord[pfx][usedVer][mainImg];
         let ctl: LayerInfo[] = [{
             name: mImg.layer,
             offset: mImg.offset,
@@ -310,10 +307,10 @@ export default class Character {
             .concat(vImgs)
             .map((v: LayerInfo) => {
                 return {
-                    name: ([pfx, usedVer, v.name].join('_')),
+                    name: ([pfx, usedVer, v.name].join("_")),
                     offset: v.offset,
                     size: v.size,
-                }
+                };
             });
         // zoom each layer
         // emmmm, not now...

@@ -9,7 +9,7 @@ export default class YZCG {
 
     public static async __LoadCGList() {
         const [szx, szy] = Config.Display.WindowSize;
-        KRCSV.parse(await FilePath.read(Config.Display.CGDiffFile), ",", null)
+        KRCSV.parse(await FilePath.read(Config.Display.CGDiffFile), ",", undefined)
             .forEach((d) =>
                 this.diffdef[d[0]] = {
                     ev: d[0],
@@ -28,7 +28,7 @@ export default class YZCG {
                 this.diffdef[d] = {
                     ev: d,
                     base: d,
-                    diff: null,
+                    diff: undefined,
                     offset: { x: 0, y: 0 }, // offset and size only apply on diff
                     size: { x: 0, y: 0 },
                 });

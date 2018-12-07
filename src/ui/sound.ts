@@ -1,4 +1,4 @@
-import FilePath from '../utils/filepath'
+import FilePath from "../utils/filepath";
 
 export default class YZSound {
     static channels: {
@@ -7,25 +7,25 @@ export default class YZSound {
 
     static Init() {
         this.channels = {
-            voice: $('#voice'),
-            se: $('#se'),
-            bgm: $('#bgm')
-        }
+            voice: $("#voice"),
+            se: $("#se"),
+            bgm: $("#bgm")
+        };
     }
 
     static BGM(cmd: KSLine) {
         let fadetime = 0;
         if (cmd.param.time) fadetime = cmd.param.time as number / 1000;
 
-        if (cmd.option.includes('stop')) {
-            this.AudioChannelCtl('bgm', null, { '-1': ['pause', 0, fadetime] })
+        if (cmd.option.includes("stop")) {
+            this.AudioChannelCtl("bgm", undefined, { "-1": ["pause", 0, fadetime] });
         }
         else {
             if (!cmd.param.storage) return;
-            let realbgm = (cmd.param.storage as string).replace(/bgm/i, 'BGM');
+            const realbgm = (cmd.param.storage as string).replace(/bgm/i, "BGM");
             // TODO: generate loop info
-            let ctl = { '-1': ['start', fadetime] };
-            this.AudioChannelCtl('bgm', realbgm, ctl)
+            const ctl = { "-1": ["start", fadetime] };
+            this.AudioChannelCtl("bgm", realbgm, ctl);
         }
     }
 
@@ -34,8 +34,8 @@ export default class YZSound {
      * @param {String} src Source
      */
     static Voice(src: string) {
-        let ctl = { '-1': ['start', 0] }
-        this.AudioChannelCtl('voice', src, ctl)
+        const ctl = { "-1": ["start", 0] };
+        this.AudioChannelCtl("voice", src, ctl);
     }
 
     // playctl format: key is time(sec), -1 means immediately
@@ -47,44 +47,44 @@ export default class YZSound {
         2000:['pause',0,2], pause: pause arg1 sec with arg2 fadeout, arg1 = 0 means infinite
     }*/
     /**
-     * 
-     * @param {String} channel Channel name
-     * @param {String} aname Audio name, if null, not change
-     * @param {*} playctl Play Control
+     *
+     * @param channel Channel name
+     * @param aname Audio name, if null, not change
+     * @param playctl Play Control
      */
     static AudioChannelCtl(channel: string, aname: string, playctl: any) {
-        let ch = this.channels[channel];
-        let s = ch.attr('src');
-        let asrc = null;
-        if (aname != null) {
-            asrc = FilePath.findMedia(aname, 'audio');
+        const ch = this.channels[channel];
+        const s = ch.attr("src");
+        let asrc;
+        if (aname !== undefined) {
+            asrc = FilePath.findMedia(aname, "audio");
         }
-        if (asrc != s) {
-            ch.attr('src', asrc);
-            ch.unbind('timeupdate');
+        if (asrc !== s) {
+            ch.attr("src", asrc);
+            ch.unbind("timeupdate");
         }
         for (const key in playctl) {
             if (playctl.hasOwnProperty(key)) {
                 const element = playctl[key];
-                let f = () => { };
+                let f: (p?: any) => any = () => { return undefined; };
                 const elm: HTMLAudioElement = ch.get(0) as HTMLAudioElement;
                 switch (element[0]) {
-                    case 'start':
+                    case "start":
                         f = () => {
-                            elm.play().catch(e => { });
-                        }
+                            elm.play().catch(e => { return undefined; });
+                        };
                         break;
-                    case 'pause':
+                    case "pause":
                         f = () => {
                             elm.pause();
-                        }
+                        };
                         break;
-                    case 'volume':
+                    case "volume":
                         f = () => {
                             elm.volume = element[1];
-                        }
+                        };
                 }
-                if (parseInt(key) == -1) {
+                if (parseInt(key) === -1) {
                     f();
                 }
             }

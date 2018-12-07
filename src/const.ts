@@ -5,7 +5,7 @@ export enum VMMode {
     Quick,  // stop per text, continue after 20 ms?
     Select, // stop when jump occured, shutdown ui
 }
-declare enum KAGConst {
+export enum KAGConst {
     Both = "KAGEnvImage.BOTH",
     BU = "KAGEnvImage.BU",
     Clear = "KAGEnvImage.CLEAR",

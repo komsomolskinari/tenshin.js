@@ -2,21 +2,21 @@
 
 import Init from "./init";
 import KSVM from "./ksvm";
-import ObjectMapper from './objectmapper';
+import ObjectMapper from "./objectmapper";
 import Character from "./runtime/character";
 import TJSVM from "./tjsvm";
-import FilePath from './utils/filepath';
+import FilePath from "./utils/filepath";
 import KSParser from "./utils/ksparser";
 import TJSON from "./utils/tjson";
 
 async function LoadVMData() {
-    const ScriptLoadSeq = Config.Boot.InitialScripts;
-    let envinit = await FilePath.read(Config.Boot.EnvInitFile);
+    const scriptLoadSeq = Config.Boot.InitialScripts;
+    const envinit = await FilePath.read(Config.Boot.EnvInitFile);
     ObjectMapper.LoadObject(TJSON.parse(envinit));
-    await Promise.all(ScriptLoadSeq.map(s =>
+    await Promise.all(scriptLoadSeq.map(s =>
         (async () =>
             KSVM.AddScript(
-                s.split('.')[0],
+                s.split(".")[0],
                 KSParser.parse(await FilePath.read(s))
             )
         )()
@@ -29,7 +29,7 @@ async function LoadVMData() {
 }
 
 Object.keys(Config.Boot.TJSVariable)
-    .forEach(k => TJSVM.addObject(k, Config.Boot.TJSVariable[k]))
+    .forEach(k => TJSVM.addObject(k, Config.Boot.TJSVariable[k]));
 
 $(document).ready(async () => {
     await Init();
@@ -38,14 +38,15 @@ $(document).ready(async () => {
     KSVM.RunFrom(Config.Boot.EntryTag);
     KSVM.Next();
     // TODO: let vm cache module load other script
-    let scripts = Object.keys(FilePath.ls(Config.Boot.ScenarioPath));
-    await Promise.all(scripts.map(s =>
-        (async () =>
-            KSVM.AddScript(
-                s.split('.')[0],
-                KSParser.parse(await FilePath.read(s))
-            )
-        )()
-    ));
+    await Promise.all(
+        Object.keys(FilePath.ls(Config.Boot.ScenarioPath))
+            .map(s =>
+                (async () =>
+                    KSVM.AddScript(
+                        s.split(".")[0],
+                        KSParser.parse(await FilePath.read(s))
+                    )
+                )()
+            ));
     console.debug("cache ok");
 });

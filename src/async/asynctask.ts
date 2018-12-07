@@ -2,15 +2,15 @@ export default class AsyncTask {
     private static ctr = 0;
     /**
      * Add a 'cancellable' function
-     * @param {Function} func function to execute
-     * @param {Object} param function parameter
-     * @param {Number} timeout function execute timeout 
+     * @param func function to execute
+     * @param param function parameter
+     * @param timeout function execute timeout
      */
     static Add(func: (p: any) => any, param: any, timeout: number) {
-        let tmp = this.ctr;
+        const tmp = this.ctr;
         setTimeout(() => {
-            if (tmp != this.CTR()) {
-                console.debug('cancel task');
+            if (tmp !== this.CTR()) {
+                console.debug("cancel task");
                 return;
             }
             func(param);

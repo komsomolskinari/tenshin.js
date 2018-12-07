@@ -2,9 +2,9 @@ import TJSVM from "../tjsvm";
 import YZSelectUI from "../ui/select";
 
 interface JumpDest {
-    script: string,
-    target: string
-};
+    script: string;
+    target: string;
+}
 
 export class YZSelectData {
 
@@ -13,7 +13,7 @@ export class YZSelectData {
     operation: string;
     mapplace: any;
     /**
-     * 
+     *
      * @param text Text to show
      * @param dest When selected, dest position
      * @param operation When selected, TJS to run (when map, only when true, show this option)
@@ -30,18 +30,18 @@ export class YZSelectData {
 
 // all select logic here
 export default class YZSelect {
-    static MapSelectData: YZSelectData[] = [];
-    static SelectData: YZSelectData[] = [];
+    static mapSelectData: YZSelectData[] = [];
+    static selectData: YZSelectData[] = [];
 
     static MapSelectInit() {
-        this.MapSelectData = []
+        this.mapSelectData = [];
     }
 
     // TODO: mselect is Tenshin Ranman only command?
     // add map select option
     static MapSelectAdd(cmd: KSLine) {
-        let p = cmd.param;
-        this.MapSelectData.push(
+        const p = cmd.param;
+        this.mapSelectData.push(
             new YZSelectData(
                 p.name as string,
                 {
@@ -55,15 +55,15 @@ export default class YZSelect {
 
     // raise a map select
     static async MapSelect() {
-        let ro = await YZSelectUI.MSelect(this.MapSelectData);
-        this.MapSelectData = [];
+        const ro = await YZSelectUI.MSelect(this.mapSelectData);
+        this.mapSelectData = [];
         if (!ro.dest) return undefined;
         return ro.dest;
     }
 
     static SelectAdd(cmd: KSLine) {
-        let p = cmd.param;
-        this.SelectData.push(
+        const p = cmd.param;
+        this.selectData.push(
             new YZSelectData(
                 p.text as string,
                 {
@@ -77,20 +77,20 @@ export default class YZSelect {
 
     // raise a normal select
     static async Select() {
-        let ro = await YZSelectUI.Select(this.SelectData);
+        const ro = await YZSelectUI.Select(this.selectData);
         if (ro.operation) TJSVM.eval(ro.operation);
-        this.SelectData = [];
+        this.selectData = [];
         if (!ro.dest) return undefined;
         return ro.dest;
     }
 
     static Next(cmd: KSLine) {
-        let { name, param, option } = cmd;
-        if (param.eval != undefined) {
-            let r = TJSVM.eval(cmd.param.eval as string);
+        const { name, param, option } = cmd;
+        if (param.eval !== undefined) {
+            const r = TJSVM.eval(cmd.param.eval as string);
             // cancel jump
             if (!r) return undefined;
         }
-        return [param.target, param.storage]
+        return [param.target, param.storage];
     }
 }
