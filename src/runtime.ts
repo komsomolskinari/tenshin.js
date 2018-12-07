@@ -1,18 +1,18 @@
 // runtime libs
-import Character from "./runtime/character";
-import TJSVM from "./tjsvm";
 import YZBgImg from "./runtime/bgimg";
 import YZCG from "./runtime/cg";
+import Character from "./runtime/character";
+import YZLayerHandler from "./runtime/layerhandler";
+import YZSelect from "./runtime/select";
+import TJSVM from "./tjsvm";
 import YZSound from "./ui/sound";
 import YZText from "./ui/text";
 import YZVideo from "./ui/video";
-import YZSelect from "./runtime/select";
-import YZLayerHandler from "./runtime/layerhandler";
 
 export default class Runtime {
     // Callback function map
     // Always use arrow function, or Firefox will 'this is undefined'
-    static callbacks: {
+    private static callbacks: {
         [prop: string]: (a: KSLine) => any
     } = {
             mseladd: cmd => YZSelect.MapSelectAdd(cmd),

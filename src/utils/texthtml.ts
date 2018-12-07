@@ -1,8 +1,8 @@
 import KSParser from "./ksparser";
 /**
  * convert text with ks format cmd to html
- * @param {String} txt Text with KAG tag
- * @returns {String} KAG tag converted to html tag
+ * @param txt Text with KAG tag
+ * @returns KAG tag converted to html tag
  */
 export default function TextHTML(txt: string) {
     if (txt.indexOf("[") < 0) return txt;

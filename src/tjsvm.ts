@@ -2,15 +2,14 @@
 // REAL! WILL EXECUTE CODE!
 // Not a TJS virtual machine, just a JS eval wrapper
 export default class TJSVM {
-
-    static objs: { [prop: string]: any } = {};
-    static params: string[] = [];
+    private static objs: { [prop: string]: any } = {};
+    private static params: string[] = [];
 
     /**
      * evaluate a tjs function
-     * @param {String} str
+     * @param str
      */
-    static eval(str: string): any {
+    public static eval(str: string): any {
         const func = new Function(...this.params, "'use strict;'; return " + str);
         // manually bind params
         const funcWithParam = this.params.reduce((f, p) => f.bind(undefined, this.objs[p]), func);
@@ -18,19 +17,19 @@ export default class TJSVM {
     }
     /**
      * Add TJSVM variable
-     * @param {String} name Object name
-     * @param {Object} obj Initial value, default = {}
+     * @param name Object name
+     * @param obj Initial value, default = {}
      */
-    static addObject(name: string, obj: { [prop: string]: any }) {
+    public static addObject(name: string, obj: { [prop: string]: any }) {
         this.objs[name] = (obj || {});
         this.params.push(name);
     }
     /**
      * Get variable
-     * @param {String} name variable
+     * @param name variable
      * @example TJSVM.get('f.voiceBase');
      */
-    static get(name: string): any {
+    public static get(name: string): any {
         return name
             .split(".")
             .reduce((p, c) => p === undefined ? undefined : p[c], this.objs);

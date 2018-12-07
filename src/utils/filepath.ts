@@ -51,8 +51,8 @@ export default class FilePath {
 
     /**
      * List directory
-     * @param {String} dir String, target directory
-     * @returns {*} FileTree, undefine if dir not exist
+     * @param dir String, target directory
+     * @returns FileTree, undefine if dir not exist
      */
     static ls(dir: string) {
         if (!this.ready) return undefined;
@@ -63,9 +63,9 @@ export default class FilePath {
 
     /**
      * Find file
-     * @param {String} file file to find, with extension
-     * @param {Boolean} relative return path without root directory
-     * @returns {String} path
+     * @param file file to find, with extension
+     * @param relative return path without root directory
+     * @returns path
      */
     static find(file: string, relative?: boolean): string {
         if (!this.ready) return undefined;
@@ -77,10 +77,9 @@ export default class FilePath {
 
     /**
      * Find media file
-     * @param  file file to find, without extension
-     * @param  type file type
-     * @param  relative return path without root directory
-     * @returns  path
+     * @param file file to find, without extension
+     * @param type file type
+     * @param relative return path without root directory
      */
     static findMedia(file: string, type: string, relative?: boolean): string {
         const realname = this.mediatree[type][file.toLowerCase()];
@@ -99,7 +98,7 @@ export default class FilePath {
     // ----- Generate index files ----- //
     /**
      * generate ls's index
-     * @param {*} tree fs tree
+     * @param tree fs tree
      */
     static _genindex(tree: DirItem[]): IndexItem {
         const r: IndexItem = {};
@@ -114,7 +113,7 @@ export default class FilePath {
 
     /**
      * generate findmedia's index
-     * @param {[String]} findlist find tree in list format
+     * @param findlist find tree in list format
      */
     static _genmedia(findlist: string[]) {
         const r: {
@@ -166,8 +165,8 @@ export default class FilePath {
 
     /**
      * generate find's index
-     * @param {*} tree fs tree
-     * @param {String} dir start directory
+     * @param tree fs tree
+     * @param dir start directory
      */
     static _genfind(tree: DirItem[], dir: string): FindIndex {
         let ret: FindIndex = {};
@@ -188,19 +187,9 @@ export default class FilePath {
     // ----- Loader public tools ----- //
     /**
      * Load VFS directory
-     * @param {*} url
+     * @param url
      */
     static async __loader(url: string) {
-        /*
-        [
-            {
-                name: string,
-                type: "directory"/ "file",
-                contents: [...]/ null
-            }...
-        ]
-        */
-
         const loaderHttpMap: {
             [mode: string]: (str: string) => DirItem[]
         } = {

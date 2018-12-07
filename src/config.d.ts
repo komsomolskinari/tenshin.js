@@ -1,4 +1,3 @@
-// 本文件支持Unicode
 declare enum ConfigTreeMode {
     nginx_json = "nginx-json",
     nginx_xml = "nginx-xml",

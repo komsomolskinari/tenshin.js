@@ -140,8 +140,7 @@ export default class KSParser {
 
     /**
      * Parse text line
-     * @private @static
-     * @param {String} str
+     * @param str
      */
     private _text(str: string) {
         const ret: KSLine = {
@@ -171,12 +170,11 @@ export default class KSParser {
         return ret;
     }
 
-    _fp: number;
-    _fstr: string;
+    private _fp: number;
+    private _fstr: string;
     /**
      * Get next char
-     * @private
-     * @param {Boolean} inc Step to next
+     * @param inc Step to next
      */
     private _nextch(inc?: boolean) {
         while (" \f\n\r\t\v".includes(this._fstr[this._fp])) this._fp++;
@@ -188,9 +186,7 @@ export default class KSParser {
 
     /**
      * Parse function line
-     * @private
-     * @param {String} str
-     * @returns {{type:String,name:String,option:[String],param:{}}}
+     * @param str
      * @see _kv
      * @see _ident
      */
@@ -260,7 +256,7 @@ export default class KSParser {
     /**
      * Parse string
      * @private @static
-     * @param {String} sep Separators
+     * @param sep Separators
      */
     private _str(sep: string) {
         let b = "";

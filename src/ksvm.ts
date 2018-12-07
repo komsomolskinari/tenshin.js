@@ -1,8 +1,8 @@
 /// <reference path="./public.d.ts" />
 
 import AsyncTask from "./async/asynctask";
-import Runtime from "./runtime";
 import { VMMode } from "./const";
+import Runtime from "./runtime";
 export default class KSVM {
     static mode = VMMode.Text;
     static hang = false;
@@ -25,8 +25,8 @@ export default class KSVM {
 
     /**
      * Add a script file to VM
-     * @param {String} name file name, without extension
-     * @param {*} script compiled script
+     * @param name file name, without extension
+     * @param script compiled script
      */
     static AddScript(name: string, script: KSLine[]) {
         if (Object.keys(this.scripts).includes(name)) {
@@ -95,8 +95,8 @@ export default class KSVM {
 
     /**
      * Locate a KS tag
-     * @param {String} tag tag name, with *
-     * @param {String} script script name
+     * @param tag tag name, with *
+     * @param script script name
      */
     static LocateTag(tag: string, script: string) {
         if (script) script = script.split(".")[0];

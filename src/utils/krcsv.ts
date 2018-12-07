@@ -41,7 +41,7 @@ export default class KRCSV {
 
     /**
      * Guess a line array is Tab-CSV or normal CSV
-     * @param {[String]} lines Line array
+     * @param lines Line array
      */
     static GuessMode(lines: string[]): string {
         if (lines.every(l => l.indexOf("\t") >= 0)) return "\t";
@@ -49,7 +49,8 @@ export default class KRCSV {
     }
 
     // copy from https://stackoverflow.com/questions/8493195/how-can-i-parse-a-csv-string-with-javascript-which-contains-comma-in-data
-    // Return array of string values, or NULL if CSV string not well formed.
+    // Return array of string values, or undefined if CSV string not well formed.
+    // Modified to TS format
     static ParseLine(text: string) {
         const reValid = /^\s*(?:'[^'\\]*(?:\\[\S\s][^'\\]*)*'|"[^"\\]*(?:\\[\S\s][^"\\]*)*"|[^,'"\s\\]*(?:\s+[^,'"\s\\]+)*)\s*(?:,\s*(?:'[^'\\]*(?:\\[\S\s][^'\\]*)*'|"[^"\\]*(?:\\[\S\s][^"\\]*)*"|[^,'"\s\\]*(?:\s+[^,'"\s\\]+)*)\s*)*$/;
         const reValue = /(?!\s*$)\s*(?:'([^'\\]*(?:\\[\S\s][^'\\]*)*)'|"([^"\\]*(?:\\[\S\s][^"\\]*)*)"|([^,'"\s\\]*(?:\s+[^,'"\s\\]+)*))\s*(?:,|$)/g;

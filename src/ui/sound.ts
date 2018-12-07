@@ -31,7 +31,7 @@ export default class YZSound {
 
     /**
      * Output voice
-     * @param {String} src Source
+     * @param src Source
      */
     static Voice(src: string) {
         const ctl = { "-1": ["start", 0] };
