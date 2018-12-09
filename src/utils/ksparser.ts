@@ -295,4 +295,3 @@ export default class KSParser {
         return b;
     }
 }
-// window.KSParser = KSParser;

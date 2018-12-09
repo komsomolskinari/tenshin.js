@@ -14,17 +14,16 @@ const HEIGHT = 1;
 const VERTICAL = 1;
 
 export default class Character {
-
     static voiceBase = "";
     static characters: {
         [name: string]: Character
     } = {};
 
-    name: string;
-    currentVoice = 1;
-    nextVoice: string = undefined;
-    voiceFmt: string;
-    displayName: string;
+    private name: string;
+    private currentVoice = 1;
+    private nextVoice: string = undefined;
+    private voiceFmt: string;
+    private displayName: string;
 
     dress: {
         [dressname: string]: {
@@ -53,7 +52,6 @@ export default class Character {
     dispPos: string = KAGConst.Both;
     showedInDom = false;
     dressOpt = "";
-
 
     constructor(name: string) {
         this.name = name;
@@ -214,7 +212,7 @@ export default class Character {
         if (dOpt) {
             this.dressOpt = dOpt;
         }
-        const fOpt = option.filter(o => o.match(/^[0-9]{3}$/) !== undefined)[0];
+        const fOpt = option.filter(o => o.match(/^[0-9]{3}$/) !== null)[0];
         let imgctl: LayerInfo[] = [];
         if (fOpt) {
             imgctl = this.Image(fOpt);
@@ -281,8 +279,9 @@ export default class Character {
         const varId = faceOpt.substr(1, 2);
 
         if (!this.dressOpt) this.dressOpt = Object.keys(this.dress)[0];
-
-        const [mainImg, pfx] = this.dress[this.dressOpt][mainId];
+        const i = this.dress[this.dressOpt][mainId];
+        if (!i) debugger;
+        const [mainImg, pfx] = i;
         const varImg = this.face[pfx][varId];
         if (varImg === undefined) return;
         // 35 50 75 100 120 140 bgexpand original

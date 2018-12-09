@@ -18,6 +18,7 @@ interface YZLayerData {
 class YZSubLayer {
     name: string;
     fd: JQuery<HTMLElement>;
+
     constructor(name: string, parent: JQuery<HTMLElement>) {
         this.name = name;
         parent.append(
@@ -58,6 +59,7 @@ class YZSubLayer {
         _height = elm.naturalHeight;
         return [_width, _height];
     }
+
     ZIndex(z: number) {
         this.fd.css("z-index", z);
     }
@@ -65,12 +67,9 @@ class YZSubLayer {
 
 class YZLayer {
     static rootDOM: JQuery<HTMLElement>;
-    static Init() {
-        this.rootDOM = $("#camera");
-    }
-
     name: string;
     type: string;
+
     previous: YZLayerData = {
         width: 0,
         height: 0,
@@ -79,14 +78,18 @@ class YZLayer {
         zoom: 100,
         files: [],
     };
-    drawlock = false;
     current: YZLayerData;
+    drawlock = false;
     transIn: any[] = [];
     transOut: any[] = [];
     actionSeq: any[] = [];
 
     fd: JQuery<HTMLElement>;
     sublayer: { [name: string]: YZSubLayer } = {};
+
+    static Init() {
+        this.rootDOM = $("#camera");
+    }
 
     constructor(name: string, files: LayerInfo[], type: string, zindex: number) {
         this.name = name;
@@ -244,9 +247,11 @@ export default class YZLayerMgr {
             stages: 1,
             characters: 5
         };
+
     static Init() {
         YZLayer.Init();
     }
+
     /**
      * Set a layer (new or existed)
      * @param {String} name

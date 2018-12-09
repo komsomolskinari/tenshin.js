@@ -3,7 +3,6 @@ declare interface VMPosition {
     line: number
 }
 
-
 declare interface Point {
     /**
      * @property x left, width

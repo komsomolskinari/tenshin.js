@@ -171,5 +171,11 @@
         "no-reference": false,
         "object-literal-sort-keys": false,
         "one-variable-per-declaration": false
+    },
+    "linterOptions": {
+        "exclude": [
+            "node_modules",
+            "index.js"
+        ]
     }
 }

@@ -42,8 +42,8 @@ export default class YZLayerHandler {
 
     // name reslover : input a full cmd, output layers and name
 
-
     // position resolver
+    // not applied yet
     static CalculatePosition(cmd: KSLine) {
         // xpos and ypos will cover other value
         const { name, option, param } = cmd;

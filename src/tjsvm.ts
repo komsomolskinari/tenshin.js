@@ -15,6 +15,7 @@ export default class TJSVM {
         const funcWithParam = this.params.reduce((f, p) => f.bind(undefined, this.objs[p]), func);
         return funcWithParam();
     }
+
     /**
      * Add TJSVM variable
      * @param name Object name
@@ -24,6 +25,7 @@ export default class TJSVM {
         this.objs[name] = (obj || {});
         this.params.push(name);
     }
+
     /**
      * Get variable
      * @param name variable

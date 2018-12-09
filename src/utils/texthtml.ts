@@ -7,47 +7,46 @@ import KSParser from "./ksparser";
 export default function TextHTML(txt: string) {
     if (txt.indexOf("[") < 0) return txt;
     // first, cut to lines: text\n[cmd]\ntext
-    const t = txt
+    const tokens = txt
         .replace(/\[/g, "\n[")
         .replace(/\]/g, "]\n")
         .split("\n");
     // generate raw text and cmd position
-    let rs = "";
+    let rawString = "";
     // use KSParser to parse function
-    const c: [number, KSLine][] = [];
-    t.forEach(e => {
-        if (e[0] === "[") {
-            const f = KSParser.parse(e)[0];
-            c.push([rs.length, f]);
+    const funcAndPos: [number, KSLine][] = [];
+    tokens.forEach(t => {
+        if (t[0] === "[") {
+            funcAndPos.push([rawString.length, KSParser.parse(t)[0]]);
         }
         else {
-            rs += e;
+            rawString += t;
         }
     });
-    let p = 0;
+    let pos = 0;
     let ret = "";
-    c.forEach(t => {
-        let f: KSLine;
+    funcAndPos.forEach(t => {
+        let func: KSLine;
         // append unformatted txt
-        ret += rs.substr(p, t[0] - p);
-        [p, f] = t;
-        switch (f.name) {
+        ret += rawString.substr(pos, t[0] - pos);
+        [pos, func] = t;
+        switch (func.name) {
             case "ruby": // [ruby text='text']c
                 ret += "<ruby>";
-                ret += rs[p];
-                p++;
+                ret += rawString[pos];
+                pos++;
                 ret += "<rt>";
-                ret += f.param.text;
+                ret += func.param.text;
                 ret += "</rt></ruby>";
                 break;
             case "r":  // [r]
                 ret += "<br />";
                 break;
             default:
-                console.warn("TextHTML, Unknown inline tag", t);
+                console.warn("TextHTML, Unknown inline tag", func);
                 break;
         }
     });
-    ret += rs.substr(p);
+    ret += rawString.substr(pos);
     return ret;
 }

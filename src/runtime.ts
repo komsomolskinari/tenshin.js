@@ -38,9 +38,6 @@ export default class Runtime {
             edmovie: async cmd => YZVideo.ED(cmd)
         };
 
-
-    // Text related commands
-    //
     static Text(cmd: KSLine) {
         const { text, name, display } = cmd;
         if (name) {

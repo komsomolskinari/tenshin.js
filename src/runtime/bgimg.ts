@@ -3,12 +3,10 @@ import FilePath from "../utils/filepath";
 import YZLayerMgr from "../ui/layer";
 
 export default class YZBgImg {
-
     static daytime: any = undefined;
     static stage: any = undefined;
     static curImg = "";
     static bgname = "background";
-    // this.bgfd = $('#bgimg');
     static camfd = $("#camera");
 
     static Init() {
