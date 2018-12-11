@@ -101,14 +101,14 @@ export default class FilePath {
      * @param tree fs tree
      */
     static _genindex(tree: DirItem[]): IndexItem {
-        const r: IndexItem = {};
-        tree.forEach((e: DirItem) => {
-            if (e.type === ItemType.directory) {
-                r[e.name] = this._genindex(e.contents);
+        const ret: IndexItem = {};
+        tree.forEach((item: DirItem) => {
+            if (item.type === ItemType.directory) {
+                ret[item.name] = this._genindex(item.contents);
             }
-            else r[e.name] = undefined;
+            else ret[item.name] = undefined;
         });
-        return r;
+        return ret;
     }
 
     /**
@@ -116,7 +116,7 @@ export default class FilePath {
      * @param findlist find tree in list format
      */
     static _genmedia(findlist: string[]) {
-        const r: {
+        const ret: {
             image: { [key: string]: string },
             video: { [key: string]: string },
             audio: { [key: string]: string },
@@ -144,23 +144,23 @@ export default class FilePath {
         findlist.forEach(l => {
             const [, name, ext] = l.toLowerCase().match(/(.+?)\.([^.]*$|$)/i);
             if (imageExt.includes(ext)) {
-                r.image[name] = l;
+                ret.image[name] = l;
             }
             else if (videoExt.includes(ext)) {
-                r.video[name] = l;
+                ret.video[name] = l;
             }
             else if (audioExt.includes(ext)) {
-                r.audio[name] = l;
+                ret.audio[name] = l;
             }
             else if (scriptExt.includes(ext)) {
-                r.script[name] = l;
+                ret.script[name] = l;
             }
             else {
                 console.debug(`FilePath: unknown file type, file: ${l}`);
-                r.other[name] = l;
+                ret.other[name] = l;
             }
         });
-        return r;
+        return ret;
     }
 
     /**
@@ -224,12 +224,19 @@ export default class FilePath {
         let ret: DirItem[] = [];
         const loader = loaderHttpMap[this.mode] || this.__loader__error;
         ret = loader.call(this, ls);    // need rewrite 'this'
-
-        await Promise.all(ret.filter(l => l.type === ItemType.directory).map((l, i) =>
-            (
-                async () => ret[i].contents = await this.__loader(url + l.name + "/")
-            )()
-        ));
+        const idx: {
+            [name: string]: number
+        } = {};
+        ret.forEach((item, id) => idx[item.name] = id);
+        await Promise.all(ret
+            .filter(item => item.type === ItemType.directory)
+            .map(item =>
+                (
+                    async () => {
+                        ret[idx[item.name]].contents = await this.__loader(url + item.name + "/");
+                    }
+                )()
+            ));
         return ret;
     }
 

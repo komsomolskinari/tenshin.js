@@ -13,5 +13,5 @@ interface KSLine {
     display?: string,
     text?: string,
     param?: PrimitiveObject,
-    option?: PrimitiveType[],
+    option?: string[], // string array, convert on demand
 }

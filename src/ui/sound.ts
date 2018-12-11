@@ -38,6 +38,7 @@ export default class YZSound {
         this.AudioChannelCtl("voice", src, ctl);
     }
 
+    // Make it more 'TypeScript'?
     // playctl format: key is time(sec), -1 means immediately
     // once a cmd is set, it will always exist, until different aname is set
     /* {

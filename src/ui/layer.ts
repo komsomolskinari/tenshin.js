@@ -9,11 +9,6 @@ interface YZLayerData {
     files: LayerInfo[];
 }
 
-// methods:
-// draw multiple layer
-//     with or without coordinate offset
-// layer zoom and positioning
-
 // Sub layer operation
 class YZSubLayer {
     name: string;
