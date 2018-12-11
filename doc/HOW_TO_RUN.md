@@ -18,35 +18,38 @@
   - *Kirikiri TPV JavaScript Script (TJS)*
 - Windows subsystem for Linux
 - bash
-  - nodejs
-    - npm
-    - webpack
+- npm
 
 # 步骤 Steps
-## 从发行包部署 From release
-1. 解压到某个目录。
-2. 如果没有`jquery.min.js`, 下载最新的jQuery到此目录。
+## 会用Web服务器的
+1. 下载release，解压。
 3. 把游戏拿XP3Viewer什么的拆包，拆出来的放在`game/`目录下。
-4. 运行`generate_tree_json.py game/ > tree.json`生成文件索引。
-5. 下载HFS，参考`hfs.vfs`配置。
-6. 浏览器访问 http://localhost/ 即可。
+4. 修改`config.js`中的目录浏览配置以适应你使用的Web服务器。
+5. 启动HTTP服务器，把网站目录指向相应位置，打开目录浏览功能。
+6. 浏览器访问即可。
 
-## 从源代码构建 From source
-1. 在项目根目录下运行`./test.sh` (需要bash)
+## 会写js的
+1. 在项目根目录下运行`./test.sh` （要bash，不过也可以对照着脚本自己手动一下）
 2. 把游戏拿XP3Viewer什么的拆包，拆出来的放在`game/`目录下。
-3. 运行`appendix/generate_tree_json.py game/ > tree.json`生成文件索引。
-4. 配置并启动你的HTTP服务器。
-5. 浏览器访问 http://localhost/ 即可
+3. 配置并启动你的HTTP服务器，暂不支持npm的http-server，不过会有的。
+4. 浏览器访问即可
+## 都不会的
+此处假定你是Windows用户。Linux用户一般都会开服务器，如果不会，RTFM。Android用户一般连个服务器软件都没有。
+1. 下载lighttpd，挑zip或者tar.gz，解压出来
+2. 改配置文件，主要是开目录浏览和调网站路径
+3. 双击lighttpd.exe，出来的窗口不要关，如果要防火墙或者要权限，确认。
+4. 好了，现在你会开服务器了。
+
 
 # 支持的服务端和浏览器
 ## 服务端
 按理说支持Unicode的都可以，已经测试过以下服务端：
-- nginx (Linux & WSL) *Windows Unicode支持有问题，不能用*
-- HFS (Windows) *性能萎靡*
+- nginx (Linux & WSL) *Windows版本的Unicode支持有问题，不能用*
+- HFS (Windows) *谜之性能萎靡，基本上不能用*
 - lighttpd (Windows)
 - Apache2 (WSL)
 - IIS *要配MIME*
-- php -S *没有目录浏览*
+- php -S *没有目录浏览，不过可以在生成索引文件后将就用*
 - npm http-server
 
 ## 浏览器

@@ -1,5 +1,10 @@
 # 更新日志 Changelog
 
+## [v0.4.4.1-notwork] - 2018-12-12
+**正式切换到TypeScript**
+### 修复
+- 功能恢复到v0.4.3.2的水平
+
 ## [v0.4.4-notwork] - 2018-12-05
 ### 改变
 - 转到TypeScript

@@ -21,7 +21,6 @@ export default class Runtime {
             mselect: async cmd => YZSelect.MapSelect(),
             select: async cmd => YZSelect.Select(),
             sysjump: cmd => console.debug("Sysjump, EOF?", cmd),
-            // "endtrans": cmd => this.CompileTrans(cmd),
             newlay: cmd => YZCG.NewLay(cmd),
             dellay: cmd => YZCG.DelLay(cmd),
             bgm: cmd => YZSound.BGM(cmd),
@@ -31,8 +30,6 @@ export default class Runtime {
             // has unexpected return value
             mselinit: () => YZSelect.MapSelectInit(),
             eval: cmd => { TJSVM.eval(cmd.param.exp as string); return undefined; },
-            // "begintrans": () => { this.inTrans = true; return undefined },
-
             // macro, native impliement
             opmovie: async () => YZVideo.OP(),
             edmovie: async cmd => YZVideo.ED(cmd)
