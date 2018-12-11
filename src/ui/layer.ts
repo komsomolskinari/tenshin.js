@@ -174,7 +174,7 @@ class YZLayer {
                 let _width;
                 let _height;
                 // need get size
-                if (!size) [_width, _height] = await this.sublayer[name].GetSize();
+                if (!size || !size.x || !size.y) [_width, _height] = await this.sublayer[name].GetSize();
                 else {
                     size.x = _width;
                     size.y = _height;

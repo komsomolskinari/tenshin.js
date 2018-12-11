@@ -27,7 +27,10 @@ export default class Character {
 
     dress: {
         [dressname: string]: {
-            [subvariant: string]: string[]
+            [subvariant: string]: {
+                name: string,
+                prefix: string
+            }
         }
     } = {};
     face: {
@@ -96,7 +99,7 @@ export default class Character {
             if (this.dress[dname] === undefined) {
                 this.dress[dname] = {};
             }
-            this.dress[dname][dno] = [dvstr, pfx];
+            this.dress[dname][dno] = { name: dvstr, prefix: pfx };
         });
         f.filter(l => l.length === 4).forEach(l => {
             const [, fno, , fvstr] = l;
@@ -281,7 +284,8 @@ export default class Character {
         if (!this.dressOpt) this.dressOpt = Object.keys(this.dress)[0];
         const i = this.dress[this.dressOpt][mainId];
         if (!i) debugger;
-        const [mainImg, pfx] = i;
+        const mainImg = i.name;
+        const pfx = i.prefix;
         const varImg = this.face[pfx][varId];
         if (varImg === undefined) return;
         // 35 50 75 100 120 140 bgexpand original
