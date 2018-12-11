@@ -1,18 +1,22 @@
+# Game dump directory
 /game/
+
+# npm data
 /node_modules/
+/package-lock.json
+
+# dev temp files
 /src/.data/
-/.vs/
+.antlr
+
+# output
 /index.js
 /index.js.map
 /index.html
 /index.css
-/1280.png
-/favicon.png
 /favicon.ico
 /jquery.min.js
-.antlr
-/tree.json
-/package-lock.json
-/web.config
 /config.js
-/temp
+
+# iis test config
+/web.config
