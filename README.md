@@ -42,7 +42,6 @@ This project is a experiment about running Galgame in modern browser, it's origi
 - [ ] 存档    Save And Load
 - [ ] 自动播放    Auto Play
 ### 可能要鸽 Sooo......oon
-- [ ] 支持更多Web服务器    Support More Web Server
 - [ ] 支持千恋万花    Support Senren Banka
 - [ ] 封装成Electron程序    Pack With Electron
 - [ ] CG观赏与回想    CG And Scene Viewer

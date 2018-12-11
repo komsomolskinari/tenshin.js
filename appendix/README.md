@@ -18,8 +18,3 @@
 
 ## yuzumash.svg
 谜之图标。
-
-## tree_format/
-各常见HTTP服务器的目录浏览输出格式。
-
-附tree命令输出格式。
