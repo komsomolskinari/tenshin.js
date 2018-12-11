@@ -7,7 +7,7 @@ LIB='jquery.min.js'
 CONFIG='config.js'
 for i in $APPENDIX
 do
-    cp appendix/$i $i 
+    cp appendix/$i $i
 done
-tar -czvf release.tar.gz $LOCAL $LIB $APPENDIX $CONFIG doc/
+tar -czvf release.tar.gz $LOCAL $LIB $APPENDIX $CONFIG doc/ README.md
 rm $APPENDIX
