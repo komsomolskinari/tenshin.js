@@ -1,7 +1,4 @@
 import ObjectMapper from "../objectmapper";
-import FilePath from "../utils/filepath";
-import YZLayerMgr from "../ui/layer";
-
 export default class YZBgImg {
     static daytime: any = undefined;
     static stage: any = undefined;
@@ -18,13 +15,14 @@ export default class YZBgImg {
         this.camfd = $("#camera");
     }
 
-    static SetDaytime(time: any) {
+    static SetDaytime(time: any): LayerControlData {
         if (ObjectMapper.TypeOf(time) === "times") {
             this.daytime = ObjectMapper.GetProperty(time);
         }
+        return { name: this.bgname, layer: [] };
     }
 
-    static Process(cmd: KSLine) {
+    static Process(cmd: KSLine): LayerControlData {
         const { name, option, param } = cmd;
         this.stage = ObjectMapper.GetProperty(name);
 
@@ -35,15 +33,6 @@ export default class YZBgImg {
         }
 
         this.curImg = this.stage.image.replace("TIME", this.daytime.prefix);
-        YZLayerMgr.Set(this.bgname, [{ name: this.curImg }], "stages");
-        YZLayerMgr.Move(this.bgname, { x: 0, y: 0 });
-        YZLayerMgr.Zoom(this.bgname, 100);
-        const xpos = param.xpos as number || 0;
-        const ypos = param.ypos as number || 0;
-        const zoom = param.zoom as number || 100;
-        YZLayerMgr.Move(this.bgname, { x: xpos, y: ypos });
-        YZLayerMgr.Zoom(this.bgname, zoom);
-        YZLayerMgr.Draw(this.bgname);
         return { name: this.bgname, layer: [{ name: this.curImg }] };
     }
 

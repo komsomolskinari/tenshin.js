@@ -2,6 +2,7 @@ import ObjectMapper from "../objectmapper";
 import Character from "./character";
 import YZBgImg from "./bgimg";
 import YZCG from "./cg";
+import YZLayerMgr from "../ui/layer";
 
 export default class YZLayerHandler {
     static isLayer(cmd: KSLine) {
@@ -22,7 +23,7 @@ export default class YZLayerHandler {
         if (cmd.name === "dellay") {
             YZCG.DelLay(cmd);
         }
-        let cb: (cmd?: KSLine) => any = () => { return undefined; };
+        let cb: (cmd?: KSLine) => Promise<LayerControlData> = () => { return undefined; };
         switch (ObjectMapper.TypeOf(cmd.name)) {
             case "characters":
                 cb = async (cmd: KSLine) => Character.characters[cmd.name].Process(cmd);
@@ -37,17 +38,22 @@ export default class YZLayerHandler {
                 cb = async (cmd: KSLine) => YZCG.ProcessLay(cmd);
                 break;
         }
-        console.log(await cb(cmd), this.CalculatePosition(cmd));
+        const controlData = await cb(cmd);
+        if (!controlData) debugger;
+        const name = controlData.name;
+        const position = this.CalculatePosition(cmd);
+        YZLayerMgr.Set(name, controlData.layer);
+        YZLayerMgr.Move(name, position);
+        YZLayerMgr.Draw(name);
     }
 
     // name reslover : input a full cmd, output layers and name
 
     // position resolver
     // not applied yet
-    static CalculatePosition(cmd: KSLine) {
+    static CalculatePosition(cmd: KSLine): Point {
         // xpos and ypos will cover other value
         const { name, option, param } = cmd;
-        console.log(option);
         const mapped = ObjectMapper.ConvertAll(option);
         const mapX = ((mapped.positions || [])
             .filter((p: any) => p.xpos !== undefined)
@@ -58,6 +64,6 @@ export default class YZLayerHandler {
 
         const finalX = mapX || paramX;
         const finalY = paramY;
-        return [finalX, finalY];
+        return { x: finalX, y: finalY as number };
     }
 }

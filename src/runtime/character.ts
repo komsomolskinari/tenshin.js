@@ -3,7 +3,6 @@ import YZSound from "../ui/sound";
 import YZText from "../ui/text";
 import FilePath from "../utils/filepath";
 import KRCSV from "../utils/krcsv";
-import YZLayerMgr from "../ui/layer";
 import { KAGConst } from "../const";
 
 const X = 0;
@@ -209,7 +208,7 @@ export default class Character {
         return runner.ProcessImageCmd(option);
     }
 
-    async ProcessImageCmd(option: any[]) {
+    async ProcessImageCmd(option: any[]): Promise<LayerControlData> {
         const allDress = Object.keys(this.dress);
         const dOpt = option.filter(o => allDress.includes(o))[0];
         if (dOpt) {
@@ -222,13 +221,10 @@ export default class Character {
         }
         if ([KAGConst.Both, KAGConst.BU].includes(this.dispPos as KAGConst)) {
             this.showedInDom = true;
-            await YZLayerMgr.Set(this.name, imgctl, "characters");
         }
         else {
             this.showedInDom = false;
-            YZLayerMgr.Hide(this.name);
         }
-        YZLayerMgr.Draw(this.name);
         return { name: this.name, layer: imgctl };
     }
 

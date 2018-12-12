@@ -59,7 +59,7 @@ export default class YZCG {
         ObjectMapper.RemoveLayer(cmd.param.name as string);
     }
 
-    public static ProcessLay(cmd: KSLine) {
+    public static ProcessLay(cmd: KSLine): LayerControlData {
         const { name, option, param } = cmd;
 
         const last = this.layerlast[name];
@@ -68,15 +68,6 @@ export default class YZCG {
         // TODO: coordinate convert
         const zoom = param.zoom as number || last.zoom;
         this.layerlast[name] = { x, y, zoom };
-        YZLayerMgr.Zoom(name, zoom);
-        YZLayerMgr.Move(name, { x, y });
-
-        if (option.includes("show")) {
-            YZLayerMgr.Show(name);
-        }
-        if (option.includes("hide")) {
-            YZLayerMgr.Hide(name);
-        }
         return { name, layer: [] as LayerInfo[] };
     }
 

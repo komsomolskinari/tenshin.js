@@ -23,3 +23,8 @@ declare interface LayerInfo {
 declare interface IndexItem {
     [name: string]: null | IndexItem
 }
+
+declare interface LayerControlData {
+    name: string,
+    layer: LayerInfo[]
+}

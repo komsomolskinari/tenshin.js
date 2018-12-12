@@ -118,6 +118,8 @@ class YZLayer {
     }
 
     SetSubLayer(files: LayerInfo[]) {
+        if (!files || files.length <= 0) return;
+
         // maybe diff here
         this.current.files = files || [];
     }
