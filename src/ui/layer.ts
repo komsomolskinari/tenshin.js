@@ -39,20 +39,16 @@ class YZSubLayer {
 
     async GetSize() {
         const elm = this.fd.get(0) as HTMLImageElement;
-        let _width;
-        let _height = elm.naturalHeight;
         // not loaded
-        if (!_height) {
+        if (!elm.complete) {
             // wait image loaded
             await new Promise((resolve, reject) => {
                 this.fd.one("load", () => resolve());
                 this.fd.one("error", () => reject());
             });
         }
-        // ok, it's now loaded
-        _width = elm.naturalWidth;
-        _height = elm.naturalHeight;
-        return [_width, _height];
+        // ok,  now it's loaded
+        return [elm.naturalWidth, elm.naturalHeight];
     }
 
     ZIndex(z: number) {

@@ -12,34 +12,33 @@ export default class YZLayerHandler {
     }
 
     // layerhandler
-    // resolve name
-    // resolve position
+    // *resolve name
+    // *resolve position
     // resolve display
     // resolve animation
-    static async Process(cmd: KSLine) {
+    static Process(cmd: KSLine) {
         if (cmd.name === "newlay") {
             YZCG.NewLay(cmd);
         }
         if (cmd.name === "dellay") {
             YZCG.DelLay(cmd);
         }
-        let cb: (cmd?: KSLine) => Promise<LayerControlData> = () => { return undefined; };
+        let cb: (cmd?: KSLine) => LayerControlData = () => { return undefined; };
         switch (ObjectMapper.TypeOf(cmd.name)) {
             case "characters":
-                cb = async (cmd: KSLine) => Character.characters[cmd.name].Process(cmd);
+                cb = (cmd: KSLine) => Character.ProcessImage(cmd);
                 break;
             case "times":
-                cb = async (cmd: KSLine) => YZBgImg.SetDaytime(cmd.name);
+                cb = (cmd: KSLine) => YZBgImg.SetDaytime(cmd.name);
                 break;
             case "stages":
-                cb = async (cmd: KSLine) => YZBgImg.Process(cmd);
+                cb = (cmd: KSLine) => YZBgImg.Process(cmd);
                 break;
             case "layer":
-                cb = async (cmd: KSLine) => YZCG.ProcessLay(cmd);
+                cb = (cmd: KSLine) => YZCG.ProcessLay(cmd);
                 break;
         }
-        const controlData = await cb(cmd);
-        if (!controlData) debugger;
+        const controlData = cb(cmd);
         const name = controlData.name;
         const position = this.CalculatePosition(cmd);
         YZLayerMgr.Set(name, controlData.layer);
@@ -48,7 +47,9 @@ export default class YZLayerHandler {
     }
 
     // name reslover : input a full cmd, output layers and name
-
+    static CalculateLayer(cmd: KSLine): LayerControlData {
+        return undefined;
+    }
     // position resolver
     // not applied yet
     static CalculatePosition(cmd: KSLine): Point {

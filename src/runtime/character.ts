@@ -41,7 +41,7 @@ export default class Character {
         [variant: string]: {
             [subvariant: string]: {
                 [layername: string]: {
-                    layer: string,
+                    name: string,
                     offset: Point,
                     size: Point
                 }
@@ -127,7 +127,7 @@ export default class Character {
             this.coord[pfx][fvar][lname] = {
                 offset: { x: loffx, y: loffy },
                 size: { x: lsizex, y: lsizey },
-                layer: lid
+                name: lid
             };
         });
     }
@@ -144,15 +144,7 @@ export default class Character {
         if (name !== this.name) return;
 
         // let upper runtime handle this, it's public option
-        // delayrun: just set a delay to timeline
-        // TODO: use eventlistener to channel instead of cmd
-        // or calculate
-        if (param.delayrun) {
-            // delete cmd.param.delayrun;
-            // console.debug('Delay exec command', cmd);
-            // AsyncTask.Add(() => this.Process(cmd), undefined, 2000);
-            return;
-        }
+        if (param.delayrun) return;
 
         // first, voice option:
         if (param.voice) {
@@ -164,51 +156,30 @@ export default class Character {
             }
         }
 
-        const mapped: {
-            [key: string]: any
-        } = {};
-        option.filter(o => ObjectMapper.IsProperty(o as string)).forEach(o => {
-            const t = ObjectMapper.TypeOf(o as string);
-            if (mapped[t] === undefined) mapped[t] = [];
-            const mo = ObjectMapper.GetProperty(o as string);
-            if (mo.length === undefined) {
-                mapped[t].push(mo);
-            }
-            else {
-                for (const i of mo) {
-                    mapped[t].push(i);
-                }
-            }
-        });
+        const ret = Character.ProcessImage(cmd);
+        if (!ret) debugger;
 
+        return ret;
+    }
+
+    static ProcessImage(cmd: KSLine) {
+        const { name, option, param } = cmd;
+
+
+        const ch = this.characters[name];
+        const mapped = ObjectMapper.ConvertAll(option);
         (mapped.positions || []).forEach((p: any) => {
-            switch (p.type) {
-                case KAGConst.DispPosition:
-                    this.dispPos = p.disp;
-                    break;
-                case KAGConst.XPosition:
-                    this.imageXPos = parseInt(p.xpos);
-                    this.dispPos = KAGConst.Both; // ?? 1.ks 1865, should we do this?
-                    break;
-                case KAGConst.Level:
-                    this.imageLevel = parseInt(p.level);
-                    break;
-                default:
-                    break;
-            }
+            if (p.type === KAGConst.Level) ch.imageLevel = parseInt(p.level);
         });
-        // if standName !== name, we need call another character's Image()
-        // TODO: Update imageLevel, imageXPos
-
-        let runner: Character = Character.characters[this.name];
-        if (this.displayName && this.displayName !== this.name) {
-            const dispch = Character.characters[this.displayName];
+        let runner: Character = ch;
+        if (ch.displayName && ch.displayName !== this.name) {
+            const dispch = Character.characters[ch.displayName];
             if (dispch) runner = dispch;
         }
         return runner.ProcessImageCmd(option);
     }
 
-    async ProcessImageCmd(option: any[]): Promise<LayerControlData> {
+    ProcessImageCmd(option: string[]): LayerControlData {
         const allDress = Object.keys(this.dress);
         const dOpt = option.filter(o => allDress.includes(o))[0];
         if (dOpt) {
@@ -217,13 +188,27 @@ export default class Character {
         const fOpt = option.filter(o => o.match(/^[0-9]{3}$/) !== null)[0];
         let imgctl: LayerInfo[] = [];
         if (fOpt) {
-            imgctl = this.Image(fOpt);
-        }
-        if ([KAGConst.Both, KAGConst.BU].includes(this.dispPos as KAGConst)) {
-            this.showedInDom = true;
-        }
-        else {
-            this.showedInDom = false;
+            // select image
+            const mainId = fOpt.substr(0, 1);
+            const varId = fOpt.substr(1, 2);
+
+            if (!this.dressOpt) this.dressOpt = Object.keys(this.dress)[0];
+            const { name: mainImg, prefix: pfx } = this.dress[this.dressOpt][mainId];
+            const varImg = this.face[pfx][varId];
+            if (varImg === undefined) return;
+            // 35 50 75 100 120 140 bgexpand original
+            const usedVer = ([1, 1, 3, 3, 3, 5, 3])[this.imageLevel];
+
+            const vImgs: LayerInfo[] = varImg
+                .map(v => this.coord[pfx][usedVer][v]);
+            const mImg = this.coord[pfx][usedVer][mainImg];
+            imgctl = ([mImg] as LayerInfo[]).concat(vImgs)
+                // transform names
+                .map(v => ({
+                    name: ([pfx, usedVer, v.name].join("_")),
+                    offset: v.offset,
+                    size: v.size,
+                }));
         }
         return { name: this.name, layer: imgctl };
     }
@@ -270,49 +255,5 @@ export default class Character {
         // drop extension
         stxt = (stxt as string).replace(/\.[a-z0-9]{2,5}$/i, "");
         YZSound.Voice(stxt);
-    }
-
-    Image(faceOpt: string) {
-        // select image
-        const mainId = faceOpt.substr(0, 1);
-        const varId = faceOpt.substr(1, 2);
-
-        if (!this.dressOpt) this.dressOpt = Object.keys(this.dress)[0];
-        const i = this.dress[this.dressOpt][mainId];
-        if (!i) debugger;
-        const mainImg = i.name;
-        const pfx = i.prefix;
-        const varImg = this.face[pfx][varId];
-        if (varImg === undefined) return;
-        // 35 50 75 100 120 140 bgexpand original
-        const usedVer = ([1, 1, 3, 3, 3, 5, 3])[this.imageLevel];
-
-        const vImgs: LayerInfo[] = varImg
-            .map(v => this.coord[pfx][usedVer][v])
-            .map(v => {
-                return {
-                    name: v.layer,
-                    offset: v.offset,
-                    size: v.size,
-                };
-            });
-        const mImg = this.coord[pfx][usedVer][mainImg];
-        let ctl: LayerInfo[] = [{
-            name: mImg.layer,
-            offset: mImg.offset,
-            size: mImg.size,
-        }];
-        ctl = ctl
-            .concat(vImgs)
-            .map((v: LayerInfo) => {
-                return {
-                    name: ([pfx, usedVer, v.name].join("_")),
-                    offset: v.offset,
-                    size: v.size,
-                };
-            });
-        // zoom each layer
-        // emmmm, not now...
-        return ctl;
     }
 }
