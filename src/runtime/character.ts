@@ -85,7 +85,7 @@ export default class Character {
     }
 
     async __LoadChunk(filename: string) {
-        const f = KRCSV.parse(await FilePath.read(filename), "\t", false);
+        const chunkDefs = KRCSV.parse(await FilePath.read(filename), "\t", false);
         const _fsp = filename.split("_");
         const pfx = _fsp.slice(0, _fsp.length - 1).join("_");
 
@@ -93,15 +93,15 @@ export default class Character {
             this.face[pfx] = {};
         }
 
-        f.filter(l => l.length === 5).forEach(l => {
-            const [, dname, , dno, dvstr] = l;
+        chunkDefs.filter(def => def.length === 5).forEach(def => {
+            const [, dname, , dno, dvstr] = def;
             if (this.dress[dname] === undefined) {
                 this.dress[dname] = {};
             }
             this.dress[dname][dno] = { name: dvstr, prefix: pfx };
         });
-        f.filter(l => l.length === 4).forEach(l => {
-            const [, fno, , fvstr] = l;
+        chunkDefs.filter(def => def.length === 4).forEach(def => {
+            const [, fno, , fvstr] = def;
             if (this.face[pfx][fno] === undefined) {
                 this.face[pfx][fno] = [];
             }
@@ -110,7 +110,7 @@ export default class Character {
     }
 
     async __LoadCoord(filename: string) {
-        const f = KRCSV.parse(await FilePath.read(filename), "\t");
+        const coordDefs = KRCSV.parse(await FilePath.read(filename), "\t");
         const fvar = filename.match(/_([0-9])\./)[1];
         const _fsp = filename.split("_");
         const pfx = _fsp.slice(0, _fsp.length - 1).join("_");
@@ -122,11 +122,12 @@ export default class Character {
             this.coord[pfx][fvar] = {};
         }
 
-        f.forEach(l => {
-            const [, lname, loffx, loffy, lsizex, lsizey, , , , lid] = l;
+        coordDefs.forEach(def => {
+            const [, lname, loffx, loffy, lsizex, lsizey, , , , lid] = def;
             this.coord[pfx][fvar][lname] = {
-                offset: { x: loffx, y: loffy },
-                size: { x: lsizex, y: lsizey },
+                // type sensitive
+                offset: { x: parseInt(loffx), y: parseInt(loffy) },
+                size: { x: parseInt(lsizex), y: parseInt(lsizey) },
                 name: lid
             };
         });

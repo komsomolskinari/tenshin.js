@@ -6,6 +6,7 @@ import YZLayerMgr from "../ui/layer";
 
 export default class YZLayerHandler {
     static isLayer(cmd: KSLine) {
+        // hack for newlay & dellay
         if (["newlay", "dellay"].includes(cmd.name)) return true;
         return ["characters", "times", "stages", "layer"]
             .includes(ObjectMapper.TypeOf(cmd.name));
@@ -24,7 +25,8 @@ export default class YZLayerHandler {
             YZCG.DelLay(cmd);
         }
         let cb: (cmd?: KSLine) => LayerControlData = () => { return undefined; };
-        switch (ObjectMapper.TypeOf(cmd.name)) {
+        const layerType = ObjectMapper.TypeOf(cmd.name);
+        switch (layerType) {
             case "characters":
                 cb = (cmd: KSLine) => Character.ProcessImage(cmd);
                 break;
@@ -37,17 +39,19 @@ export default class YZLayerHandler {
             case "layer":
                 cb = (cmd: KSLine) => YZCG.ProcessLay(cmd);
                 break;
+            default:
+                return;
         }
         const controlData = cb(cmd);
         const name = controlData.name;
         const position = this.CalculatePosition(cmd);
-        YZLayerMgr.Set(name, controlData.layer);
+        YZLayerMgr.Set(name, controlData.layer, layerType);
         YZLayerMgr.Move(name, position);
         YZLayerMgr.Draw(name);
     }
 
     // name reslover : input a full cmd, output layers and name
-    static CalculateLayer(cmd: KSLine): LayerControlData {
+    static CalculateSubLayer(cmd: KSLine): LayerControlData {
         return undefined;
     }
     // position resolver
@@ -60,10 +64,11 @@ export default class YZLayerHandler {
             .filter((p: any) => p.xpos !== undefined)
             .map((p: any) => p.xpos)[0])
             || undefined;
-        const paramX = (param.xpos !== undefined) ? param.xpos : undefined;
-        const paramY = (param.ypos !== undefined) ? param.ypos : undefined;
+        // type sensitive
+        const paramX = (param.xpos !== undefined) ? parseInt(param.xpos as string) : undefined;
+        const paramY = (param.ypos !== undefined) ? parseInt(param.ypos as string) : undefined;
 
-        const finalX = mapX || paramX;
+        const finalX = parseInt(mapX) || paramX;
         const finalY = paramY;
         return { x: finalX, y: finalY as number };
     }

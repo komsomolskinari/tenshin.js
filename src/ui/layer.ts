@@ -12,7 +12,9 @@ interface YZLayerData {
 // Sub layer operation
 class YZSubLayer {
     name: string;
-    fd: JQuery<HTMLElement>;
+    private fd: JQuery<HTMLElement>;
+    private x: number;
+    private y: number;
 
     constructor(name: string, parent: JQuery<HTMLElement>) {
         this.name = name;
@@ -38,17 +40,19 @@ class YZSubLayer {
     }
 
     async GetSize() {
-        const elm = this.fd.get(0) as HTMLImageElement;
-        // not loaded
-        if (!elm.complete) {
-            // wait image loaded
-            await new Promise((resolve, reject) => {
-                this.fd.one("load", () => resolve());
-                this.fd.one("error", () => reject());
-            });
+        if (!this.x || !this.y) { // not cached
+            const elm = this.fd.get(0) as HTMLImageElement;
+            if (!elm.complete) { // not loaded
+                await new Promise((resolve, reject) => { // wait image loaded
+                    this.fd.one("load", () => resolve());
+                    this.fd.one("error", () => reject());
+                });
+            }
+            // ok,  now it's loaded
+            this.x = elm.naturalWidth;
+            this.y = elm.naturalHeight;
         }
-        // ok,  now it's loaded
-        return [elm.naturalWidth, elm.naturalHeight];
+        return [this.x, this.y];
     }
 
     ZIndex(z: number) {
@@ -61,7 +65,7 @@ class YZLayer {
     name: string;
     type: string;
 
-    previous: YZLayerData = {
+    private previous: YZLayerData = {
         width: 0,
         height: 0,
         left: 0,    // relative offset with center
@@ -69,14 +73,14 @@ class YZLayer {
         zoom: 100,
         files: [],
     };
-    current: YZLayerData;
-    drawlock = false;
-    transIn: any[] = [];
-    transOut: any[] = [];
-    actionSeq: any[] = [];
+    private current: YZLayerData;
+    private drawlock = false;
+    private transIn: any[] = [];
+    private transOut: any[] = [];
+    private actionSeq: any[] = [];
 
-    fd: JQuery<HTMLElement>;
-    sublayer: { [name: string]: YZSubLayer } = {};
+    private fd: JQuery<HTMLElement>;
+    private sublayer: { [name: string]: YZSubLayer } = {};
 
     static Init() {
         this.rootDOM = $("#camera");
@@ -163,30 +167,29 @@ class YZLayer {
         let _minWidth = 10000;
         const [_winW, _winH] = Config.Display.WindowSize;
 
+        // per sublayer, draw
         await Promise.all(this.current.files.map(f =>
             (async () => {
                 const { name, offset, size } = f;
-                // default offset [0,0]
                 const _offset = offset || { x: 0, y: 0 };
-                // get size when loaded
                 let _width;
                 let _height;
-                // need get size
-                if (!size || !size.x || !size.y) [_width, _height] = await this.sublayer[name].GetSize();
-                else {
-                    size.x = _width;
-                    size.y = _height;
+                if (!size || !size.x || !size.y) { // need get size
+                    [_width, _height] = await this.sublayer[name].GetSize();
                 }
-
+                else {
+                    _width = size.x;
+                    _height = size.y;
+                }
+                // calculate image draw window
                 const { x: _left, y: _top } = _offset;
                 _minWidth = _left < _minWidth ? _left : _minWidth;
                 _minHeight = _top < _minHeight ? _top : _minHeight;
                 _maxWidth = (_left + _width) > _maxWidth ? (_left + _width) : _maxWidth;
                 _maxHeight = (_top + _height) > _maxHeight ? (_top + _height) : _maxHeight;
-
                 this.sublayer[name].Draw(_offset);
-            })() // Wait an IIFE, it returns a Promise
-        ));  // and Promise wait all... );})()));
+            })() // Run in IIFE, it returns a Promise
+        ));  // and Promise wait all... );})())); :-)
 
         // when all draw complete
         // start animation
@@ -195,8 +198,7 @@ class YZLayer {
             (_winW - _fullWidth) / 2 - _minWidth + this.current.left,
             (_winH - _fullHeight) / 2 - _minHeight + this.current.top
         ];
-        // set main zoom, offset
-        this.fd
+        this.fd // set main zoom, offset
             .css("display", "")
             .css("left", _fullLeft)
             .css("top", _fullTop)
@@ -212,8 +214,7 @@ class YZLayer {
         this.fd.css("display", "none");
     }
 
-    // clear DOM .etc
-    Delete() {
+    Delete() { // clear DOM .etc
         // draw last time, to execute transOut
         this.Draw();
         this.fd.remove();
@@ -234,7 +235,7 @@ export default class YZLayerMgr {
     static layers: {
         [name: string]: YZLayer
     } = {};
-    static type2zindex: {
+    private static type2zindex: {
         [type: string]: number
     } = {
             stages: 1,

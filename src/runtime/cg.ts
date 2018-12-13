@@ -10,21 +10,21 @@ export default class YZCG {
     public static async __LoadCGList() {
         const [szx, szy] = Config.Display.WindowSize;
         KRCSV.parse(await FilePath.read(Config.Display.CGDiffFile), ",", undefined)
-            .forEach((d) =>
+            .forEach(d =>
                 this.diffdef[d[0]] = {
                     ev: d[0],
                     base: d[1],
                     diff: d[2],
-                    offset: { x: d[3] || 0, y: d[4] || 0 },
-                    size: { x: d[5] || szx, y: d[6] || szy },
+                    offset: { x: parseInt(d[3]) || 0, y: parseInt(d[4]) || 0 },
+                    size: { x: parseInt(d[5]) || szx, y: parseInt(d[6]) || szy },
                 });
 
         const ls = FilePath.ls(Config.Display.CGPath);
         delete ls.diff;
         Object.keys(ls) // base images
-            .map((l) => l.match(/ev[0-9]+[a-z]+/i)[0])
-            .filter((l) => l)
-            .forEach((d) =>
+            .map(l => l.match(/ev[0-9]+[a-z]+/i)[0])
+            .filter(l => l)
+            .forEach(d =>
                 this.diffdef[d] = {
                     ev: d,
                     base: d,
