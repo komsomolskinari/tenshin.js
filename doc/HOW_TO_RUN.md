@@ -31,14 +31,16 @@
 ## 会写js的
 1. 在项目根目录下运行`./test.sh` （要bash，不过也可以对照着脚本自己手动一下）
 2. 把游戏拿XP3Viewer什么的拆包，拆出来的放在`game/`目录下。
-3. 配置并启动你的HTTP服务器，暂不支持npm的http-server，不过会有的。
+3. 启动`http-server`，对，npm里面排名最前那一个。
 4. 浏览器访问即可
 ## 都不会的
 此处假定你是Windows用户。Linux用户一般都会开服务器，如果不会，RTFM。Android用户一般连个服务器软件都没有。
-1. 下载lighttpd，挑zip或者tar.gz，解压出来
-2. 改配置文件，主要是开目录浏览和调网站路径
+1. 下载[windows版lighttpd](http://lighttpd.dtech.hu/)，挑win32 zip，下载解压。
+2. 下载[配置文件](doc/lighttpd.conf)，覆盖原来的`conf/lighttpd.conf`，然后记事本打开，修改网站路径。
 3. 双击lighttpd.exe，出来的窗口不要关，如果要防火墙或者要权限，确认。
 4. 好了，现在你会开服务器了。
+5. 浏览器访问 http://localhost 即可。
+6. 如果要关服务器，把窗口关了就是。
 
 
 # 支持的服务端和浏览器
@@ -48,7 +50,7 @@
 - HFS (Windows) *谜之性能萎靡，基本上不能用*
 - lighttpd (Windows)
 - Apache2 (WSL)
-- IIS *要配MIME*
+- IIS *要配MIME，不然不提供文件*
 - php -S *没有目录浏览，不过可以在生成索引文件后将就用*
 - npm http-server
 

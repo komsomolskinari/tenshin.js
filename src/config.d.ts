@@ -6,7 +6,8 @@ declare enum ConfigTreeMode {
     iis = "iis",
     lighttpd = "lighttpd",
     hfs = "hfs",
-    json = "json"
+    json = "json",
+    http_server = "http-server",
 }
 
 declare var Config: {

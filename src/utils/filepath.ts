@@ -85,6 +85,7 @@ export default class FilePath {
         const realname = this.mediatree[type][file.toLowerCase()];
         return this.find(realname, relative);
     }
+
     /**
      * Perform async read
      * @param  file file to find, with/without extension
@@ -201,6 +202,7 @@ export default class FilePath {
             "lighttpd": this.__loader_lighttpd,
             "apache": this.__loader_apache,
             "iis": this.__loader_iis,
+            "http-server": this.__loader_npm_http_server,
         };
 
 
@@ -342,7 +344,7 @@ export default class FilePath {
                 const type = [].includes.call(r.classList, "d") ?
                     ItemType.directory :
                     ItemType.file;
-                const name = (r   // tr
+                const name = (r // tr
                     .cells[0]   // 1st td
                     .firstElementChild as HTMLAnchorElement)
                     .innerText; // text
@@ -378,6 +380,32 @@ export default class FilePath {
                     .firstElementChild  // a
                     .innerHTML;
 
+                const match = filename.match(/(.+)\/$/i);
+                if (match) {
+                    ret.push({
+                        name: match[1],
+                        type: ItemType.directory
+                    });
+                }
+                else {
+                    ret.push({
+                        name: filename,
+                        type: ItemType.file
+                    });
+                }
+            });
+        return ret;
+    }
+    static __loader_npm_http_server(text: string) {
+        const ret: DirItem[] = [];
+        this.__loader__table(text)
+            .slice(1)   // skip ../
+            .forEach((r: HTMLTableRowElement) => {
+                const filename = (r // tr
+                    .cells[3]   // 1st td
+                    .firstElementChild as HTMLAnchorElement)
+                    .innerText; // text
+                if (name[0] === ".") return;
                 const match = filename.match(/(.+)\/$/i);
                 if (match) {
                     ret.push({
