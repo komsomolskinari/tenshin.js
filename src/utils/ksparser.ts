@@ -63,7 +63,7 @@ export default class KSParser {
     cmd: KSLine[];
 
     private _parse(str: string) {
-        let lines: string[] = [];
+        const lines: string[] = [];
         // scan1, check line type
         str.split("\n").forEach(l => {
             l = l.trim();
@@ -73,7 +73,7 @@ export default class KSParser {
                     return;
                 case "[":
                     // cut to multiple function token
-                    lines = lines.concat(this._cutfunction(l));
+                    lines.push(...this._cutfunction(l));
                     return;
                 case "*":
                     // tag, direct pass
@@ -278,19 +278,11 @@ export default class KSParser {
     private _ident() {
         let b = "";
         while (true) {
-            // get next char
             const nc = this._fstr[this._fp];
-            this._fp++;
-            // not token char
             // macro.ks: [eval exp='sf["replay_"+mp.file]=true']
-            if (!" \t[]=".includes(nc) && nc !== undefined) {
-                b += nc;
-            }
-            // is token char
-            else {
-                this._fp--;
-                break;
-            }
+            if (" \t[]=".includes(nc) || nc === undefined) break;
+            this._fp++;
+            b += nc;
         }
         return b;
     }

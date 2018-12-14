@@ -1,3 +1,5 @@
+import { ParseHTML } from "./util";
+
 enum ItemType { file = "file", directory = "directory" }
 interface DirItem {
     name: string;
@@ -6,7 +8,7 @@ interface DirItem {
 }
 
 interface FindIndex {
-    [name: string]: string[];
+    [name: string]: string;
 }
 
 interface MediaIndex {
@@ -69,8 +71,8 @@ export default class FilePath {
      */
     static find(file: string, relative?: boolean): string {
         if (!this.ready) return undefined;
-        if (relative === true) return this.findtree[file][0];
-        const treeItem = (this.findtree[file] || [])[0];
+        if (relative === true) return this.findtree[file];
+        const treeItem = this.findtree[file];
         if (treeItem) return (`${this.root}/${treeItem}`).replace(/\/+/g, "/");
         else return undefined;
     }
@@ -170,18 +172,19 @@ export default class FilePath {
      * @param dir start directory
      */
     static _genfind(tree: DirItem[], dir: string): FindIndex {
-        let ret: FindIndex = {};
-        tree.forEach((e: DirItem) => {
-            if (e.type === ItemType.file) {
-                if (ret[e.name] === undefined) {
-                    ret[e.name] = [];
+        const ret: FindIndex = {};
+        tree
+            .filter(e => e.type === ItemType.file)
+            .forEach(e => ret[e.name] = `${dir}/${e.name}`);
+        tree
+            .filter(e => e.type === ItemType.directory)
+            .forEach(e => {
+                const sub = this._genfind(e.contents, `${dir}/${e.name}`);
+                for (const key in sub) {
+                    ret[key] = sub[key];
                 }
-                ret[e.name].push(`${dir}/${e.name}`);
-            }
-            else {
-                ret = { ...ret, ...this._genfind(e.contents, `${dir}/${e.name}`) };
-            }
-        });
+                // ret = { ...ret, ...this._genfind(e.contents, `${dir}/${e.name}`) };
+            });
         return ret;
     }
 
@@ -244,16 +247,14 @@ export default class FilePath {
 
     static __loader__table(text: string) {
         return [].slice.call(// return raw array
-            new DOMParser()
-                .parseFromString(text, "text/html")
+            ParseHTML(text)
                 .getElementsByTagName("table")[0]
                 .rows
         );
     }
 
     static __loader__pre(text: string) {
-        return new DOMParser()
-            .parseFromString(text, "text/html")
+        return ParseHTML(text)
             .getElementsByTagName("pre")[0]     // get <pre>
             .innerHTML                          // 's innerhtml
             .split(/\n|<br>|<br \/>| <br\/>/g)  // as lines

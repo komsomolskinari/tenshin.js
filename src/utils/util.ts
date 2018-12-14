@@ -2,7 +2,7 @@
  * Auto convert data type
  * @param str
  */
-
+const div = document.createElement("div");
 export function AutoType(str: string): string | number {
     let b: any = str + "";
     const orig = b;
@@ -14,9 +14,7 @@ export function AutoType(str: string): string | number {
     return b;
 }
 
-export function ParseHTML(str: string): ChildNode {
-    return new DOMParser()
-        .parseFromString(str, "text/html")
-        .firstChild     // <html>
-        .lastChild;      // <body>
+export function ParseHTML(str: string): Element {
+    div.innerHTML = str;
+    return div.cloneNode(true) as Element;
 }
