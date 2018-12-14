@@ -14,7 +14,8 @@ export function AutoType(str: string): string | number {
     return b;
 }
 
-export function ParseHTML(str: string): Element {
-    div.innerHTML = str;
-    return div.cloneNode(true) as Element;
+export function ParseHTML(str: string): HTMLElement {
+    return new DOMParser()
+        .parseFromString(str, "text/html")
+        .body;
 }

@@ -35,23 +35,18 @@ export default class YZCG {
         this.cglist = Object.keys(this.diffdef);
     }
 
-    public static NewLay(cmd: KSLine) {
+    public static NewLay(cmd: KSLine): LayerControlData {
         const { name, option, param } = cmd;
         const lname = param.name as string;
         const lfile = param.file as string;
         if (!lfile) { return; }
-        this.layerlast[lname] = {
-            x: 0,
-            y: 0,
-            zoom: 100,
-        };
-        YZLayerMgr.Set(lname, [{ name: lfile, offset: { x: 0, y: 0 } }]);
         this.ProcessLay({
             name: lname,
             option,
             param,
         } as KSLine);
         ObjectMapper.AddLayer(lname);
+        return { name: lname, layer: [{ name: lfile }] };
     }
 
     public static DelLay(cmd: KSLine) {
@@ -60,15 +55,7 @@ export default class YZCG {
     }
 
     public static ProcessLay(cmd: KSLine): LayerControlData {
-        const { name, option, param } = cmd;
-
-        const last = this.layerlast[name];
-        const x = (param.xpos !== undefined) ? param.xpos as number : last.x;
-        const y = (param.ypos !== undefined) ? param.ypos as number : last.y;
-        // TODO: coordinate convert
-        const zoom = param.zoom as number || last.zoom;
-        this.layerlast[name] = { x, y, zoom };
-        return { name, layer: [] as LayerInfo[] };
+        return { name: cmd.name, layer: [] };
     }
 
     public static EV(cmd: KSLine) {
@@ -94,13 +81,6 @@ export default class YZCG {
         YZLayerMgr.Set("background", layers);
         if (option.includes("hide")) { YZLayerMgr.Hide("background"); } else { YZLayerMgr.Show("background"); }
     }
-    private static layerlast: {
-        [name: string]: {
-            x: number,
-            y: number,
-            zoom: number,
-        },
-    } = {};
     private static cglist: string[] = [];
     private static diffdef: {
         [name: string]: {

@@ -21,8 +21,6 @@ export default class Runtime {
             mselect: async cmd => YZSelect.MapSelect(),
             select: async cmd => YZSelect.Select(),
             sysjump: cmd => console.debug("Sysjump, EOF?", cmd),
-            newlay: cmd => YZCG.NewLay(cmd),
-            dellay: cmd => YZCG.DelLay(cmd),
             bgm: cmd => YZSound.BGM(cmd),
             env: cmd => YZBgImg.ProcessEnv(cmd),
             ev: cmd => YZCG.EV(cmd),

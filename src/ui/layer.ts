@@ -137,8 +137,9 @@ class YZLayer {
         if (newLayers.length === 0) {
             this.current.files = this.previous.files;
         }
-        const deleted = oldLayers.filter(l => !newLayers.includes(l));
-        const added = newLayers.filter(l => !oldLayers.includes(l));
+        const onScreenlayer = Object.keys(this.sublayer);
+        const deleted = onScreenlayer.filter(l => !newLayers.includes(l));
+        const added = newLayers.filter(l => !onScreenlayer.includes(l));
         // oldLayers.forEach(f => this.subfd[f].finish());
         added.forEach(f => this.sublayer[f] = new YZSubLayer(f, this.fd));
 

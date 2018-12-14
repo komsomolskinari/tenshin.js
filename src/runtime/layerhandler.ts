@@ -3,6 +3,7 @@ import Character from "./character";
 import YZBgImg from "./bgimg";
 import YZCG from "./cg";
 import YZLayerMgr from "../ui/layer";
+import { KAGConst } from "../const";
 
 export default class YZLayerHandler {
     static isLayer(cmd: KSLine) {
@@ -18,12 +19,6 @@ export default class YZLayerHandler {
     // resolve display
     // resolve animation
     static Process(cmd: KSLine) {
-        if (cmd.name === "newlay") {
-            YZCG.NewLay(cmd);
-        }
-        if (cmd.name === "dellay") {
-            YZCG.DelLay(cmd);
-        }
         let cb: (cmd?: KSLine) => LayerControlData = () => { return undefined; };
         const layerType = ObjectMapper.TypeOf(cmd.name);
         switch (layerType) {
@@ -40,24 +35,30 @@ export default class YZLayerHandler {
                 cb = (cmd: KSLine) => YZCG.ProcessLay(cmd);
                 break;
             default:
-                return;
+                if (cmd.name === "newlay") {
+                    cb = (cmd: KSLine) => YZCG.NewLay(cmd);
+                }
+                else {
+                    if (cmd.name === "dellay") YZCG.DelLay(cmd);
+                    return;
+                }
         }
         const controlData = cb(cmd);
         const name = controlData.name;
         const position = this.CalculatePosition(cmd);
         const zoom = this.CalculateZoom(cmd);
+        const show = this.CalculateShow(cmd);
         YZLayerMgr.Set(name, controlData.layer, layerType);
         YZLayerMgr.Move(name, position);
         YZLayerMgr.Zoom(name, zoom);
-        YZLayerMgr.Draw(name);
+        if (show !== false) YZLayerMgr.Draw(name);
+        else YZLayerMgr.Hide(name);
     }
 
-    // name reslover : input a full cmd, output layers and name
     static CalculateSubLayer(cmd: KSLine): LayerControlData {
         return undefined;
     }
-    // position resolver
-    // not applied yet
+
     static CalculatePosition(cmd: KSLine): Point {
         // xpos and ypos will cover other value
         const { name, option, param } = cmd;
@@ -82,9 +83,28 @@ export default class YZLayerHandler {
             .filter((p: any) => p.level !== undefined)
             .map((p: any) => p.level)[0])
             || undefined;
-        const mapZoom = (mapZoomLevel === undefined) ? undefined : ObjectMapper.innerobj.levels[mapZoomLevel].zoom;
+        const mapZoom = (mapZoomLevel === undefined) ? undefined : ObjectMapper.innerobj.levels[mapZoomLevel].imgzoom;
         const paramZoom = (param.zoom !== undefined) ? parseInt(param.zoom as string) : undefined;
         const finalZoom = parseInt(mapZoom) || paramZoom;
         return finalZoom;
+    }
+
+    static CalculateShow(cmd: KSLine): boolean {
+        const { name, option, param } = cmd;
+        let needShow;
+        if (option.includes("show")) needShow = true;
+        if (option.includes("hide")) needShow = false;
+        const mapped = ObjectMapper.ConvertAll(option);
+        const mapShowOpt = ((mapped.positions || [])
+            .filter((p: any) => p.disp !== undefined)
+            .map((p: any) => p.disp)[0])
+            || undefined;
+        let mapShow;
+        if (mapShowOpt !== undefined) {
+            if ([KAGConst.Both, KAGConst.BU].includes(mapShowOpt)) mapShow = true;
+            else mapShow = false;
+        }
+        needShow = (needShow === undefined) ? mapShow : needShow;
+        return needShow;
     }
 }
