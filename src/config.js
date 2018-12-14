@@ -51,7 +51,7 @@ window.Config = {
     File: {
         // String: file tree root, add prefix to all ajax
         Root: "game/",
-        // Enum: nginx-json, nginx-xml, nginx-html, apache, iis, lighttpd, hfs, json
+        // Enum: nginx-json, nginx-xml, nginx-html, apache, iis, lighttpd, hfs, json, python
         //      - http-server: npm's http-server
         //      - json：use static json file, in tree -J format
         TreeMode: "http-server",

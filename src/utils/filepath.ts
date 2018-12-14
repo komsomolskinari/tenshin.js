@@ -206,6 +206,7 @@ export default class FilePath {
             "apache": this.__loader_apache,
             "iis": this.__loader_iis,
             "http-server": this.__loader_npm_http_server,
+            "python": this.__loader_python_http_server,
         };
 
 
@@ -265,6 +266,27 @@ export default class FilePath {
         console.error("FilePath: Invaild file listing mode");
     }
 
+    static __loader__all_a(text: string) {
+        return [].slice.call(ParseHTML(text)
+            .getElementsByTagName("a"));
+    }
+
+    static __loader__parse_filename(name: string): DirItem {
+        const match = name.match(/(.+)\/$/i);
+        if (match) {
+            return {
+                name: match[1],
+                type: ItemType.directory
+            };
+        }
+        else {
+            return {
+                name,
+                type: ItemType.file
+            };
+        }
+    }
+
     // ----- Loader for each httpd ----- //
     // NOTE: If anyone wants add a new loader, please DO NOT use URL parser
     //          it will mess encoding up
@@ -321,26 +343,13 @@ export default class FilePath {
                     .firstElementChild as HTMLInputElement)
                     .value;             // .value
                 if (filename[0] === ".") return;
-                const match = filename.match(/(.+)\/$/i);
-                if (match) {
-                    ret.push({
-                        name: match[1],
-                        type: ItemType.directory
-                    });
-                }
-                else {
-                    ret.push({
-                        name: filename,
-                        type: ItemType.file
-                    });
-                }
+                ret.push(this.__loader__parse_filename(filename));
             });
         return ret;
     }
     static __loader_lighttpd(text: string) {
         const ret: DirItem[] = [];
-        this.__loader__table(text)
-            .slice(1)
+        this.__loader__all_a(text)
             .forEach((r: HTMLTableRowElement) => {
                 const type = [].includes.call(r.classList, "d") ?
                     ItemType.directory :
@@ -380,20 +389,7 @@ export default class FilePath {
                 const filename = td
                     .firstElementChild  // a
                     .innerHTML;
-
-                const match = filename.match(/(.+)\/$/i);
-                if (match) {
-                    ret.push({
-                        name: match[1],
-                        type: ItemType.directory
-                    });
-                }
-                else {
-                    ret.push({
-                        name: filename,
-                        type: ItemType.file
-                    });
-                }
+                ret.push(this.__loader__parse_filename(filename));
             });
         return ret;
     }
@@ -407,19 +403,17 @@ export default class FilePath {
                     .firstElementChild as HTMLAnchorElement)
                     .innerText; // text
                 if (name[0] === ".") return;
-                const match = filename.match(/(.+)\/$/i);
-                if (match) {
-                    ret.push({
-                        name: match[1],
-                        type: ItemType.directory
-                    });
-                }
-                else {
-                    ret.push({
-                        name: filename,
-                        type: ItemType.file
-                    });
-                }
+                ret.push(this.__loader__parse_filename(filename));
+            });
+        return ret;
+    }
+    static __loader_python_http_server(text: string) {
+        const ret: DirItem[] = [];
+        this.__loader__all_a(text)
+            .forEach((a: HTMLAnchorElement) => {
+                const filename = a.innerText; // text
+                if (name[0] === ".") return;
+                ret.push(this.__loader__parse_filename(filename));
             });
         return ret;
     }

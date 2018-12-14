@@ -23,16 +23,17 @@
 # 步骤 Steps
 ## 会用Web服务器的
 1. 下载release，解压。
-3. 把游戏拿XP3Viewer什么的拆包，拆出来的放在`game/`目录下。
+3. 把游戏拿XP3Viewer什么的拆包，拆出来的转换格式后放在`game/`目录下。
 4. 修改`config.js`中的目录浏览配置以适应你使用的Web服务器。
 5. 启动HTTP服务器，把网站目录指向相应位置，打开目录浏览功能。
 6. 浏览器访问即可。
 
 ## 会写js的
 1. 在项目根目录下运行`./test.sh` （要bash，不过也可以对照着脚本自己手动一下）
-2. 把游戏拿XP3Viewer什么的拆包，拆出来的放在`game/`目录下。
+2. 把游戏拿XP3Viewer什么的拆包，拆出来的转换格式后放在`game/`目录下。
 3. 启动`http-server`，对，npm里面排名最前那一个。
 4. 浏览器访问即可
+
 ## 都不会的
 此处假定你是Windows用户。Linux用户一般都会开服务器，如果不会，RTFM。Android用户一般连个服务器软件都没有。
 1. 下载[windows版lighttpd](http://lighttpd.dtech.hu/)，挑win32 zip，下载解压。
@@ -52,7 +53,8 @@
 - Apache2 (WSL)
 - IIS *要配MIME，不然不提供文件*
 - php -S *没有目录浏览，不过可以在生成索引文件后将就用*
-- npm http-server
+- npx http-server
+- python3 -m http.server
 
 ## 浏览器
 按理说功能完善的当代浏览器都可以，不过`功能完善的当代浏览器`其实就那几个
