@@ -38,7 +38,6 @@ This project is a experiment about running Galgame in modern browser, it's origi
 - [ ] 大修图片支持    Rebuild image support
 - [ ] 基本动画    Basic Animation
 ### 近期 Soon 
-- [ ] 图片特效    Image Effect
 - [ ] 存档    Save And Load
 - [ ] 自动播放    Auto Play
 ### 可能要鸽 Sooo......oon

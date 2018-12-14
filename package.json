@@ -1,6 +1,6 @@
 {
   "name": "tenshin.js",
-  "version": "0.4.4-1-notwork",
+  "version": "0.4.5-notwork",
   "description": "天神乱漫，Javascript实现",
   "main": "index.js",
   "scripts": {
@@ -18,7 +18,7 @@
     "jquery": "^3.3.1"
   },
   "devDependencies": {
-    "@types/jquery": "^3.3.24",
+    "@types/jquery": "^3.3.27",
     "file-loader": "^2.0.0",
     "ts-loader": "^5.3.1",
     "typescript": "^3.2.2",
