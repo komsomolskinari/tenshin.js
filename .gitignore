@@ -11,6 +11,3 @@
 
 # output
 /dist
-
-# iis test config
-/web.config

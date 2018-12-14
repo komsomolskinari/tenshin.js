@@ -45,8 +45,10 @@ export default class YZLayerHandler {
         const controlData = cb(cmd);
         const name = controlData.name;
         const position = this.CalculatePosition(cmd);
+        const zoom = this.CalculateZoom(cmd);
         YZLayerMgr.Set(name, controlData.layer, layerType);
         YZLayerMgr.Move(name, position);
+        YZLayerMgr.Zoom(name, zoom);
         YZLayerMgr.Draw(name);
     }
 
@@ -71,5 +73,18 @@ export default class YZLayerHandler {
         const finalX = parseInt(mapX) || paramX;
         const finalY = paramY;
         return { x: finalX, y: finalY as number };
+    }
+
+    static CalculateZoom(cmd: KSLine): number {
+        const { name, option, param } = cmd;
+        const mapped = ObjectMapper.ConvertAll(option);
+        const mapZoomLevel = ((mapped.positions || [])
+            .filter((p: any) => p.level !== undefined)
+            .map((p: any) => p.level)[0])
+            || undefined;
+        const mapZoom = (mapZoomLevel === undefined) ? undefined : ObjectMapper.innerobj.levels[mapZoomLevel].zoom;
+        const paramZoom = (param.zoom !== undefined) ? parseInt(param.zoom as string) : undefined;
+        const finalZoom = parseInt(mapZoom) || paramZoom;
+        return finalZoom;
     }
 }

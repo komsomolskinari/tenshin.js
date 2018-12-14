@@ -74,7 +74,6 @@ class YZLayer {
         files: [],
     };
     private current: YZLayerData;
-    private drawlock = false;
     private transIn: any[] = [];
     private transOut: any[] = [];
     private actionSeq: any[] = [];
@@ -97,7 +96,6 @@ class YZLayer {
             zoom: 100,
             files: [],
         };
-        this.drawlock = false;
         this.current = JSON.parse(JSON.stringify(this.previous));
         this.current.files = files || [];
         this.transIn = [];
@@ -132,8 +130,6 @@ class YZLayer {
     // when [begintrans] called, do not exec Draw()
     // when [endtrans %TRANS%] called, set trans, then Draw()
     async Draw() {
-        if (this.drawlock) return;
-        this.drawlock = true;
         // cancel all animation
         this.fd.finish();
         const oldLayers = this.previous.files.map(l => l.name);
@@ -144,7 +140,6 @@ class YZLayer {
         const deleted = oldLayers.filter(l => !newLayers.includes(l));
         const added = newLayers.filter(l => !oldLayers.includes(l));
         // oldLayers.forEach(f => this.subfd[f].finish());
-
         added.forEach(f => this.sublayer[f] = new YZSubLayer(f, this.fd));
 
         // execute transOut
@@ -161,13 +156,24 @@ class YZLayer {
         });
         // execute transIn
         // Apply for all added layer
-        let _maxHeight = -10000;
-        let _maxWidth = -10000;
-        let _minHeight = 10000; // set a big value
-        let _minWidth = 10000;
         const [_winW, _winH] = Config.Display.WindowSize;
+        const [_maxHeight, _maxWidth, _minHeight, _minWidth] = await this._DrawAndCalculateSubLayer();
+        // when all draw complete
+        // start animation
+        const [_fullWidth, _fullHeight] = [_maxWidth - _minWidth, _maxHeight - _minHeight];
+        const [_fullLeft, _fullTop] = [
+            (_winW - _fullWidth) / 2 - _minWidth + this.current.left,
+            (_winH - _fullHeight) / 2 - _minHeight + this.current.top
+        ];
+        this._DrawLayer(_fullLeft, _fullTop, _fullHeight, _fullWidth, this.current.zoom);
+        this.previous = JSON.parse(JSON.stringify(this.current));
+    }
 
-        // per sublayer, draw
+    private async _DrawAndCalculateSubLayer() {
+        const _maxHeightArray: number[] = [];
+        const _maxWidthArray: number[] = [];
+        const _minHeightArray: number[] = [];
+        const _minWidthArray: number[] = [];
         await Promise.all(this.current.files.map(f =>
             (async () => {
                 const { name, offset, size } = f;
@@ -183,31 +189,29 @@ class YZLayer {
                 }
                 // calculate image draw window
                 const { x: _left, y: _top } = _offset;
-                _minWidth = _left < _minWidth ? _left : _minWidth;
-                _minHeight = _top < _minHeight ? _top : _minHeight;
-                _maxWidth = (_left + _width) > _maxWidth ? (_left + _width) : _maxWidth;
-                _maxHeight = (_top + _height) > _maxHeight ? (_top + _height) : _maxHeight;
+                _maxWidthArray.push(_left + _width);
+                _maxHeightArray.push(_top + _height);
+                _minWidthArray.push(_left);
+                _minHeightArray.push(_top);
                 this.sublayer[name].Draw(_offset);
             })() // Run in IIFE, it returns a Promise
         ));  // and Promise wait all... );})())); :-)
+        const _maxHeight = _maxHeightArray.reduce((p, c) => p > c ? p : c, Number.MIN_SAFE_INTEGER);
+        const _maxWidth = _maxWidthArray.reduce((p, c) => p > c ? p : c, Number.MIN_SAFE_INTEGER);
+        const _minHeight = _minHeightArray.reduce((p, c) => p < c ? p : c, Number.MAX_SAFE_INTEGER);
+        const _minWidth = _minWidthArray.reduce((p, c) => p < c ? p : c, Number.MAX_SAFE_INTEGER);
+        return [_maxHeight, _maxWidth, _minHeight, _minWidth];
+    }
 
-        // when all draw complete
-        // start animation
-        const [_fullWidth, _fullHeight] = [_maxWidth - _minWidth, _maxHeight - _minHeight];
-        const [_fullLeft, _fullTop] = [
-            (_winW - _fullWidth) / 2 - _minWidth + this.current.left,
-            (_winH - _fullHeight) / 2 - _minHeight + this.current.top
-        ];
-        this.fd // set main zoom, offset
+    private _DrawLayer(left: number, top: number, height: number, width: number, zoom: number) {
+        const realZoom = zoom / 100;
+        this.fd
             .css("display", "")
-            .css("left", _fullLeft)
-            .css("top", _fullTop)
-            .css("height", _fullHeight)
-            .css("width", _fullWidth)
-            .css("transform", `scale(${this.current.zoom / 100})`);
-
-        this.previous = JSON.parse(JSON.stringify(this.current));
-        this.drawlock = false;
+            .css("top", top + (1 - realZoom) * height)
+            .css("left", left + (1 - realZoom) * width)
+            .css("height", height)
+            .css("width", width)
+            .css("transform", `scale(${realZoom})`);
     }
 
     Hide() {
@@ -221,12 +225,12 @@ class YZLayer {
     }
 
     Move(pos: Point) {
-        if (pos.x !== undefined) this.current.left = pos.x;
-        if (pos.y !== undefined) this.current.top = pos.y;
+        if (isFinite(pos.x)) this.current.left = pos.x;
+        if (isFinite(pos.y)) this.current.top = pos.y;
     }
 
     Zoom(zoom: number) {
-        this.current.zoom = zoom;
+        if (isFinite(zoom)) this.current.zoom = zoom;
     }
 }
 // problem: how to handle 'env', or camera layer?

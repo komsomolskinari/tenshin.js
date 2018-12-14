@@ -166,7 +166,6 @@ export default class Character {
     static ProcessImage(cmd: KSLine) {
         const { name, option, param } = cmd;
 
-
         const ch = this.characters[name];
         const mapped = ObjectMapper.ConvertAll(option);
         (mapped.positions || []).forEach((p: any) => {
