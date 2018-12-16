@@ -4,7 +4,8 @@
   "description": "天神乱漫，Javascript实现",
   "main": "index.js",
   "scripts": {
-    "test": "./test.sh"
+    "start": "webpack && http-server dist",
+    "test": "jest"
   },
   "keywords": [
     "galgame",

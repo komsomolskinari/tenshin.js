@@ -1,18 +1,265 @@
 /// <reference path="./parser.d.ts" />
-
-// Kirikiri TPV JavaScript Object Notation to JSON
-// TJSON: JSON of TJS, TJS is JavaScript(TM) like language, like JavaScript, it has JSON.
-
 /**
- * @class TJSON Parser,
+ * @class TJSON Parser
+ * Kirikiri TPV JavaScript Object Notation to JSON
+ * TJSON: JSON of TJS, TJS is JavaScript(TM) like language, like JavaScript, it has JSON.
+ * Parser modified from https://github.com/douglascrockford/JSON-js
  */
 export default class TJSON {
     /**
      * JSON.parse in TJS world
-     * @param str
+     * @param text
      */
-    static parse(str: string) {
-        return new TJSON()._parse(str);
+    static parse(text: string): any {
+        let currentPosition = 0;
+        let currentChar = " ";
+        let str: string;
+        const escapee: {
+            [key: string]: string
+        } = {
+            "\"": "\"",
+            "\\": "\\",
+            "/": "/",
+            "b": "\b",
+            "f": "\f",
+            "n": "\n",
+            "r": "\r",
+            "t": "\t"
+        };
+        const seprator = "\"\\+-*/\f\n\r\t '%[]:=><{},?";
+        function error(message?: string) {
+            throw new SyntaxError(message);
+        }
+        function next(char?: string) {
+            if (char && char !== currentChar) {
+                error(`Expected ${char}, got ${currentChar} at ${currentPosition}`);
+            }
+            currentChar = str.charAt(currentPosition);
+            currentPosition++;
+            return currentChar;
+        }
+        function white() {
+            while (currentChar && currentChar <= " ") next();
+        }
+        function number() {
+            let value;
+            let nstring = "";
+            if (currentChar === "-") {
+                nstring = "-";
+                next("-");
+            }
+            while (currentChar >= "0" && currentChar <= "9") {
+                nstring += currentChar;
+                next();
+            }
+            if (currentChar === ".") {
+                nstring += ".";
+                while (next() && currentChar >= "0" && currentChar <= "9") {
+                    nstring += currentChar;
+                }
+            }
+            else if (currentChar === "x" || currentChar === "X") {
+                nstring += currentChar;
+                while (next() && (
+                    (currentChar >= "0" && currentChar <= "9")
+                    || (currentChar >= "a" && currentChar <= "f")
+                    || (currentChar >= "A" && currentChar <= "F"))) {
+                    nstring += currentChar;
+                }
+            }
+            if (currentChar === "e" || currentChar === "E") {
+                nstring += currentChar;
+                currentChar = next();
+                if (currentChar === "-" || currentChar === "+") {
+                    nstring += currentChar;
+                    next();
+                }
+                while (currentChar >= "0" && currentChar <= "9") {
+                    nstring += currentChar;
+                    next();
+                }
+            }
+            value = +nstring;
+            if (!isFinite(value)) {
+                error(`Bad number at ${currentPosition}, ${nstring}`);
+            } else {
+                return value;
+            }
+        }
+        function string() {
+            let hex;
+            let i;
+            let value = "";
+            let uffff;
+            // When parsing for string values, we must look for " and \ characters.
+            const charsep = currentChar;
+            if (charsep !== "'" && charsep !== "\"") {
+                white();
+                do {
+                    if (seprator.includes(currentChar)) break;
+                    value += currentChar;
+                } while (next());
+                if (value.length === 0) error(`Empty colonless string at ${currentPosition}, char is ${currentChar}`);
+                else return value;
+            }
+            while (next()) {
+                if (currentChar === charsep) {
+                    next();
+                    return value;
+                }
+                if (currentChar === "\\") {
+                    currentChar = next();
+                    if (currentChar === "u") {
+                        uffff = 0;
+                        for (i = 0; i < 4; i += 1) {
+                            hex = parseInt(next(), 16);
+                            if (!isFinite(hex)) {
+                                break;
+                            }
+                            uffff = uffff * 16 + hex;
+                        }
+                        value += String.fromCharCode(uffff);
+                    } else if (typeof escapee[currentChar] === "string") {
+                        value += escapee[currentChar];
+                    } else {
+                        break;
+                    }
+                } else {
+                    value += currentChar;
+                }
+            }
+            error(`Bad string at ${currentPosition}, with ${currentChar}`);
+        }
+        function word() {
+            const contextChar = currentChar;
+            const context = currentPosition;
+            switch (currentChar) {
+                case "t":
+                    next("t");
+                    next("r");
+                    next("u");
+                    next("e");
+                    return true;
+                case "f":
+                    next("f");
+                    next("a");
+                    next("l");
+                    next("s");
+                    next("e");
+                    return false;
+                case "n":
+                    next("n");
+                    next("u");
+                    next("l");
+                    next("l");
+                    // tslint:disable-next-line:no-null-keyword
+                    return null;
+            }
+            currentPosition = context;
+            return (contextChar >= "0" && contextChar <= "9")
+                ? number()
+                : string();
+        }
+        function value() {
+            white();
+            switch (currentChar) {
+                case "%":
+                    return object();
+                case "[":
+                    return array();
+                case "\"":
+                case "'":
+                    return string();
+                case "-":
+                    return number();
+                default:
+                    return (currentChar >= "0" && currentChar <= "9")
+                        ? number()
+                        : word();
+            }
+        }
+        function array() {
+            const arr: any[] = [];
+            if (currentChar === "[") {
+                currentChar = next("[");
+                white();
+                if (currentChar === "]") {
+                    next("]");
+                    return arr;   // empty array
+                }
+                while (currentChar) {
+                    if (currentChar === "]") {
+                        next("]");
+                        return arr;
+                    }
+                    arr.push(value());
+                    white();
+                    if (currentChar === "]") {
+                        next("]");
+                        return arr;
+                    }
+                    next(",");
+                    white();
+                }
+            }
+            error("Bad array");
+        }
+        function object() {
+            let key;
+            const obj: {
+                [key: string]: any
+            } = {};
+
+            if (currentChar === "%") {
+                next("%");
+                currentChar = next("[");
+                white();
+                if (currentChar === "]") {
+                    next("]");
+                    return obj;   // empty object
+                }
+                while (currentChar) {
+                    white();
+                    // obj, ]
+                    if (currentChar === "]") {
+                        next("]");
+                        return obj;
+                    }
+                    key = string();
+                    white();
+                    if (currentChar === ":") next(":");
+                    else {
+                        next("=");
+                        next(">");
+                    }
+
+                    obj[key] = value();
+                    white();
+                    while (currentChar !== ",") {
+                        if (currentChar === "]") {
+                            next("]");
+                            return obj;
+                        }
+                        // reload value
+                        obj[key] = value();
+                        white();
+                    }
+                    next(",");
+                    white();
+                }
+            }
+            error(`Bad object at ${currentPosition}, with ${currentChar}`);
+        }
+        function json() {
+            let result;
+            result = value();
+            return result;
+        }
+
+        str = text
+            .replace(/\/\/[^\r\n]*[\r\n]/gm, " ")
+            .replace(/\/\*[^\*]*\*\//gm, " ");
+        return json();
     }
     /**
      * JSON.stringify in TJS world
@@ -57,171 +304,5 @@ export default class TJSON {
             else return `"${k}"=>${vs}`;
         }).filter(i => i !== undefined);
         return `%[${s.join(",")}]`;
-    }
-
-
-    /**
-     * Get next non-empty char
-     * @param step Step to next char
-     */
-    private _nextnechar(step?: boolean) {
-        let ret;
-        for (; this.ptr < this.str.length; this.ptr++) {
-            if (!" \f\n\r\t\v".includes(this.str[this.ptr])) {
-                ret = this.str[this.ptr];
-                break;
-            }
-        }
-        if (step === true) this.ptr++;
-        return ret;
-    }
-
-    str = "";
-    ptr = 0;
-    obj: JSONObject = undefined;
-
-    /**
-     * Parse TJSON to object, just like JSON.Parse
-     * @param  str TJSON string
-     */
-    private _parse(str: string): JSONObject {
-        this.str = "";
-        this.ptr = 0;
-        this.obj = undefined;
-
-        if (str === undefined) return undefined;
-        const lines = str.split("\n");
-
-        for (const line of lines) {
-            const element = line.replace(/^\r+|\r+$/g, "");
-            // remove comment so we neednt parse it
-            const idx = element.indexOf("//");
-            this.str += idx >= 0 ? element.substring(0, idx) : element;
-        }
-        this.obj = this._value();
-        return this.obj;
-    }
-
-    /**
-     * Get next 'value', map to _obj() _array() _string()
-     */
-    private _value(): JSONObject {
-        let r;
-        switch (this._nextnechar()) {
-            case "%":
-                r = this._obj();
-                break;
-            case "[":
-                r = this._array();
-                break;
-            case undefined:
-                throw new Error("fail");
-            default:
-                r = this._string();
-                break;
-        }
-        return r;
-    }
-
-    /**
-     * Get next 'Object' (%[key1=>value1,...])
-     */
-    private _obj(): PrimitiveObject {
-        const r: PrimitiveObject = {};
-        if (this._nextnechar(true) !== "%") throw new Error("fail");
-        if (this._nextnechar(true) !== "[") throw new Error("fail");
-        let lp;
-        const br = true;
-        read_token:
-        while (br) {
-            if (this._nextnechar() !== "]") {
-                lp = this._pair();
-                r[lp.key] = lp.value;
-            }
-            else {
-                this.ptr++;
-                break read_token;
-            }
-            switch (this._nextnechar(true)) {
-                case ",":
-                    break;
-                case "]":
-                    break read_token;
-                default:
-                    throw new Error("fail");
-            }
-        }
-        return r;
-    }
-
-    /**
-     * Get next 'Array' ([value1,...])
-     */
-    private _array(): any[] {
-        const r = [];
-        if (this._nextnechar(true) !== "[") throw new Error("fail");
-        const br = true;
-        read_token:
-        while (br) {
-            if (this._nextnechar() !== "]") {
-                r.push(this._value());
-            }
-            else {
-                this.ptr++;
-                break read_token;
-            }
-            switch (this._nextnechar(true)) {
-                case ",":
-                    break;
-                case "]":
-                    break read_token;
-                default:
-                    throw new Error("fail");
-            }
-        }
-        return r;
-    }
-
-    /**
-     * Get next 'key-value pair' (key1=>value1)
-     */
-    private _pair(): KeyValuePair {
-        const r: KeyValuePair = { key: "", value: "" };
-        r.key = this._string();
-        switch (this._nextnechar(true)) {
-            case "=":
-                if (this._nextnechar(true) !== ">") {
-                    throw new Error("fail");
-                }
-                break;
-            case ":":
-                break;
-            default:
-                throw new Error("fail");
-        }
-        r.value = this._value();
-        // forward predict
-        if (!",]".includes(this._nextnechar())) {
-            // with type, drop type info
-            delete r.value;
-            r.value = this._value();
-        }
-        return r;
-    }
-
-    /**
-     * Get next 'String', have some hack to work with non standard tjson
-     */
-    private _string(): string {
-        let r = "";
-        let type = this._nextnechar();
-        if (!"\"'".includes(type)) type = " \f\n\r\t\v,\"':[]";
-        else this.ptr++;
-        while (!type.includes(this.str[this.ptr])) {
-            r += this.str[this.ptr];
-            this.ptr++;
-        }
-        if ("\"'".includes(type)) this.ptr++;
-        return r;
     }
 }
