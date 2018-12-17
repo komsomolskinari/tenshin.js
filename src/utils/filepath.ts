@@ -1,4 +1,4 @@
-import { ParseHTML } from "./util";
+import { ParseHTML, AJAX, ParseXML } from "./util";
 
 enum ItemType { file = "file", directory = "directory" }
 interface DirItem {
@@ -95,7 +95,7 @@ export default class FilePath {
      */
     static async read(file: string, type?: string) {
         const path = type ? this.findMedia(file, type) : this.find(file);
-        return $.get(path);
+        return AJAX(path);
     }
 
     // ----- Generate index files ----- //
@@ -221,12 +221,12 @@ export default class FilePath {
         };
 
         if (!Object.keys(loaderHttpMap).includes(String(this.mode))) {
-            const text = await $.ajax(url, { dataType: "text" });
+            const text = await AJAX(url);
             return loaderFileMap[this.mode](text);
         }
 
         // get raw data, so we can parse it next
-        const ls: string = await $.ajax(url, { dataType: "text" });
+        const ls: string = await AJAX(url);
         let ret: DirItem[] = [];
         const loader = loaderHttpMap[this.mode] || this.__loader__error;
         ret = loader.call(this, ls);    // need rewrite 'this'
@@ -295,17 +295,17 @@ export default class FilePath {
     }
     static __loader_nginx_xml(text: string) {
         const ret: DirItem[] = [];
-        const ngxml = $.parseXML(text);
-        $(ngxml).find("directory").each((idx, elm) => {
+        const xml = ParseXML(text);
+        [].forEach.call(xml.getElementsByTagName("directory"), (e: Element) => {
             ret.push({
-                name: $(elm).text(),
+                name: e.innerHTML,
                 type: ItemType.directory
             });
         });
-        $(ngxml).find("file").each((idx, elm) => {
+        [].forEach.call(xml.getElementsByTagName("file"), (e: Element) => {
             ret.push({
-                name: $(elm).text(),
-                type: ItemType.file
+                name: e.innerHTML,
+                type: ItemType.directory
             });
         });
         return ret;
@@ -316,19 +316,7 @@ export default class FilePath {
         this.__loader__pre(text).forEach(l => {
             const filename = $(l).text();
             if (filename[0] === ".") return;
-            const match = filename.match(/(.+)\/$/i);
-            if (match) {
-                ret.push({
-                    name: match[1],
-                    type: ItemType.directory
-                });
-            }
-            else {
-                ret.push({
-                    name: filename,
-                    type: ItemType.file
-                });
-            }
+            ret.push(this.__loader__parse_filename(filename));
         });
         return ret;
     }
@@ -367,8 +355,7 @@ export default class FilePath {
         const ret: DirItem[] = [];
         this.__loader__pre(text).forEach((l, i) => {
             if (i === 0) return; // jump first line
-            const a = new DOMParser()
-                .parseFromString(l, "text/html")
+            const a = ParseHTML(l)
                 .getElementsByTagName("a")[0];
             const name = a.innerText;
             const type = a.href.match(/\/$/) ?
