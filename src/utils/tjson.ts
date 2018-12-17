@@ -28,11 +28,11 @@ export default class TJSON {
         };
         const seprator = "\"\\+-*/\f\n\r\t '%[]:=><{},?";
         function error(message?: string) {
-            throw new SyntaxError(message);
+            throw new SyntaxError(message + `at ${currentPosition}, char ${currentChar}`);
         }
         function next(char?: string) {
             if (char && char !== currentChar) {
-                error(`Expected ${char}, got ${currentChar} at ${currentPosition}`);
+                error(`Expected ${char}`);
             }
             currentChar = str.charAt(currentPosition);
             currentPosition++;
@@ -69,8 +69,8 @@ export default class TJSON {
             }
             if (currentChar === "e" || currentChar === "E") {
                 nstring += currentChar;
-                currentChar = next();
-                if (currentChar === "-" || currentChar === "+") {
+                next();
+                if (currentChar as string === "-" || currentChar as string === "+") {
                     nstring += currentChar;
                     next();
                 }
@@ -81,7 +81,7 @@ export default class TJSON {
             }
             value = +nstring;
             if (!isFinite(value)) {
-                error(`Bad number at ${currentPosition}, ${nstring}`);
+                error(`Bad number ${nstring}`);
             } else {
                 return value;
             }
@@ -99,7 +99,7 @@ export default class TJSON {
                     if (seprator.includes(currentChar)) break;
                     value += currentChar;
                 } while (next());
-                if (value.length === 0) error(`Empty colonless string at ${currentPosition}, char is ${currentChar}`);
+                if (value.length === 0) error(`Empty colonless string`);
                 else return value;
             }
             while (next()) {
@@ -108,8 +108,8 @@ export default class TJSON {
                     return value;
                 }
                 if (currentChar === "\\") {
-                    currentChar = next();
-                    if (currentChar === "u") {
+                    next();
+                    if (currentChar as string === "u") {
                         uffff = 0;
                         for (i = 0; i < 4; i += 1) {
                             hex = parseInt(next(), 16);
@@ -128,7 +128,7 @@ export default class TJSON {
                     value += currentChar;
                 }
             }
-            error(`Bad string at ${currentPosition}, with ${currentChar}`);
+            error(`Bad string`);
         }
         function word() {
             const contextChar = currentChar;
@@ -181,20 +181,20 @@ export default class TJSON {
         function array() {
             const arr: any[] = [];
             if (currentChar === "[") {
-                currentChar = next("[");
+                next("[");
                 white();
-                if (currentChar === "]") {
+                if (currentChar as string === "]") {
                     next("]");
-                    return arr;   // empty array
+                    return arr; // empty array
                 }
                 while (currentChar) {
-                    if (currentChar === "]") {
+                    if (currentChar as string === "]") {
                         next("]");
                         return arr;
                     }
                     arr.push(value());
                     white();
-                    if (currentChar === "]") {
+                    if (currentChar as string === "]") {
                         next("]");
                         return arr;
                     }
@@ -202,7 +202,7 @@ export default class TJSON {
                     white();
                 }
             }
-            error("Bad array");
+            error(`Bad array`);
         }
         function object() {
             let key;
@@ -212,22 +212,22 @@ export default class TJSON {
 
             if (currentChar === "%") {
                 next("%");
-                currentChar = next("[");
+                next("[");
                 white();
-                if (currentChar === "]") {
+                if (currentChar as string === "]") {
                     next("]");
                     return obj;   // empty object
                 }
                 while (currentChar) {
                     white();
                     // obj, ]
-                    if (currentChar === "]") {
+                    if (currentChar as string === "]") {
                         next("]");
                         return obj;
                     }
                     key = string();
                     white();
-                    if (currentChar === ":") next(":");
+                    if (currentChar as string === ":") next(":");
                     else {
                         next("=");
                         next(">");
@@ -235,8 +235,8 @@ export default class TJSON {
 
                     obj[key] = value();
                     white();
-                    while (currentChar !== ",") {
-                        if (currentChar === "]") {
+                    while (currentChar as string !== ",") {
+                        if (currentChar as string === "]") {
                             next("]");
                             return obj;
                         }
@@ -248,7 +248,7 @@ export default class TJSON {
                     white();
                 }
             }
-            error(`Bad object at ${currentPosition}, with ${currentChar}`);
+            error(`Bad object`);
         }
         function json() {
             let result;
