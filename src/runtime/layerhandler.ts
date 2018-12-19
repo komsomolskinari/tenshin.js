@@ -8,7 +8,7 @@ import { KAGConst } from "../const";
 export default class YZLayerHandler {
     static isLayer(cmd: KSLine) {
         // hack for newlay & dellay
-        if (["newlay", "dellay"].includes(cmd.name)) return true;
+        if (["newlay", "dellay", "ev"].includes(cmd.name)) return true;
         return ["characters", "times", "stages", "layer"]
             .includes(ObjectMapper.TypeOf(cmd.name));
     }
@@ -35,12 +35,16 @@ export default class YZLayerHandler {
                 cb = (cmd: KSLine) => YZCG.ProcessLay(cmd);
                 break;
             default:
-                if (cmd.name === "newlay") {
-                    cb = (cmd: KSLine) => YZCG.NewLay(cmd);
-                }
-                else {
-                    if (cmd.name === "dellay") YZCG.DelLay(cmd);
-                    return;
+                switch (cmd.name) {
+                    case "newlay":
+                        cb = (cmd: KSLine) => YZCG.NewLay(cmd);
+                        break;
+                    case "dellay":
+                        YZCG.DelLay(cmd);
+                        return;
+                    case "ev":
+                        cb = (cmd: KSLine) => YZCG.EV(cmd);
+                        break;
                 }
         }
         const controlData = cb(cmd);
@@ -48,11 +52,14 @@ export default class YZLayerHandler {
         const position = this.CalculatePosition(cmd);
         const zoom = this.CalculateZoom(cmd);
         const show = this.CalculateShow(cmd);
+        console.log(show);
         YZLayerMgr.Set(name, controlData.layer, layerType);
         YZLayerMgr.Move(name, position);
         YZLayerMgr.Zoom(name, zoom);
-        if (show !== false) YZLayerMgr.Draw(name);
-        else YZLayerMgr.Hide(name);
+        if (show === true) YZLayerMgr.Show(name);
+        else if (show === false) YZLayerMgr.Hide(name);
+        YZLayerMgr.Draw(name);
+        return;
     }
 
     static CalculateSubLayer(cmd: KSLine): LayerControlData {

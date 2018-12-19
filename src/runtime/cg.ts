@@ -58,14 +58,14 @@ export default class YZCG {
         return { name: cmd.name, layer: [] };
     }
 
-    public static EV(cmd: KSLine) {
+    public static EV(cmd: KSLine): LayerControlData {
         const { name, option, param } = cmd;
         let evs: string[] = (option as string[]).filter((o) => this.cglist.includes(o));
         if (evs.length === 0) {
             evs = (option as string[]).filter((o) => FilePath.findMedia(o, "image"));
             if (evs.length === 0) {
                 console.warn("CG.EV: no ev", cmd);
-                return;
+                return { name: "background", layer: [] };
             }
         }
         const def = this.diffdef[evs[0]];
@@ -78,8 +78,7 @@ export default class YZCG {
         } else {
             layers.push({ name: evs[0] });
         }
-        YZLayerMgr.Set("background", layers);
-        if (option.includes("hide")) { YZLayerMgr.Hide("background"); } else { YZLayerMgr.Show("background"); }
+        return { name: "background", layer: layers };
     }
     private static cglist: string[] = [];
     private static diffdef: {

@@ -77,6 +77,7 @@ class YZLayer {
     private transIn: any[] = [];
     private transOut: any[] = [];
     private actionSeq: any[] = [];
+    private showed = true;
 
     private fd: JQuery<HTMLElement>;
     private sublayer: { [name: string]: YZSubLayer } = {};
@@ -130,6 +131,7 @@ class YZLayer {
     // when [begintrans] called, do not exec Draw()
     // when [endtrans %TRANS%] called, set trans, then Draw()
     async Draw() {
+        if (!this.showed) return;
         // cancel all animation
         this.fd.finish();
         const oldLayers = this.previous.files.map(l => l.name);
@@ -215,7 +217,12 @@ class YZLayer {
             .css("transform", `scale(${realZoom})`);
     }
 
+    Show() {
+        this.showed = true;
+    }
+
     Hide() {
+        this.showed = false;
         this.fd.css("display", "none");
     }
 
@@ -278,7 +285,7 @@ export default class YZLayerMgr {
     }
 
     static Show(name: string) {
-        this.layers[name].Draw();
+        this.layers[name].Show();
     }
 
     static Hide(name: string) {

@@ -157,9 +157,8 @@ export default class KSVM {
                     const next = await Runtime.Call(cmd);
                     // Okay, comand return a new position, lets use it
                     if (next !== undefined) {
+                        debugger;
                         if (this.mode === VMMode.Step) this.hang = true;
-                        const nextpos = this.LocateTag(next[0], next[1]);
-                        if (nextpos === undefined) debugger;
                         this.currentpos = this.LocateTag(next[0], next[1]);
                     }
                     break;
@@ -174,7 +173,7 @@ export default class KSVM {
                     }
                     break;
             }
-            console.debug(cmd);
+            console.debug(cmd, this.currentpos);
             if (VMMode.Step) this.hang = true;
             this.currentpos.line++;
         }

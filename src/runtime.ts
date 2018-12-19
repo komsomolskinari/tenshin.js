@@ -23,7 +23,6 @@ export default class Runtime {
             sysjump: cmd => console.debug("Sysjump, EOF?", cmd),
             bgm: cmd => YZSound.BGM(cmd),
             env: cmd => YZBgImg.ProcessEnv(cmd),
-            ev: cmd => YZCG.EV(cmd),
 
             // has unexpected return value
             mselinit: () => YZSelect.MapSelectInit(),
@@ -46,8 +45,8 @@ export default class Runtime {
     }
 
     static async Call(cmd: KSLine) {
-        const callname = cmd.name.toLowerCase();
-        const cb = this.callbacks[callname];
+        cmd.name = cmd.name.toLowerCase();
+        const cb = this.callbacks[cmd.name];
         let ret;
         if (cb !== undefined) {
             // don't rewrite 'this' here
