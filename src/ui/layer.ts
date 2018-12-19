@@ -118,9 +118,13 @@ class YZLayer {
 
     SetSubLayer(files: LayerInfo[]) {
         if (!files || files.length <= 0) return;
-
         // maybe diff here
         this.current.files = files || [];
+        const newLayers = this.current.files.map(l => l.name);
+        const onScreenlayer = Object.keys(this.sublayer);
+        const deleted = onScreenlayer.filter(l => !newLayers.includes(l));
+        const added = newLayers.filter(l => !onScreenlayer.includes(l));
+        if (deleted.length > 0 || added.length > 0) this.showed = true;
     }
 
     SetSize(size: Point) {
@@ -161,14 +165,15 @@ class YZLayer {
         // Apply for all added layer
         const [_winW, _winH] = Config.Display.WindowSize;
         const [_maxHeight, _maxWidth, _minHeight, _minWidth] = await this._DrawAndCalculateSubLayer();
+        const [_divWidth, _divHeight] = [_maxWidth + _minWidth, _maxHeight + _minHeight];
         // when all draw complete
         // start animation
-        const [_fullWidth, _fullHeight] = [_maxWidth - _minWidth, _maxHeight - _minHeight];
-        const [_fullLeft, _fullTop] = [
-            (_winW - _fullWidth) / 2 - _minWidth + this.current.left,
-            (_winH - _fullHeight) / 2 - _minHeight + this.current.top
+        const [_drawWidth, _drawHeight] = [_maxWidth - _minWidth, _maxHeight - _minHeight];
+        const [_divLeft, _divTop] = [
+            (_winW - _drawWidth) / 2 - _minWidth + this.current.left,
+            (_winH - _drawHeight) / 2 - _minHeight + this.current.top
         ];
-        this._DrawLayer(_fullLeft, _fullTop, _fullHeight, _fullWidth, this.current.zoom);
+        this._DrawLayer(_divLeft, _divTop, _divHeight, _divWidth, this.current.zoom);
         this.previous = JSON.parse(JSON.stringify(this.current));
     }
 
@@ -210,8 +215,9 @@ class YZLayer {
         const realZoom = zoom / 100;
         this.fd
             .css("display", "")
-            .css("top", top + (1 - realZoom) * height)
-            .css("left", left + (1 - realZoom) * width)
+            .css("top", top)
+            .css("left", left)
+            // fd height & width has unexpected influence to zoom position
             .css("height", height)
             .css("width", width)
             .css("transform", `scale(${realZoom})`);
