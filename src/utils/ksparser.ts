@@ -76,9 +76,9 @@ export default class KSParser {
             let _text: string;
             let currentPosition = 0;
             let currentChar = " ";
-            const seprator = "\"\\+-*/\f\n\r\t '%[]:=><{},?";
+            const seprator = "\\\f\n\r\t []=><{},";
             function error(message?: string) {
-                throw new SyntaxError(message + ` at ${currentPosition}, char '${currentChar}'`);
+                throw new SyntaxError(message + ` at ${currentPosition}, char '${currentChar}', line '${_text}'`);
             }
             function next(char?: string) {
                 if (char && char !== currentChar) {
