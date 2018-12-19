@@ -57,7 +57,7 @@ export default class YZCG {
         return { name: this.bgname, layer: [] };
     }
 
-    static ProcessBG(cmd: KSLine): LayerControlData {
+    static ProcessBG(cmd: KSFunc): LayerControlData {
         const { name, option, param } = cmd;
         this.stage = ObjectMapper.GetProperty(name);
 
@@ -72,7 +72,7 @@ export default class YZCG {
         return { name: this.bgname, layer: [{ name: this.stage.image.replace("TIME", this.daytime.prefix) }], reload };
     }
 
-    public static NewLay(cmd: KSLine): LayerControlData {
+    public static NewLay(cmd: KSFunc): LayerControlData {
         const { name, option, param } = cmd;
         const lname = param.name as string;
         const lfile = param.file as string;
@@ -81,12 +81,12 @@ export default class YZCG {
         return { name: lname, layer: [{ name: lfile }] };
     }
 
-    public static DelLay(cmd: KSLine) {
+    public static DelLay(cmd: KSFunc) {
         YZLayerMgr.Delete(cmd.param.name as string);
         ObjectMapper.RemoveLayer(cmd.param.name as string);
     }
 
-    public static ProcessEV(cmd: KSLine): LayerControlData {
+    public static ProcessEV(cmd: KSFunc): LayerControlData {
         const { name, option, param } = cmd;
         let evs: string[] = (option as string[]).filter((o) => this.cglist.includes(o));
         if (evs.length === 0) {

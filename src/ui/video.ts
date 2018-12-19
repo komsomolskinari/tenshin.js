@@ -11,7 +11,7 @@ export default class YZVideo {
     static async OP() {
         await this.Play(Config.Display.OPFile);
     }
-    static async ED(cmd: KSLine) {
+    static async ED(cmd: KSFunc) {
         await this.Play(cmd.param.file as string);
     }
 

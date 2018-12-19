@@ -13,7 +13,7 @@ export default class KSParser {
      * @param str KS script string to parse
      * @return KS AST
      */
-    static parse(text: string) {
+    static parse(text: string): KSLine[] {
         function cutfunc(str: string) {
             let depth = 0;
             let cur = "";
@@ -46,7 +46,7 @@ export default class KSParser {
             return ret;
         }
         function textline(text: string) {
-            const ret: KSLine = {
+            const ret: KSText = {
                 type: "text",
                 name: undefined,
                 display: undefined,
@@ -72,7 +72,7 @@ export default class KSParser {
             }
             return ret;
         }
-        function funcline(text: string) {
+        function funcline(text: string): KSFunc {
             let _text: string;
             let currentPosition = 0;
             let currentChar = " ";
@@ -80,7 +80,7 @@ export default class KSParser {
             function error(message?: string) {
                 throw new SyntaxError(message + ` at ${currentPosition}, char '${currentChar}', line '${_text}'`);
             }
-            function next(char?: string) {
+            function next(char?: string): string {
                 if (char && char !== currentChar) {
                     error(`Expected ${char}`);
                 }
@@ -88,7 +88,7 @@ export default class KSParser {
                 currentPosition++;
                 return currentChar;
             }
-            function white() {
+            function white(): void {
                 while (currentChar && currentChar <= " ") next();
             }
             function keyvalue() {
@@ -121,7 +121,7 @@ export default class KSParser {
                 }
                 return ret;
             }
-            function str() {
+            function str(): string {
                 let value = "";
                 // When parsing for string values, we must look for " and \ characters.
                 const charsep = currentChar;
@@ -143,7 +143,7 @@ export default class KSParser {
                 }
                 error(`Bad string`);
             }
-            function ident() {
+            function ident(): string {
                 let value = "";
                 white();
                 do {
@@ -212,7 +212,7 @@ export default class KSParser {
                     return funcline(c);
                 case "*": // type:entry *tag|comment
                     const tag = c.substr(1).trim().split("|")[0];
-                    if (tag) return { type: "entry", name: tag };
+                    if (tag) return { type: "entry", name: tag } as KSEntry;
                     else return undefined;
                 default: // type:text
                     if (c) return textline(c);

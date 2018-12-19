@@ -30,7 +30,7 @@ export default class KSVM {
      */
     static AddScript(name: string, script: KSLine[]) {
         if (Object.keys(this.scripts).includes(name)) {
-            console.debug(`AddScript: duplicate script ${name}`);
+            console.debug("%c AddScript: duplicate script %s", "color:grey", name);
             return;
         }
         this.scripts[name] = script;
@@ -154,6 +154,7 @@ export default class KSVM {
                 case "entry":
                     break;
                 case "func":
+                    cmd.trace = this.currentpos;
                     const next = await Runtime.Call(cmd);
                     // Okay, comand return a new position, lets use it
                     if (next !== undefined) {

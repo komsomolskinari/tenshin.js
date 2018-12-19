@@ -13,7 +13,7 @@ export default class YZSound {
         };
     }
 
-    static BGM(cmd: KSLine) {
+    static BGM(cmd: KSFunc) {
         let fadetime = 0;
         if (cmd.param.time) fadetime = cmd.param.time as number / 1000;
 

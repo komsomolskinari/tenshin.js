@@ -159,7 +159,7 @@ export default class FilePath {
                 ret.script[name] = l;
             }
             else {
-                console.debug(`FilePath: unknown file type, file: ${l}`);
+                console.debug("%c FilePath: unknown file type, file: %s", "color:blue", l);
                 ret.other[name] = l;
             }
         });
@@ -183,7 +183,6 @@ export default class FilePath {
                 for (const key in sub) {
                     ret[key] = sub[key];
                 }
-                // ret = { ...ret, ...this._genfind(e.contents, `${dir}/${e.name}`) };
             });
         return ret;
     }
@@ -311,7 +310,7 @@ export default class FilePath {
         return ret;
     }
     static __loader_nginx_html(text: string) {
-        console.log("nginx html autoindex will truncate long file name");
+        console.log("%c nginx html autoindex will truncate long file name", "color:red");
         const ret: DirItem[] = [];
         this.__loader__pre(text).forEach(l => {
             const filename = $(l).text();
@@ -321,7 +320,7 @@ export default class FilePath {
         return ret;
     }
     static __loader_hfs(text: string) {
-        console.log("HFS is known have perfomance issue");
+        console.log("%c HFS is known have perfomance issue", "color:red");
         const ret: DirItem[] = [];
         this.__loader__table(text)
             .slice(1)

@@ -12,7 +12,7 @@ export default class Runtime {
     // Callback function map
     // Always use arrow function, or Firefox will 'this is undefined'
     private static callbacks: {
-        [prop: string]: (a: KSLine) => any
+        [prop: string]: (a: KSFunc) => any
     } = {
             mseladd: cmd => YZSelect.MapSelectAdd(cmd),
             seladd: cmd => YZSelect.SelectAdd(cmd),
@@ -30,7 +30,7 @@ export default class Runtime {
             edmovie: async cmd => YZVideo.ED(cmd)
         };
 
-    static Text(cmd: KSLine) {
+    static Text(cmd: KSText) {
         const { text, name, display } = cmd;
         if (name) {
             const ch = Character.characters[name];
@@ -42,7 +42,7 @@ export default class Runtime {
         }
     }
 
-    static async Call(cmd: KSLine) {
+    static async Call(cmd: KSFunc) {
         cmd.name = cmd.name.toLowerCase();
         const cb = this.callbacks[cmd.name];
         let ret;

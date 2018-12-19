@@ -140,7 +140,7 @@ export default class Character {
     // -p [x]voice: modify next voice, if number, change curVoice
     // -p [?]delayrun: do it when voice play to arg
     // o- [?]sync: sync with what?
-    Process(cmd: KSLine) {
+    Process(cmd: KSFunc) {
         const { name, option, param } = cmd;
         if (name !== this.name) return;
 
@@ -163,7 +163,7 @@ export default class Character {
         return ret;
     }
 
-    static ProcessImage(cmd: KSLine) {
+    static ProcessImage(cmd: KSFunc) {
         const { name, option, param } = cmd;
 
         const ch = this.characters[name];

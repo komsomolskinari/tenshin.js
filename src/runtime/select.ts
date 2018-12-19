@@ -39,7 +39,7 @@ export default class YZSelect {
 
     // TODO: mselect is Tenshin Ranman only command?
     // add map select option
-    static MapSelectAdd(cmd: KSLine) {
+    static MapSelectAdd(cmd: KSFunc) {
         const p = cmd.param;
         this.mapSelectData.push(
             new YZSelectData(
@@ -61,7 +61,7 @@ export default class YZSelect {
         return ro.dest;
     }
 
-    static SelectAdd(cmd: KSLine) {
+    static SelectAdd(cmd: KSFunc) {
         const p = cmd.param;
         this.selectData.push(
             new YZSelectData(
@@ -84,7 +84,7 @@ export default class YZSelect {
         return ro.dest;
     }
 
-    static Next(cmd: KSLine) {
+    static Next(cmd: KSFunc) {
         const { name, param, option } = cmd;
         if (param.eval !== undefined) {
             const r = TJSVM.eval(cmd.param.eval as string);

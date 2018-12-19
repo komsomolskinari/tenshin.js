@@ -5,7 +5,7 @@ export default class YZCamera {
         this.camfd = $("#camera");
     }
 
-    public static ProcessEnv(cmd: KSLine) {
+    public static ProcessEnv(cmd: KSFunc) {
         const { name, option, param } = cmd;
         if (option.includes("resetcamera")) {
             // reset and return

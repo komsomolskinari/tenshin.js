@@ -7,11 +7,24 @@ declare interface KeyValuePair {
 declare interface PrimitiveObject {
     [key: string]: JSONObject
 }
-interface KSLine {
-    type: string,
+
+type KSLine = KSEntry | KSText | KSFunc
+
+interface KSEntry {
+    type: "entry",
     name: string,
-    display?: string,
-    text?: string,
-    param?: PrimitiveObject,
-    option?: string[], // string array, convert on demand
+}
+
+interface KSText {
+    type: "text",
+    name: string,
+    display: string,
+    text: string,
+}
+interface KSFunc {
+    type: "func",
+    name: string,
+    param: PrimitiveObject,
+    option: string[],   // string array, convert on demand
+    trace?: VMPosition  // optional stack trace
 }

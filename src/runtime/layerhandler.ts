@@ -17,32 +17,32 @@ export default class YZLayerHandler {
     // *resolve position
     // resolve display
     // resolve animation
-    static Process(cmd: KSLine) {
-        let cb: (cmd?: KSLine) => LayerControlData = () => { return undefined; };
+    static Process(cmd: KSFunc) {
+        let cb: (cmd?: KSFunc) => LayerControlData = () => { return undefined; };
         const layerType = ObjectMapper.TypeOf(cmd.name);
         switch (layerType) {
             case "characters":
-                cb = (cmd: KSLine) => Character.ProcessImage(cmd);
+                cb = (cmd: KSFunc) => Character.ProcessImage(cmd);
                 break;
             case "times":
-                cb = (cmd: KSLine) => YZCG.SetDaytime(cmd.name);
+                cb = (cmd: KSFunc) => YZCG.SetDaytime(cmd.name);
                 break;
             case "stages":
-                cb = (cmd: KSLine) => YZCG.ProcessBG(cmd);
+                cb = (cmd: KSFunc) => YZCG.ProcessBG(cmd);
                 break;
             case "layer":
-                cb = (cmd: KSLine) => ({ name: cmd.name, layer: [] });
+                cb = (cmd: KSFunc) => ({ name: cmd.name, layer: [] });
                 break;
             default:
                 switch (cmd.name) {
                     case "newlay":
-                        cb = (cmd: KSLine) => YZCG.NewLay(cmd);
+                        cb = (cmd: KSFunc) => YZCG.NewLay(cmd);
                         break;
                     case "dellay":
                         YZCG.DelLay(cmd);
                         return;
                     case "ev":
-                        cb = (cmd: KSLine) => YZCG.ProcessEV(cmd);
+                        cb = (cmd: KSFunc) => YZCG.ProcessEV(cmd);
                         break;
                 }
         }
@@ -66,7 +66,7 @@ export default class YZLayerHandler {
         return undefined;
     }
 
-    static CalculatePosition(cmd: KSLine): Point {
+    static CalculatePosition(cmd: KSFunc): Point {
         // xpos and ypos will cover other value
         const { name, option, param } = cmd;
         // direct reset
@@ -86,7 +86,7 @@ export default class YZLayerHandler {
         return { x: finalX, y: finalY as number };
     }
 
-    static CalculateZoom(cmd: KSLine): number {
+    static CalculateZoom(cmd: KSFunc): number {
         const { name, option, param } = cmd;
         if (option.includes("reset")) return 100;
         const mapped = ObjectMapper.ConvertAll(option);
@@ -100,7 +100,7 @@ export default class YZLayerHandler {
         return finalZoom;
     }
 
-    static CalculateShow(cmd: KSLine): boolean {
+    static CalculateShow(cmd: KSFunc): boolean {
         const { name, option, param } = cmd;
         let needShow;
         if (option.includes("show")) needShow = true;

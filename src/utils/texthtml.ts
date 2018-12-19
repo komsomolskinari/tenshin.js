@@ -14,27 +14,26 @@ export default function TextHTML(txt: string) {
     // generate raw text and cmd position
     let rawString = "";
     // use KSParser to parse function
-    const funcAndPos: [number, KSLine][] = [];
+    const funcAndPos: { pos: number, func: KSFunc }[] = [];
     tokens.forEach(t => {
         if (t[0] === "[") {
-            funcAndPos.push([rawString.length, KSParser.parse(t)[0]]);
+            funcAndPos.push({ pos: rawString.length, func: KSParser.parse(t)[0] as KSFunc });
         }
         else {
             rawString += t;
         }
     });
-    let pos = 0;
+    let _pos = 0;
     let ret = "";
     funcAndPos.forEach(t => {
-        let func: KSLine;
+        const { pos, func } = t;
         // append unformatted txt
-        ret += rawString.substr(pos, t[0] - pos);
-        [pos, func] = t;
+        ret += rawString.substr(_pos, pos - _pos);
         switch (func.name) {
             case "ruby": // [ruby text='text']c
                 ret += "<ruby>";
-                ret += rawString[pos];
-                pos++;
+                ret += rawString[_pos];
+                _pos++;
                 ret += "<rt>";
                 ret += func.param.text;
                 ret += "</rt></ruby>";
@@ -47,6 +46,6 @@ export default function TextHTML(txt: string) {
                 break;
         }
     });
-    ret += rawString.substr(pos);
+    ret += rawString.substr(_pos);
     return ret;
 }
