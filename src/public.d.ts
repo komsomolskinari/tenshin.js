@@ -26,5 +26,6 @@ declare interface IndexItem {
 
 declare interface LayerControlData {
     name: string,
-    layer: LayerInfo[]
+    layer: LayerInfo[],
+    reload?: boolean
 }

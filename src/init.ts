@@ -1,5 +1,4 @@
 // Load all required stuff here
-import YZBgImg from "./runtime/bgimg";
 import YZCG from "./runtime/cg";
 import YZLayerMgr from "./ui/layer";
 import YZSound from "./ui/sound";
@@ -11,7 +10,6 @@ export default async function Init() {
     await FilePath.Load();
     YZSound.Init();
     YZText.Init();
-    YZBgImg.Init();
     YZCG.Init();
     YZVideo.Init();
     YZLayerMgr.Init();

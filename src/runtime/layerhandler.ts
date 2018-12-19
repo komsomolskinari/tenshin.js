@@ -1,6 +1,5 @@
 import ObjectMapper from "../objectmapper";
 import Character from "./character";
-import YZBgImg from "./bgimg";
 import YZCG from "./cg";
 import YZLayerMgr from "../ui/layer";
 import { KAGConst } from "../const";
@@ -26,13 +25,13 @@ export default class YZLayerHandler {
                 cb = (cmd: KSLine) => Character.ProcessImage(cmd);
                 break;
             case "times":
-                cb = (cmd: KSLine) => YZBgImg.SetDaytime(cmd.name);
+                cb = (cmd: KSLine) => YZCG.SetDaytime(cmd.name);
                 break;
             case "stages":
-                cb = (cmd: KSLine) => YZBgImg.Process(cmd);
+                cb = (cmd: KSLine) => YZCG.ProcessBG(cmd);
                 break;
             case "layer":
-                cb = (cmd: KSLine) => YZCG.ProcessLay(cmd);
+                cb = (cmd: KSLine) => ({ name: cmd.name, layer: [] });
                 break;
             default:
                 switch (cmd.name) {
@@ -43,16 +42,17 @@ export default class YZLayerHandler {
                         YZCG.DelLay(cmd);
                         return;
                     case "ev":
-                        cb = (cmd: KSLine) => YZCG.EV(cmd);
+                        cb = (cmd: KSLine) => YZCG.ProcessEV(cmd);
                         break;
                 }
         }
         const controlData = cb(cmd);
         const name = controlData.name;
+        const reload = controlData.reload;
         const position = this.CalculatePosition(cmd);
         const zoom = this.CalculateZoom(cmd);
         const show = this.CalculateShow(cmd);
-        console.log(show);
+        if (reload) YZLayerMgr.Delete(name);
         YZLayerMgr.Set(name, controlData.layer, layerType);
         YZLayerMgr.Move(name, position);
         YZLayerMgr.Zoom(name, zoom);
@@ -69,6 +69,9 @@ export default class YZLayerHandler {
     static CalculatePosition(cmd: KSLine): Point {
         // xpos and ypos will cover other value
         const { name, option, param } = cmd;
+        // direct reset
+        if (option.includes("reset")) return { x: 0, y: 0 };
+
         const mapped = ObjectMapper.ConvertAll(option);
         const mapX = ((mapped.positions || [])
             .filter((p: any) => p.xpos !== undefined)
@@ -85,6 +88,7 @@ export default class YZLayerHandler {
 
     static CalculateZoom(cmd: KSLine): number {
         const { name, option, param } = cmd;
+        if (option.includes("reset")) return 100;
         const mapped = ObjectMapper.ConvertAll(option);
         const mapZoomLevel = ((mapped.positions || [])
             .filter((p: any) => p.level !== undefined)

@@ -1,6 +1,4 @@
 // runtime libs
-import YZBgImg from "./runtime/bgimg";
-import YZCG from "./runtime/cg";
 import Character from "./runtime/character";
 import YZLayerHandler from "./runtime/layerhandler";
 import YZSelect from "./runtime/select";
@@ -8,6 +6,7 @@ import TJSVM from "./tjsvm";
 import YZSound from "./ui/sound";
 import YZText from "./ui/text";
 import YZVideo from "./ui/video";
+import YZCamera from "./runtime/camera";
 
 export default class Runtime {
     // Callback function map
@@ -20,9 +19,8 @@ export default class Runtime {
             next: cmd => YZSelect.Next(cmd),
             mselect: async cmd => YZSelect.MapSelect(),
             select: async cmd => YZSelect.Select(),
-            sysjump: cmd => console.debug("Sysjump, EOF?", cmd),
             bgm: cmd => YZSound.BGM(cmd),
-            env: cmd => YZBgImg.ProcessEnv(cmd),
+            env: cmd => YZCamera.ProcessEnv(cmd),
 
             // has unexpected return value
             mselinit: () => YZSelect.MapSelectInit(),

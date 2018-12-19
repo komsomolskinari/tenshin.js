@@ -3,7 +3,22 @@ import YZLayerMgr from "../ui/layer";
 import FilePath from "../utils/filepath";
 import KRCSV from "../utils/krcsv";
 export default class YZCG {
-    public static Init() {
+    private static cgName = "";
+    private static daytime: any = undefined;
+    private static stage: any = undefined;
+    private static bgname = "background";
+    private static cglist: string[] = [];
+    private static diffdef: {
+        [name: string]: {
+            base: string,
+            diff: string,
+            ev: string,
+            offset: Point,
+            size: Point,
+        },
+    } = {};
+
+    static Init() {
         this.__LoadCGList();
     }
 
@@ -35,16 +50,33 @@ export default class YZCG {
         this.cglist = Object.keys(this.diffdef);
     }
 
+    static SetDaytime(time: any): LayerControlData {
+        if (ObjectMapper.TypeOf(time) === "times") {
+            this.daytime = ObjectMapper.GetProperty(time);
+        }
+        return { name: this.bgname, layer: [] };
+    }
+
+    static ProcessBG(cmd: KSLine): LayerControlData {
+        const { name, option, param } = cmd;
+        this.stage = ObjectMapper.GetProperty(name);
+
+        // inline time
+        const inlineTime = (option.filter(o => ObjectMapper.TypeOf(o as string) === "times") || [])[0];
+        if (inlineTime) {
+            this.SetDaytime(inlineTime);
+        }
+        let reload = false;
+        if (this.stage.image !== this.cgName) reload = true;
+        this.cgName = this.stage.image;
+        return { name: this.bgname, layer: [{ name: this.stage.image.replace("TIME", this.daytime.prefix) }], reload };
+    }
+
     public static NewLay(cmd: KSLine): LayerControlData {
         const { name, option, param } = cmd;
         const lname = param.name as string;
         const lfile = param.file as string;
         if (!lfile) { return; }
-        this.ProcessLay({
-            name: lname,
-            option,
-            param,
-        } as KSLine);
         ObjectMapper.AddLayer(lname);
         return { name: lname, layer: [{ name: lfile }] };
     }
@@ -54,11 +86,7 @@ export default class YZCG {
         ObjectMapper.RemoveLayer(cmd.param.name as string);
     }
 
-    public static ProcessLay(cmd: KSLine): LayerControlData {
-        return { name: cmd.name, layer: [] };
-    }
-
-    public static EV(cmd: KSLine): LayerControlData {
+    public static ProcessEV(cmd: KSLine): LayerControlData {
         const { name, option, param } = cmd;
         let evs: string[] = (option as string[]).filter((o) => this.cglist.includes(o));
         if (evs.length === 0) {
@@ -70,7 +98,10 @@ export default class YZCG {
         }
         const def = this.diffdef[evs[0]];
         const layers = [];
+        let reload = false;
         if (def) {
+            if (def.base !== this.cgName) reload = true;
+            this.cgName = def.base;
             layers.push({ name: def.base });
             if (def.diff) {
                 layers.push({ name: def.diff, offset: def.offset });
@@ -78,16 +109,7 @@ export default class YZCG {
         } else {
             layers.push({ name: evs[0] });
         }
-        return { name: "background", layer: layers };
+        return { name: "background", layer: layers, reload };
     }
-    private static cglist: string[] = [];
-    private static diffdef: {
-        [name: string]: {
-            base: string,
-            diff: string,
-            ev: string,
-            offset: Point,
-            size: Point,
-        },
-    } = {};
+
 }
