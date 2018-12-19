@@ -45,7 +45,7 @@ export default class KSParser {
             if (funcstr.length > 0) ret.push(funcstr);
             return ret;
         }
-        function textline(text: string) {
+        function textline(text: string): KSText {
             const ret: KSText = {
                 type: "text",
                 name: undefined,
@@ -184,40 +184,53 @@ export default class KSParser {
             }
             return parse(text);
         }
-        const lines: string[] = [];
+        function tagline(text: string): KSEntry {
+            const tag = text.substr(1).trim().split("|")[0];
+            if (tag) return ({ type: "entry", name: tag }) as KSEntry;
+            else return undefined;
+        }
+        const lines: {
+            data: string,
+            lineno: number
+        }[] = [];
         // scan1, check line type
-        text.split("\n").forEach(l => {
+        text.split("\n").forEach((l, n) => {
             l = l.trim();
             switch (l[0]) {
                 case ";":   // ignore coments
                     return;
                 case "[":   // cut to multiple function token
-                    lines.push(...cutfunc(l));
+                    lines.push(...cutfunc(l).map(f => ({ data: f, lineno: n })));
                     return;
                 case "*":   // tag
-                    lines.push(l);
+                    lines.push({ data: l, lineno: n });
                     return;
                 default:    // text
-                    lines.push(l);
+                    lines.push({ data: l, lineno: n });
                     return;
             }
         });
         // scan2, generate objects
-        return lines.map(c => {
-            c = c.trim();
+        return lines.map(l => {
+            const c = l.data.trim();
+            let ret: KSLine;
             switch (c[0]) {
                 case ";": // ignore comment line
-                    return undefined;
+                    ret = undefined;
+                    break;
                 case "[": // type:func
-                    return funcline(c);
+                    ret = funcline(c);
+                    break;
                 case "*": // type:entry *tag|comment
-                    const tag = c.substr(1).trim().split("|")[0];
-                    if (tag) return { type: "entry", name: tag } as KSEntry;
-                    else return undefined;
+                    ret = tagline(c);
+                    break;
                 default: // type:text
-                    if (c) return textline(c);
-                    else return undefined;
+                    if (c) ret = textline(c);
+                    else ret = undefined;
+                    break;
             }
+            if (ret !== undefined) ret.map = l.lineno;
+            return ret;
         }).filter(c => c !== undefined);
     }
 

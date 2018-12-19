@@ -29,6 +29,7 @@ export default function TextHTML(txt: string) {
         const { pos, func } = t;
         // append unformatted txt
         ret += rawString.substr(_pos, pos - _pos);
+        _pos = pos;
         switch (func.name) {
             case "ruby": // [ruby text='text']c
                 ret += "<ruby>";
