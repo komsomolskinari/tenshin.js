@@ -240,8 +240,8 @@ export default class KSParser {
      * @param obj KS AST
      * @return script string
      */
-    static stringify(obj: [KSLine]) {
-        return obj.reduce((str, line) => {
+    static stringify(obj: [KSLine], debugMode = false) {
+        return obj.map(line => {
             let l;
             switch (line.type) {
                 case "entry":
@@ -265,13 +265,14 @@ export default class KSParser {
                     const ls = [line.name];
                     if (optstr) ls.push(optstr);
                     if (paramstr) ls.push(paramstr);
-                    l = `[${ls.join(" ")}]`;
+                    if (!debugMode) l = `[${ls.join(" ")}]`;
+                    else l = `[${ls.join(" ")}] at <${line.trace.script}.ks:${line.map}=>(${line.trace.line})>`;
                     break;
                 default:
                     l = "";
                     break;
             }
-            return str + l + "\n";
-        }, "");
+            return l;
+        }).join("\n");
     }
 }

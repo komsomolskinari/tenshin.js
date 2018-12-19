@@ -3,6 +3,7 @@
 import AsyncTask from "./async/asynctask";
 import { VMMode } from "./const";
 import Runtime from "./runtime";
+import KSParser from "./utils/ksparser";
 export default class KSVM {
     static mode = VMMode.Text;
     static hang = false;
@@ -149,11 +150,14 @@ export default class KSVM {
                 this.runlock = true;
                 debugger;
             }
+            let debugCSS = "color:grey";
             // NOTE: macro is not implement, use native implement instead
             switch (cmd.type) {
                 case "entry":
+                    debugCSS = "color:pink";
                     break;
                 case "func":
+                    debugCSS = "color:green";
                     cmd.trace = this.currentpos;
                     const next = await Runtime.Call(cmd);
                     // Okay, comand return a new position, lets use it
@@ -164,6 +168,7 @@ export default class KSVM {
                     }
                     break;
                 case "text":
+                    debugCSS = "color:cyan";
                     Runtime.Text(cmd);
                     if ([
                         VMMode.Auto,
@@ -174,7 +179,7 @@ export default class KSVM {
                     }
                     break;
             }
-            console.debug(cmd, this.currentpos);
+            console.debug("%c%s", debugCSS, KSParser.stringify([cmd], true));
             if (VMMode.Step) this.hang = true;
             this.currentpos.line++;
         }
