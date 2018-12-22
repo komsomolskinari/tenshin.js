@@ -1,7 +1,8 @@
 # 在《千恋万花》上的尝试
-Keyword: senren banka, senrenbanka, yuzusoft, m2psb
+Keyword: senren banka, senrenbanka, yuzusoft, m2psb, 千恋万花, 柚子社
 
-[官方文档](http://www.yuzu-soft.com/products/senren/index.html)
+- [官方文档](http://www.yuzu-soft.com/products/senren/)
+- [官方中文文档](http://www.hikarifield.co.jp/senren/)
 
 此处记录一点信息，以供后人参考。
 

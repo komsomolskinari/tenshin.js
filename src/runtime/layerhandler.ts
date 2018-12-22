@@ -1,8 +1,9 @@
-import ObjectMapper from "../objectmapper";
-import Character from "./character";
-import YZCG from "./cg";
-import YZLayerMgr from "../ui/layer";
 import { KAGConst } from "../const";
+import ObjectMapper from "../objectmapper";
+import YZLayer from "../ui/layer";
+import KSParser from "../utils/ksparser";
+import YZCG from "./cg";
+import Character from "./character";
 
 export default class YZLayerHandler {
     static isLayer(cmd: KSLine) {
@@ -15,7 +16,7 @@ export default class YZLayerHandler {
     // layerhandler
     // *resolve name
     // *resolve position
-    // resolve display
+    // *resolve display
     // resolve animation
     static Process(cmd: KSFunc) {
         let cb: (cmd?: KSFunc) => LayerControlData = () => { return undefined; };
@@ -52,13 +53,14 @@ export default class YZLayerHandler {
         const position = this.CalculatePosition(cmd);
         const zoom = this.CalculateZoom(cmd);
         const show = this.CalculateShow(cmd);
-        if (reload) YZLayerMgr.Delete(name);
-        YZLayerMgr.Set(name, controlData.layer, layerType);
-        YZLayerMgr.Move(name, position);
-        YZLayerMgr.Zoom(name, zoom);
-        if (show === true) YZLayerMgr.Show(name);
-        else if (show === false) YZLayerMgr.Hide(name);
-        YZLayerMgr.Draw(name);
+        if (reload) YZLayer.Unset(name);
+        const layer = YZLayer.Set(name, controlData.layer, layerType);
+        layer.Move(position);
+        layer.Zoom(zoom);
+        if (show === true) layer.Show();
+        else if (show === false) layer.Hide();
+        layer.Draw();
+        layer.Trace(KSParser.stringify([cmd]));
         return;
     }
 
@@ -70,7 +72,7 @@ export default class YZLayerHandler {
         // xpos and ypos will cover other value
         const { name, option, param } = cmd;
         // direct reset
-        if (option.includes("reset")) return { x: 0, y: 0 };
+        if (option.includes("reset") || option.includes("resetpos")) return { x: 0, y: 0 };
 
         const mapped = ObjectMapper.ConvertAll(option);
         const mapX = ((mapped.positions || [])

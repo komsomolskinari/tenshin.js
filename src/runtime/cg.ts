@@ -1,5 +1,5 @@
 import ObjectMapper from "../objectmapper";
-import YZLayerMgr from "../ui/layer";
+import YZLayer from "../ui/layer";
 import FilePath from "../utils/filepath";
 import KRCSV from "../utils/krcsv";
 export default class YZCG {
@@ -82,7 +82,7 @@ export default class YZCG {
     }
 
     public static DelLay(cmd: KSFunc) {
-        YZLayerMgr.Delete(cmd.param.name as string);
+        YZLayer.Unset(cmd.param.name as string);
         ObjectMapper.RemoveLayer(cmd.param.name as string);
     }
 

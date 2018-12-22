@@ -60,8 +60,17 @@ class YZSubLayer {
     }
 }
 
-class YZLayer {
+export default class YZLayer {
     static rootDOM: JQuery<HTMLElement>;
+    private static layers: {
+        [name: string]: YZLayer
+    } = {};
+    private static type2zindex: {
+        [type: string]: number
+    } = {
+            stages: 1,
+            characters: 5
+        };
     name: string;
     type: string;
 
@@ -246,28 +255,19 @@ class YZLayer {
     Zoom(zoom: number) {
         if (isFinite(zoom)) this.current.zoom = zoom;
     }
-}
-// problem: how to handle 'env', or camera layer?
-// simulate it to a normal layer?
-export default class YZLayerMgr {
-    static layers: {
-        [name: string]: YZLayer
-    } = {};
-    private static type2zindex: {
-        [type: string]: number
-    } = {
-            stages: 1,
-            characters: 5
-        };
 
-    static Init() {
-        YZLayer.Init();
+    Trace(str: string) {
+        this.fd.attr("yz_traceinfo", str);
     }
 
+
+    static Get(name: string) {
+        return this.layers[name];
+    }
     /**
      * Set a layer (new or existed)
-     * @param {String} name
-     * @param {[{name: String,offset:[Number,Number],size:[Number,Number]}]} files
+     * @param name
+     * @param files
      */
     static Set(name: string, files: LayerInfo[], type?: string) {
         if (!this.layers[name]) {
@@ -276,38 +276,13 @@ export default class YZLayerMgr {
         else {
             if (files && files.length > 0) this.layers[name].SetSubLayer(files);
         }
+        return this.layers[name];
     }
 
-    static Delete(name: string) {
+    static Unset(name: string) {
         const t = this.layers[name];
         if (!t) return;
         t.Delete();
         delete this.layers[name];
-    }
-
-    // apply command when draw called
-    static Draw(name: string) {
-        this.layers[name].Draw();
-    }
-
-    static Show(name: string) {
-        this.layers[name].Show();
-    }
-
-    static Hide(name: string) {
-        this.layers[name].Hide();
-    }
-
-    static Move(name: string, pos: Point) {
-        this.layers[name].Move(pos);
-    }
-
-    static Zoom(name: string, zoom: number) {
-        this.layers[name].Zoom(zoom);
-    }
-
-    // push animate command
-    static Animate() {
-        throw Error("not implement");
     }
 }
