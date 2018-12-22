@@ -2,7 +2,7 @@ import KSParser from "./ksparser";
 
 test("empty", () => {
     expect(KSParser.parse(""))
-    .toMatchObject([]);
+        .toMatchObject([]);
 });
 test("minimal func", () => {
     expect(KSParser.parse("[f]"))
@@ -90,6 +90,7 @@ test("parse real script", () => {
 [bgm storage="bgm13"]
 ;[神様 ]
 【神様/？？？】「んっ……んっ」
+[街角 zoom=115 xpos=230 ypos=80 blur=0]
 `))
         .toMatchObject([
             { type: "entry", name: "0408" },
@@ -100,5 +101,6 @@ test("parse real script", () => {
             { type: "text", name: undefined, text: "キス　【ｋｉｓｓ】", display: undefined },
             { type: "func", name: "bgm", option: [], param: { storage: "bgm13" } },
             { type: "text", name: "神様", text: "「んっ……んっ」", display: "？？？" },
+            { type: "func", name: "街角", option: [], param: { zoom: 115, xpos: 230, ypos: 80, blur: 0 } },
         ]);
 });

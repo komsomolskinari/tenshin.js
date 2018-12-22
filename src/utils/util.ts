@@ -1,19 +1,19 @@
-import TJSON from "./tjson";
-
 /**
- * Auto convert data type
+ * Auto convert data type from string
  * @param str
  */
-const div = document.createElement("div");
 export function AutoType(str: string): string | number {
-    let b: any = str + "";
-    const orig = b;
-    b = !isNaN(parseInt(b)) ? parseInt(b) : b;  // try int
-    b = !isNaN(parseFloat(b)) ? parseFloat(b) : b;  // try float
-    b = ((b + "") !== orig) ? orig : b; // check for leading 0
-    b = b ? b : undefined;   // check null
+    const rStr: string = str + "";
+    // try int
+    const rInt = parseInt(rStr);
+    if (!isNaN(rInt)) {
+        if ((rInt + "") === str) return rInt;
+    }
+    // try float
+    if (!isNaN(parseFloat(rStr))) return parseFloat(rStr);
+    if (rStr === "") return undefined;
     // or keep string
-    return b;
+    return rStr;
 }
 
 export function ParseHTML(str: string): HTMLElement {
