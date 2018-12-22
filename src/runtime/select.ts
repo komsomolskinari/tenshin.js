@@ -1,13 +1,7 @@
 import TJSVM from "../tjsvm";
 import YZSelectUI from "../ui/select";
 
-interface JumpDest {
-    script: string;
-    target: string;
-}
-
 export class YZSelectData {
-
     text: string;
     dest: JumpDest;
     operation: string;
@@ -84,13 +78,13 @@ export default class YZSelect {
         return ro.dest;
     }
 
-    static Next(cmd: KSFunc) {
+    static Next(cmd: KSFunc): JumpDest {
         const { name, param, option } = cmd;
         if (param.eval !== undefined) {
             const r = TJSVM.eval(cmd.param.eval as string);
             // cancel jump
             if (!r) return undefined;
         }
-        return [param.target, param.storage];
+        return { script: param.storage as string, target: param.target as string };
     }
 }

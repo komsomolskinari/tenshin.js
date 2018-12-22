@@ -99,13 +99,16 @@ export default class KSVM {
      * @param tag tag name, with *
      * @param script script name
      */
-    static LocateTag(tag: string, script: string) {
+    static LocateTag(dest: JumpDest): VMPosition {
+        if (!dest) return undefined;
+        let script = dest.script;
+        const target = dest.target;
         if (script) script = script.split(".")[0];
         // No tag, return first line of script
-        if (tag === undefined) {
+        if (target === undefined) {
             return { script, line: 0 };
         }
-        const tags = this.tags[tag.substr(1)];
+        const tags = this.tags[target.substr(1)];
         if (script === undefined) return (tags || [])[0];
         else {
             for (const t of tags) {
@@ -164,7 +167,7 @@ export default class KSVM {
                     if (next !== undefined) {
                         debugger;
                         if (this.mode === VMMode.Step) this.hang = true;
-                        this.currentpos = this.LocateTag(next[0], next[1]);
+                        this.currentpos = this.LocateTag(next);
                     }
                     break;
                 case "text":

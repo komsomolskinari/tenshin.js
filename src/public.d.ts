@@ -1,16 +1,15 @@
 declare interface VMPosition {
-    script: string
-    line: number
+    script: string,
+    line: number,
+}
+
+declare interface JumpDest {
+    script: string;
+    target: string;
 }
 
 declare interface Point {
-    /**
-     * @property x left, width
-     */
     x: number,  // left, width
-    /**
-     * @property y top, height
-     */
     y: number   // top, height
 }
 

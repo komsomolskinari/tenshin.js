@@ -12,7 +12,7 @@ export default class Runtime {
     // Callback function map
     // Always use arrow function, or Firefox will 'this is undefined'
     private static callbacks: {
-        [prop: string]: (a: KSFunc) => any
+        [prop: string]: (a: KSFunc) => JumpDest | void | Promise<JumpDest | void>
     } = {
             mseladd: cmd => YZSelect.MapSelectAdd(cmd),
             seladd: cmd => YZSelect.SelectAdd(cmd),
@@ -42,7 +42,7 @@ export default class Runtime {
         }
     }
 
-    static async Call(cmd: KSFunc) {
+    static async Call(cmd: KSFunc): Promise<JumpDest> {
         cmd.name = cmd.name.toLowerCase();
         const cb = this.callbacks[cmd.name];
         let ret;
@@ -62,6 +62,7 @@ export default class Runtime {
             if (YZLayerHandler.isLayer(cmd)) YZLayerHandler.Process(cmd);
             else console.warn("RuntimeCall, unimpliement cmd", cmd);
         }
+        if (!ret) return undefined;
         return ret;
     }
 }
