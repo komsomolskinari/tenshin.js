@@ -229,7 +229,7 @@ export default class KSParser {
                     else ret = undefined;
                     break;
             }
-            if (ret !== undefined) ret.map = l.lineno;
+            if (ret !== undefined) ret.map = l.lineno + 1;
             return ret;
         }).filter(c => c !== undefined);
     }
