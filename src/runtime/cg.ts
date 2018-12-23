@@ -39,14 +39,13 @@ export default class YZCG {
         Object.keys(ls) // base images
             .map(l => l.match(/ev[0-9]+[a-z]+/i)[0])
             .filter(l => l)
-            .forEach(d =>
-                this.diffdef[d] = {
-                    ev: d,
-                    base: d,
-                    diff: undefined,
-                    offset: { x: 0, y: 0 }, // offset and size only apply on diff
-                    size: { x: 0, y: 0 },
-                });
+            .forEach(d => this.diffdef[d] = {
+                ev: d,
+                base: d,
+                diff: undefined,
+                offset: { x: 0, y: 0 }, // offset and size only apply on diff
+                size: { x: 0, y: 0 },
+            });
         this.cglist = Object.keys(this.diffdef);
     }
 
@@ -112,5 +111,4 @@ export default class YZCG {
         }
         return { name: "background", layer: layers, reload };
     }
-
 }

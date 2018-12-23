@@ -39,7 +39,7 @@ export async function AJAX(url: string): Promise<string> {
     if (!xhr) reject(new Error("No AJAX support"));
     xhr.onreadystatechange = () => {
         if (xhr.readyState === XMLHttpRequest.DONE) {
-            (xhr.status === 200) ? resolve(xhr.responseText) : reject("AJAX fail");
+            (xhr.status === 200) ? resolve(xhr.responseText) : reject(new Error("AJAX fail"));
         }
     };
     xhr.open("GET", url);

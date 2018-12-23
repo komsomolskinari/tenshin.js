@@ -5,13 +5,6 @@ import FilePath from "../utils/filepath";
 import KRCSV from "../utils/krcsv";
 import { KAGConst } from "../const";
 
-const X = 0;
-const WIDTH = 0;
-const HORIZONTAL = 0;
-const Y = 1;
-const HEIGHT = 1;
-const VERTICAL = 1;
-
 export default class Character {
     static voiceBase = "";
     static characters: {
@@ -61,8 +54,6 @@ export default class Character {
         this.nextVoice = undefined;
         this.voiceFmt = ObjectMapper.GetProperty(name).voiceFile;
         this.displayName = ObjectMapper.GetProperty(name).standName;
-        // if character has no image, skip image meta
-        const fgLs = FilePath.ls(`${Config.Display.CharacterPath}/${name}`);
         this.dress = {};
         this.face = {};
         this.coord = {};
@@ -73,6 +64,8 @@ export default class Character {
         this.showedInDom = false;
         this.dressOpt = "";
         Character.characters[name] = this;
+        // if character has no image, skip image meta
+        const fgLs = FilePath.ls(`${Config.Display.CharacterPath}/${name}`);
         if (fgLs !== undefined) this.__LoadImageInfo(fgLs);
     }
 
@@ -133,13 +126,6 @@ export default class Character {
         });
     }
 
-    //
-    // o- nextvoice: generate a new voice channel, play voice, delete it
-    // o- stopvoice: ?
-    // o- bvoice: set to bvoice channel/ clear bvoice channel
-    // -p [x]voice: modify next voice, if number, change curVoice
-    // -p [?]delayrun: do it when voice play to arg
-    // o- [?]sync: sync with what?
     Process(cmd: KSFunc) {
         const { name, option, param } = cmd;
         if (name !== this.name) return;
@@ -159,7 +145,6 @@ export default class Character {
 
         const ret = Character.ProcessImage(cmd);
         if (!ret) debugger;
-
         return ret;
     }
 
@@ -190,7 +175,7 @@ export default class Character {
         if (fOpt) {
             // select image
             const mainId = fOpt.substr(0, 1);
-            const varId = fOpt.substr(1, 2);
+            const varId = fOpt.substr(1, 2).match(/([1-9][0-9]?)/)[1];
 
             if (!this.dressOpt) this.dressOpt = Object.keys(this.dress)[0];
             const { name: mainImg, prefix: pfx } = this.dress[this.dressOpt][mainId];
@@ -224,8 +209,7 @@ export default class Character {
     }
 
     /**
-     *
-     * @param {*} seq Alternate seq id, only apply non-nuber
+     * @param seq Alternate seq id
      */
     Voice(seq?: string) {
         let stxt;

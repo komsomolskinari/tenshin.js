@@ -14,16 +14,14 @@ export default class Runtime {
     private static callbacks: {
         [prop: string]: (a: KSFunc) => JumpDest | void | Promise<JumpDest | void>
     } = {
+            mselinit: () => YZSelect.MapSelectInit(),
             mseladd: cmd => YZSelect.MapSelectAdd(cmd),
-            seladd: cmd => YZSelect.SelectAdd(cmd),
-            next: cmd => YZSelect.Next(cmd),
             mselect: async cmd => YZSelect.MapSelect(),
             select: async cmd => YZSelect.Select(),
+            seladd: cmd => YZSelect.SelectAdd(cmd),
+            next: cmd => YZSelect.Next(cmd),
             bgm: cmd => YZSound.BGM(cmd),
             env: cmd => YZCamera.ProcessEnv(cmd),
-
-            // has unexpected return value
-            mselinit: () => YZSelect.MapSelectInit(),
             eval: cmd => { TJSVM.eval(cmd.param.exp as string); return undefined; },
             // macro, native impliement
             opmovie: async () => YZVideo.OP(),
