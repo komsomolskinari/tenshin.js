@@ -14,46 +14,16 @@ export default class YZLayerHandler {
     }
 
     // layerhandler
-    // *resolve name
-    // *resolve position
-    // *resolve display
-    // resolve animation
     static Process(cmd: KSFunc) {
-        let cb: (cmd?: KSFunc) => LayerControlData = () => { return undefined; };
-        const layerType = ObjectMapper.TypeOf(cmd.name);
-        switch (layerType) {
-            case "characters":
-                cb = (cmd: KSFunc) => Character.ProcessImage(cmd);
-                break;
-            case "times":
-                cb = (cmd: KSFunc) => YZCG.SetDaytime(cmd.name);
-                break;
-            case "stages":
-                cb = (cmd: KSFunc) => YZCG.ProcessBG(cmd);
-                break;
-            case "layer":
-                cb = (cmd: KSFunc) => ({ name: cmd.name, layer: [] });
-                break;
-            default:
-                switch (cmd.name) {
-                    case "newlay":
-                        cb = (cmd: KSFunc) => YZCG.NewLay(cmd);
-                        break;
-                    case "dellay":
-                        YZCG.DelLay(cmd);
-                        return;
-                    case "ev":
-                        cb = (cmd: KSFunc) => YZCG.ProcessEV(cmd);
-                        break;
-                }
-        }
-        const controlData = cb(cmd);
+        const controlData = this.CalculateSubLayer(cmd);
+        if (controlData === undefined) return;
         const name = controlData.name;
         const reload = controlData.reload;
         const position = this.CalculatePosition(cmd);
         const zoom = this.CalculateZoom(cmd);
         const show = this.CalculateShow(cmd);
         if (reload) YZLayer.Unset(name);
+        const layerType = ObjectMapper.TypeOf(cmd.name);
         const layer = YZLayer.Set(name, controlData.layer, layerType);
         layer.Move(position);
         layer.Zoom(zoom);
@@ -64,8 +34,36 @@ export default class YZLayerHandler {
         return;
     }
 
-    static CalculateSubLayer(cmd: KSLine): LayerControlData {
-        return undefined;
+    static CalculateSubLayer(cmd: KSFunc): LayerControlData {
+        let cb: (cmd?: KSFunc) => LayerControlData = () => { return undefined; };
+        const layerType = ObjectMapper.TypeOf(cmd.name);
+        switch (layerType) {
+            case "characters":
+                cb = (cmd) => Character.ProcessImage(cmd);
+                break;
+            case "times":
+                cb = (cmd) => YZCG.SetDaytime(cmd.name);
+                break;
+            case "stages":
+                cb = (cmd) => YZCG.ProcessBG(cmd);
+                break;
+            case "layer":
+                cb = (cmd) => ({ name: cmd.name, layer: [] });
+                break;
+            default:
+                switch (cmd.name) {
+                    case "newlay":
+                        cb = (cmd) => YZCG.NewLay(cmd);
+                        break;
+                    case "dellay":
+                        cb = (cmd) => YZCG.DelLay(cmd);
+                        break;
+                    case "ev":
+                        cb = (cmd) => YZCG.ProcessEV(cmd);
+                        break;
+                }
+        }
+        return cb(cmd);
     }
 
     static CalculatePosition(cmd: KSFunc): Point {

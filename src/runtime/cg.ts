@@ -81,9 +81,10 @@ export default class YZCG {
         return { name: lname, layer: [{ name: lfile }] };
     }
 
-    public static DelLay(cmd: KSFunc) {
+    public static DelLay(cmd: KSFunc): LayerControlData {
         YZLayer.Unset(cmd.param.name as string);
         ObjectMapper.RemoveLayer(cmd.param.name as string);
+        return undefined;
     }
 
     public static ProcessEV(cmd: KSFunc): LayerControlData {

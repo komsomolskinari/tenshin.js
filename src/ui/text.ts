@@ -9,6 +9,7 @@ export default class YZText {
     }
 
     static Print(text: string, display: string) {
+        display = display || "";
         this.nameCh.html(display);
         this.textCh.html(TextHTML(text));
     }
