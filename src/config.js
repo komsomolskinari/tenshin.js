@@ -53,7 +53,7 @@ window.Config = {
         Root: "game/",
         // Enum: nginx-json, nginx-xml, nginx-html, apache, iis, lighttpd, hfs, json, python
         //      - http-server: npm's http-server
-        //      - json：use static json file, in tree -J format
+        //      - json: use static json file, in tree -J format
         TreeMode: "http-server",
         // String: where to start read tree information
         //      if use json treemode, the path to index file

@@ -15,7 +15,7 @@ declare var Config: {
         // String: file tree root, add prefix to all ajax
         Root: string,
         // Enum: nginx-json, nginx-xml, nginx-html, apache, iis, lighttpd, hfs, json
-        //      - json：use static json file, in tree -J format
+        //      - json: use static json file, in tree -J format
         TreeMode: ConfigTreeMode,
         // String: where to start read tree information
         //      if use json treemode, the path to index file
