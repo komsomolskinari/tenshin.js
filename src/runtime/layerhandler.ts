@@ -77,9 +77,11 @@ export default class YZLayerHandler {
             .filter((p: any) => p.xpos !== undefined)
             .map((p: any) => p.xpos)[0])
             || undefined;
+        // for tenshin ranman, 10 krkr bg xpos = 3 browser pixel
+        const fixzoom = (ObjectMapper.TypeOf(name) === "stages") ? 0.3 : 1;
         // type sensitive
-        const paramX = (param.xpos !== undefined) ? parseInt(param.xpos as string) : undefined;
-        const paramY = (param.ypos !== undefined) ? parseInt(param.ypos as string) : undefined;
+        const paramX = (param.xpos !== undefined) ? parseInt(param.xpos as string) * fixzoom : undefined;
+        const paramY = (param.ypos !== undefined) ? parseInt(param.ypos as string) * fixzoom : undefined;
 
         const finalX = parseInt(mapX) || paramX;
         const finalY = paramY;
