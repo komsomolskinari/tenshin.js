@@ -16,7 +16,7 @@ This project is a experiment about running Galgame in modern browser, it's origi
 
 ### 注意
 1. 暂不严肃考虑在广域网上运行，虽然实际上可以
-2. 不考虑商业化应用，虽然有谁拿去用我也拦不住
+2. **不考虑商业化应用，用出问题自己解决**
 
 ## 文档
 - [官方文档](http://legacy.yuzu-soft.com/tenshin/)
