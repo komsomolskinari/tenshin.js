@@ -18,3 +18,6 @@
 
 ## yuzumash.svg
 谜之图标。
+
+## convert.sh
+一键转码，需要`cwebp`,`ffmpeg`,`iconv`

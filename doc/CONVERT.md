@@ -11,6 +11,8 @@
 - VLC （音频/视频）
 - ffmpeg （音频/视频）
 
+如果不清楚，直接抄`appendix/convet.sh`
+
 ## 文本格式
 一切文本请转换为UTF-8。
 
