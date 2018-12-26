@@ -1,6 +1,5 @@
 /// <reference path="./public.d.ts" />
 
-import AsyncTask from "./async/asynctask";
 import { VMMode } from "./const";
 import Runtime from "./runtime";
 import KSParser from "./utils/ksparser";
@@ -200,7 +199,6 @@ export default class KSVM {
     static async Next() {
         this.hang = false;
         this.mode = VMMode.Text;
-        AsyncTask.Cancel();
         await this.Run();
     }
 }
