@@ -4,6 +4,9 @@ import YZLayer from "../ui/layer";
 import KSParser from "../utils/ksparser";
 import YZCG from "./cg";
 import Character from "./character";
+import LayerBase from "./layerbase";
+import LayerChara from "./layerchara";
+import LayerCG from "./layercg";
 
 export default class YZLayerHandler {
     static isLayer(cmd: KSLine) {
@@ -15,6 +18,7 @@ export default class YZLayerHandler {
 
     // layerhandler
     static Process(cmd: KSFunc) {
+        /*
         const controlData = this.CalculateSubLayer(cmd);
         if (controlData === undefined) return;
         const name = controlData.name;
@@ -31,7 +35,44 @@ export default class YZLayerHandler {
         else if (show === false) layer.Hide();
         layer.Draw();
         layer.Trace(KSParser.stringify([cmd]));
+        return;*/
+        const instance = this.GetLayerInstance(cmd);
+        const controlData = instance.CalculateSubLayer(cmd);
+        if (controlData === undefined) return;
+        const name = controlData.name;
+        const reload = controlData.reload;
+        const position = this.CalculatePosition(cmd);
+        const zoom = this.CalculateZoom(cmd);
+        const show = this.CalculateShow(cmd);
+        if (reload) YZLayer.Unset(name);
+        const layerType = ObjectMapper.TypeOf(cmd.name);
+        const layer = YZLayer.Set(name, controlData.layer, layerType);
+        layer.Move(position);
+        layer.Zoom(zoom);
+        if (show === true) layer.Show();
+        else if (show === false) layer.Hide();
+        layer.Draw();
+        layer.Trace(KSParser.stringify([cmd]));
         return;
+    }
+
+    static GetLayerInstance(cmd: KSFunc): LayerBase {
+        let cb: LayerBase;
+        const layerType = ObjectMapper.TypeOf(cmd.name);
+        switch (layerType) {
+            case "characters":
+                cb = LayerChara.GetInstance(cmd);
+                break;
+            case "times":
+            case "stages":
+                cb = LayerCG.GetInstance(cmd);
+                break;
+            case "layer":
+            default:
+                cb = LayerBase.GetInstance(cmd);
+                break;
+        }
+        return cb;
     }
 
     static CalculateSubLayer(cmd: KSFunc): LayerControlData {

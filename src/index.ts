@@ -8,6 +8,7 @@ import TJSVM from "./tjsvm";
 import FilePath from "./utils/filepath";
 import KSParser from "./utils/ksparser";
 import TJSON from "./utils/tjson";
+import LayerChara from "./runtime/layerchara";
 
 async function LoadVMData() {
     const scriptLoadSeq = Config.Boot.InitialScripts;
@@ -25,6 +26,7 @@ async function LoadVMData() {
     // Slow it down? Or let other task run first?
     Object.keys(ObjectMapper.innerobj.characters)
         .forEach(c => new Character(c));
+    LayerChara.Init();
     return;
 }
 
