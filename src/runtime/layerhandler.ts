@@ -5,6 +5,7 @@ import LayerBase from "./layer/base";
 import LayerBG from "./layer/bg";
 import LayerChara from "./layer/chara";
 import LayerExtra from "./layer/extra";
+import LayerEV from "./layer/ev";
 
 export default class LayerHandler {
     static isLayer(cmd: KSLine) {
@@ -24,9 +25,9 @@ export default class LayerHandler {
         const position = instance.CalculatePosition(cmd);
         const zoom = instance.CalculateZoom(cmd);
         const show = instance.CalculateShowHide(cmd);
+        const zindex = instance.zindex;
         if (reload) YZLayer.Unset(name);
-        const layerType = ObjectMapper.TypeOf(cmd.name);
-        const layer = YZLayer.Set(name, controlData.layer, layerType);
+        const layer = YZLayer.Set(name, controlData.layer, zindex);
         layer.Move(position);
         layer.Zoom(zoom);
         if (show === true) layer.Show();
@@ -37,23 +38,29 @@ export default class LayerHandler {
     }
 
     static GetLayerInstance(cmd: KSFunc): LayerBase {
-        let cb: LayerBase;
-        const layerType = ObjectMapper.TypeOf(cmd.name);
+        let cb: typeof LayerBase;
+        // if cant get type, use name instead
+        const layerType = ObjectMapper.TypeOf(cmd.name) || cmd.name;
         switch (layerType) {
-            case "characters":
-                cb = LayerChara.GetInstance(cmd);
-                break;
             case "times":
             case "stages":
-                cb = LayerBG.GetInstance(cmd);
+                cb = LayerBG;
+                break;
+            case "characters":
+                cb = LayerChara;
                 break;
             case "layer":
-                cb = LayerExtra.GetInstance(cmd);
+            case "newlay":
+            case "dellay":
+                cb = LayerExtra;
+                break;
+            case "ev":
+                cb = LayerEV;
                 break;
             default:
-                cb = LayerBase.GetInstance(cmd);
+                cb = LayerBase;
                 break;
         }
-        return cb;
+        return cb.GetInstance(cmd);
     }
 }

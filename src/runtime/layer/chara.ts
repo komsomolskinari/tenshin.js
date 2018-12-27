@@ -6,75 +6,67 @@ import KRCSV from "../../utils/krcsv";
 import { KAGConst } from "../../const";
 import LayerBase from "./base";
 
+interface LayerCharaDress {
+    [dressname: string]: {
+        [subvariant: string]: {
+            name: string;
+            prefix: string;
+        }
+    };
+}
+interface LayerCharaFace {
+    [variant: string]: {
+        [faceid: string]: string[];
+    };
+}
+
+interface LayerCharaCoord {
+    [variant: string]: {
+        [subvariant: string]: {
+            [layername: string]: {
+                name: string;
+                offset: Point;
+                size: Point;
+            }
+        }
+    };
+}
+
 export default class LayerChara extends LayerBase {
-    positionZoom = 0.5;
-
+    readonly zindex = 20;
     static voiceBase = "";
-    static characters: {
-        [name: string]: LayerChara
-    } = {};
-
     private name: string;
     private currentVoice = 1;
-    private nextVoice: string = undefined;
+    private nextVoice: string;
     private voiceFmt: string;
     private displayName: string;
 
-    dress: {
-        [dressname: string]: {
-            [subvariant: string]: {
-                name: string,
-                prefix: string
-            }
-        }
-    } = {};
-    face: {
-        [variant: string]: {
-            [faceid: string]: string[]
-        }
-    } = {};
-    coord: {
-        [variant: string]: {
-            [subvariant: string]: {
-                [layername: string]: {
-                    name: string,
-                    offset: Point,
-                    size: Point
-                }
-            }
-        }
-    } = {};
-
+    dress: LayerCharaDress = {};
+    face: LayerCharaFace = {};
+    coord: LayerCharaCoord = {};
     imageLevel = 1;
     imageXPos = 0;
     dispPos: string = KAGConst.Both;
     showedInDom = false;
     dressOpt = "";
 
+    static characters: {
+        [name: string]: LayerChara
+    } = {};
     static Init() {
         Object.keys(ObjectMapper.innerobj.characters)
             .forEach(c => new LayerChara(c));
     }
-
-    static GetInstance(cmd: KSFunc) {
+    static GetInstance(cmd?: KSFunc): LayerChara {
         return this.characters[cmd.name];
     }
-    constructor(name: string) {
+    constructor(name?: string) {
         super();
         this.name = name;
         this.currentVoice = 1;
-        this.nextVoice = undefined;
         this.voiceFmt = ObjectMapper.GetProperty(name).voiceFile;
         this.displayName = ObjectMapper.GetProperty(name).standName;
-        this.dress = {};
-        this.face = {};
-        this.coord = {};
 
-        this.imageLevel = 1;
-        this.imageXPos = 0;
-        this.dispPos = KAGConst.Both;
-        this.showedInDom = false;
-        this.dressOpt = "";
         LayerChara.characters[name] = this;
         // if character has no image, skip image meta
         const fgLs = FilePath.ls(`${Config.Display.CharacterPath}/${name}`);
@@ -131,13 +123,15 @@ export default class LayerChara extends LayerBase {
         });
     }
 
-    CalculateSubLayer(cmd: KSFunc) {
+    /**
+     * CalculateSubLayer, had side effect
+     * @param cmd command
+     */
+    CalculateSubLayer(cmd: KSFunc): LayerControlData {
         const { name, option, param } = cmd;
         if (name !== this.name) return;
-
         // let upper runtime handle this, it's public option
         if (param.delayrun) return;
-
         // first, voice option:
         if (param.voice) {
             if (!isNaN(parseInt(param.voice as string))) {
@@ -147,29 +141,20 @@ export default class LayerChara extends LayerBase {
                 this.nextVoice = param.voice as string;
             }
         }
-
-        const ret = LayerChara.ProcessImage(cmd);
+        const ret = this.ProcessImageCmd(cmd.option); // LayerChara.ProcessImage(cmd);
         if (!ret) debugger;
         return ret;
     }
 
-    static ProcessImage(cmd: KSFunc) {
-        const { name, option, param } = cmd;
-
-        const ch = this.characters[name];
+    ProcessImageCmd(option: string[]): LayerControlData {
+        if (this.displayName && this.displayName !== this.name) {
+            LayerChara.GetInstance({ name: this.displayName } as KSFunc).ProcessImageCmd(option);
+        }
         const mapped = ObjectMapper.ConvertAll(option);
         (mapped.positions || []).forEach((p: any) => {
-            if (p.type === KAGConst.Level) ch.imageLevel = parseInt(p.level);
+            if (p.type === KAGConst.Level) this.imageLevel = parseInt(p.level);
         });
-        let runner: LayerChara = ch;
-        if (ch.displayName && ch.displayName !== this.name) {
-            const dispch = LayerChara.characters[ch.displayName];
-            if (dispch) runner = dispch;
-        }
-        return runner.ProcessImageCmd(option);
-    }
 
-    ProcessImageCmd(option: string[]): LayerControlData {
         const allDress = Object.keys(this.dress);
         const dOpt = option.filter(o => allDress.includes(o))[0];
         if (dOpt) {
@@ -201,6 +186,10 @@ export default class LayerChara extends LayerBase {
                 }));
         }
         return { name: this.name, layer: imgctl };
+    }
+
+    CalculatePosition(cmd: KSFunc): Point {
+        return super.CalculatePositionWithPZoom(cmd, 0.5);
     }
 
     Text(text: string, display: string) {

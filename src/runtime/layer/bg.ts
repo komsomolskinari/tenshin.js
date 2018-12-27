@@ -2,7 +2,8 @@ import LayerBase from "./base";
 import ObjectMapper from "../../objectmapper";
 
 export default class LayerBG extends LayerBase {
-    readonly positionZoom = 0.3;
+    readonly zindex = 1;
+    readonly channelName = "background";
     public static Init() {
         return;
     }
@@ -17,7 +18,6 @@ export default class LayerBG extends LayerBase {
     private cgName = "";
     private daytime: any = undefined;
     private stage: any = undefined;
-    readonly channelName = "background";
 
     CalculateSubLayer(cmd: KSFunc): LayerControlData {
         switch (ObjectMapper.TypeOf(cmd.name)) {
@@ -38,5 +38,8 @@ export default class LayerBG extends LayerBase {
                 this.daytime = ObjectMapper.GetProperty(cmd.name);
                 return { name: this.channelName, layer: [] };
         }
+    }
+    CalculatePosition(cmd: KSFunc): Point {
+        return super.CalculatePositionWithPZoom(cmd, 0.3);
     }
 }

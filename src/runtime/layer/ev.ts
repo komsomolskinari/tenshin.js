@@ -3,6 +3,8 @@ import KRCSV from "../../utils/krcsv";
 import FilePath from "../../utils/filepath";
 
 export default class LayerEV extends LayerBase {
+    readonly zindex = 15;
+    readonly channelName = "ev";
     private cglist: string[] = [];
     private diffdef: {
         [name: string]: {
@@ -14,7 +16,6 @@ export default class LayerEV extends LayerBase {
         },
     } = {};
     private cgName = "";
-    readonly channelName = "ev";
     public static Init() {
         this.GetInstance().__LoadCGList();
     }

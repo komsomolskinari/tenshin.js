@@ -2,7 +2,7 @@ import { KAGConst } from "../../const";
 import ObjectMapper from "../../objectmapper";
 
 export default class LayerBase {
-    readonly positionZoom: number = 1;
+    readonly zindex: number = 10;
     static GetInstance(cmd: KSFunc): LayerBase {
         return new LayerBase();
     }
@@ -38,6 +38,9 @@ export default class LayerBase {
         return finalZoom;
     }
     CalculatePosition(cmd: KSFunc): Point {
+        return this.CalculatePositionWithPZoom(cmd, 1);
+    }
+    CalculatePositionWithPZoom(cmd: KSFunc, zoom: number) {
         // xpos and ypos will cover other value
         const { name, option, param } = cmd;
         // direct reset
@@ -49,12 +52,11 @@ export default class LayerBase {
             .map((p: any) => p.xpos)[0])
             || undefined;
         // type sensitive
-        const paramX = (param.xpos !== undefined) ? parseInt(param.xpos as string) * this.positionZoom : undefined;
-        const paramY = (param.ypos !== undefined) ? parseInt(param.ypos as string) * this.positionZoom : undefined;
-
-        const finalX = parseInt(mapX) || paramX;
-        const finalY = paramY;
-        return { x: finalX, y: finalY as number };
+        const paramX = (param.xpos !== undefined) ? parseInt(param.xpos as string) : undefined;
+        const paramY = (param.ypos !== undefined) ? parseInt(param.ypos as string) : undefined;
+        const finalX = (parseInt(mapX) || paramX) * zoom;
+        const finalY = paramY * zoom;
+        return { x: isNaN(finalX) ? undefined : finalX, y: isNaN(finalY) ? undefined : finalY };
     }
     CalculateSubLayer(cmd: KSFunc): LayerControlData {
         return undefined;

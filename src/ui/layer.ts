@@ -72,7 +72,6 @@ export default class YZLayer {
             characters: 5
         };
     name: string;
-    type: string;
 
     private previous: YZLayerData = {
         width: 0,
@@ -95,9 +94,8 @@ export default class YZLayer {
         this.rootDOM = $("#camera");
     }
 
-    constructor(name: string, files: LayerInfo[], type: string, zindex: number) {
+    constructor(name: string, files: LayerInfo[], zindex?: number) {
         this.name = name;
-        this.type = type;
         this.previous = {
             width: 0,
             height: 0,
@@ -119,7 +117,7 @@ export default class YZLayer {
             YZLayer.rootDOM.append(
                 $("<div>")
                     .attr("id", `layer_${this.name}`)
-                    .css("z-index", zindex)
+                    .css("z-index", zindex || 1)
             );
             this.fd = $(`#layer_${this.name}`);
         }
@@ -269,9 +267,9 @@ export default class YZLayer {
      * @param name
      * @param files
      */
-    static Set(name: string, files: LayerInfo[], type?: string) {
+    static Set(name: string, files: LayerInfo[], zindex?: number) {
         if (!this.layers[name]) {
-            this.layers[name] = new YZLayer(name, files, type, this.type2zindex[type]);
+            this.layers[name] = new YZLayer(name, files, zindex);
         }
         else {
             if (files && files.length > 0) this.layers[name].SetSubLayer(files);

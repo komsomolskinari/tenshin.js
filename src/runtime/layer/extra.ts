@@ -2,7 +2,7 @@ import LayerBase from "./base";
 import ObjectMapper from "../../objectmapper";
 import YZLayer from "../../ui/layer";
 export default class LayerExtra extends LayerBase {
-    positionZoom = 1;
+    readonly zindex = 17;
     public static Init() {
         return;
     }
@@ -14,10 +14,6 @@ export default class LayerExtra extends LayerBase {
     }
     private static instance: LayerExtra = undefined;
 
-    private cgName = "";
-    private daytime: any = undefined;
-    private stage: any = undefined;
-    readonly channelName = "background";
     CalculateSubLayer(cmd: KSFunc): LayerControlData {
         switch (cmd.name) {
             case "newlay":
@@ -31,7 +27,6 @@ export default class LayerExtra extends LayerBase {
                 YZLayer.Unset(cmd.param.name as string);
                 ObjectMapper.RemoveLayer(cmd.param.name as string);
                 return undefined;
-            case "ev":
             default:
                 return { name: cmd.name, layer: [] };
         }
