@@ -1,6 +1,6 @@
 {
   "name": "tenshin.js",
-  "version": "0.4.6-notwork",
+  "version": "v0.4.6-1-maybework",
   "description": "天神乱漫，Javascript实现",
   "main": "index.js",
   "scripts": {
