@@ -3,12 +3,11 @@
 import Init from "./init";
 import KSVM from "./ksvm";
 import ObjectMapper from "./objectmapper";
-import Character from "./runtime/character";
+import LayerChara from "./runtime/layer/chara";
 import TJSVM from "./tjsvm";
 import FilePath from "./utils/filepath";
 import KSParser from "./utils/ksparser";
 import TJSON from "./utils/tjson";
-import LayerChara from "./runtime/layer/chara";
 
 async function LoadVMData() {
     const scriptLoadSeq = Config.Boot.InitialScripts;
@@ -24,8 +23,6 @@ async function LoadVMData() {
     ));
     // TODO: too many async task in new Character()
     // Slow it down? Or let other task run first?
-    Object.keys(ObjectMapper.innerobj.characters)
-        .forEach(c => new Character(c));
     LayerChara.Init();
     return;
 }

@@ -1,13 +1,12 @@
 // runtime libs
-import Character from "./runtime/character";
-import YZLayerHandler from "./runtime/layerhandler";
+import YZCamera from "./runtime/camera";
+import LayerChara from "./runtime/layer/chara";
+import LayerHandler from "./runtime/layerhandler";
 import YZSelect from "./runtime/select";
 import TJSVM from "./tjsvm";
 import YZSound from "./ui/sound";
 import YZText from "./ui/text";
 import YZVideo from "./ui/video";
-import YZCamera from "./runtime/camera";
-
 export default class Runtime {
     // Callback function map
     // Always use arrow function, or Firefox will 'this is undefined'
@@ -31,9 +30,8 @@ export default class Runtime {
     static Text(cmd: KSText) {
         const { text, name, display } = cmd;
         if (name) {
-            const ch = Character.characters[name];
-            Character.voiceBase = TJSVM.get("f.voiceBase");
-            ch.Text(text, display);
+            LayerChara.voiceBase = TJSVM.get("f.voiceBase");
+            LayerChara.GetInstance({ name } as KSFunc).Text(text, display);
         }
         else {
             YZText.Print(text, display);
@@ -57,7 +55,7 @@ export default class Runtime {
                 "playbgm", "delaydone", "white_ball", "white_ball_hide", "particle"]
                 .includes(cmd.name.toLowerCase())) return;
 
-            if (YZLayerHandler.isLayer(cmd)) YZLayerHandler.Process(cmd);
+            if (LayerHandler.isLayer(cmd)) LayerHandler.Process(cmd);
             else console.warn("RuntimeCall, unimpliement cmd", cmd);
         }
         if (!ret) return undefined;

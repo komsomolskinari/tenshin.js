@@ -2,11 +2,11 @@ import ObjectMapper from "../objectmapper";
 import YZLayer from "../ui/layer";
 import KSParser from "../utils/ksparser";
 import LayerBase from "./layer/base";
-import LayerChara from "./layer/chara";
 import LayerBG from "./layer/bg";
+import LayerChara from "./layer/chara";
 import LayerExtra from "./layer/extra";
 
-export default class YZLayerHandler {
+export default class LayerHandler {
     static isLayer(cmd: KSLine) {
         // hack for newlay & dellay
         if (["newlay", "dellay", "ev"].includes(cmd.name)) return true;
