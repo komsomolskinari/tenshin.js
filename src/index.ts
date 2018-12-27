@@ -8,7 +8,7 @@ import TJSVM from "./tjsvm";
 import FilePath from "./utils/filepath";
 import KSParser from "./utils/ksparser";
 import TJSON from "./utils/tjson";
-import LayerChara from "./runtime/layerchara";
+import LayerChara from "./runtime/layer/chara";
 
 async function LoadVMData() {
     const scriptLoadSeq = Config.Boot.InitialScripts;

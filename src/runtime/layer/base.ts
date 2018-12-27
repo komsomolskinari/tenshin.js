@@ -1,5 +1,5 @@
-import { KAGConst } from "../const";
-import ObjectMapper from "../objectmapper";
+import { KAGConst } from "../../const";
+import ObjectMapper from "../../objectmapper";
 
 export default class LayerBase {
     readonly positionZoom: number = 1;

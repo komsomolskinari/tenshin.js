@@ -1,12 +1,14 @@
-import ObjectMapper from "../objectmapper";
-import YZSound from "../ui/sound";
-import YZText from "../ui/text";
-import FilePath from "../utils/filepath";
-import KRCSV from "../utils/krcsv";
-import { KAGConst } from "../const";
-import LayerBase from "./layerbase";
+import ObjectMapper from "../../objectmapper";
+import YZSound from "../../ui/sound";
+import YZText from "../../ui/text";
+import FilePath from "../../utils/filepath";
+import KRCSV from "../../utils/krcsv";
+import { KAGConst } from "../../const";
+import LayerBase from "./base";
 
 export default class LayerChara extends LayerBase {
+    positionZoom = 0.5;
+
     static voiceBase = "";
     static characters: {
         [name: string]: LayerChara
