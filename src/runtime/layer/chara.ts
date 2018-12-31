@@ -146,15 +146,11 @@ export default class LayerChara extends LayerBase {
         return ret;
     }
 
-    ProcessImageCmd(option: string[]): LayerControlData {
+    private ProcessImageCmd(option: string[]): LayerControlData {
         if (this.displayName && this.displayName !== this.name) {
             LayerChara.GetInstance({ name: this.displayName } as KSFunc).ProcessImageCmd(option);
         }
-        const mapped = ObjectMapper.ConvertAll(option);
-        (mapped.positions || []).forEach((p: any) => {
-            if (p.type === KAGConst.Level) this.imageLevel = parseInt(p.level);
-        });
-
+        const usedVer = this.RefreshImageLevel(option);
         const allDress = Object.keys(this.dress);
         const dOpt = option.filter(o => allDress.includes(o))[0];
         if (dOpt) {
@@ -171,9 +167,6 @@ export default class LayerChara extends LayerBase {
             const { name: mainImg, prefix: pfx } = this.dress[this.dressOpt][mainId];
             const varImg = this.face[pfx][varId];
             if (varImg === undefined) return;
-            // 35 50 75 100 120 140 bgexpand original
-            const usedVer = ([1, 1, 3, 3, 3, 5, 3])[this.imageLevel];
-
             const vImgs: LayerInfo[] = varImg
                 .map(v => this.coord[pfx][usedVer][v]);
             const mImg = this.coord[pfx][usedVer][mainImg];
@@ -188,7 +181,17 @@ export default class LayerChara extends LayerBase {
         return { name: this.name, layer: imgctl };
     }
 
+    private RefreshImageLevel(option: string[]) {
+        const mapped = ObjectMapper.ConvertAll(option);
+        (mapped.positions || []).forEach((p: any) => {
+            if (p.type === KAGConst.Level) this.imageLevel = parseInt(p.level);
+        });
+        // 35 50 75 100 120 140 bgexpand original
+        return ([1, 1, 3, 3, 3, 5, 3])[this.imageLevel];
+    }
+
     CalculatePosition(cmd: KSFunc): Point {
+        const level = this.RefreshImageLevel(cmd.option);
         return super.CalculatePositionWithPZoom(cmd, 0.5);
     }
 

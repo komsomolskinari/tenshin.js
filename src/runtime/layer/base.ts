@@ -61,4 +61,7 @@ export default class LayerBase {
     CalculateSubLayer(cmd: KSFunc): LayerControlData {
         return undefined;
     }
+    CalculateZoomCenter(cmd: KSFunc): Point {
+        return { x: 50, y: 50 };
+    }
 }

@@ -1,3 +1,5 @@
+// TODO: As independent module
+
 import { ParseHTML, AJAX, ParseXML } from "./util";
 
 enum ItemType { file = "file", directory = "directory" }

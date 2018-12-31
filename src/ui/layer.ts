@@ -180,7 +180,9 @@ export default class YZLayer {
             (_winW - _drawWidth) / 2 - _minWidth + this.current.left,
             (_winH - _drawHeight) / 2 - _minHeight + this.current.top
         ];
-        this._DrawLayer(_divLeft, _divTop, _divHeight, _divWidth, this.current.zoom);
+        this.current.height = this.current.height || _divHeight;
+        this.current.width = this.current.width || _divWidth;
+        this._DrawLayer(_divLeft, _divTop, this.current.height, this.current.width, this.current.zoom);
         this.previous = JSON.parse(JSON.stringify(this.current));
     }
 

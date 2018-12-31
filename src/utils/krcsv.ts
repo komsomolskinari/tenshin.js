@@ -1,4 +1,5 @@
 // csv & tab-seprate txt parser
+// TODO: How about https://github.com/adaltas/node-csv-parse
 import { AutoType } from "./util";
 
 export default class KRCSV {
