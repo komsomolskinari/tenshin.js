@@ -139,6 +139,11 @@ export default class YZLayer {
         this.current.width = size.x;
     }
 
+    SetZoomCenter(pos: Point) {
+        // TODO: is this ok? Maybe make x optional
+        this.fd.css("transform-origin", `${pos.x}% ${pos.y}%`);
+    }
+
     // when [begintrans] called, do not exec Draw()
     // when [endtrans %TRANS%] called, set trans, then Draw()
     async Draw() {

@@ -146,6 +146,12 @@ export default class LayerChara extends LayerBase {
         return ret;
     }
 
+    CalculateZoom(cmd: KSFunc): number {
+        this.RefreshImageLevel(cmd.option);
+        const fix = [3500 / 50, 100, 7500 / 100, 100, 12000 / 140, 100][this.imageLevel];
+        return fix;
+    }
+
     private ProcessImageCmd(option: string[]): LayerControlData {
         if (this.displayName && this.displayName !== this.name) {
             LayerChara.GetInstance({ name: this.displayName } as KSFunc).ProcessImageCmd(option);
@@ -193,7 +199,7 @@ export default class LayerChara extends LayerBase {
 
     CalculatePosition(cmd: KSFunc): Point {
         const level = this.RefreshImageLevel(cmd.option);
-        const fix = [0, 100, 0, 300, 0, 500][level]; // WATCHOUT! Magic here!
+        const fix = [0, -100, 0, 200, 0, 300][level]; // WATCHOUT! Magic here!
         console.log(`Center adjust ${fix}`);
         const r = super.CalculatePositionWithPZoom(cmd, 0.5);
         r.y = r.y || 0 + fix;
@@ -221,6 +227,12 @@ export default class LayerChara extends LayerBase {
             return this.coord[pfx][usedVer].undefined.size;
         }
         return;
+    }
+
+    CalculateZoomCenter(cmd: KSFunc): Point {
+        const level = this.RefreshImageLevel(cmd.option);
+        const fix = [0, 50, 0, 70, 0, 80][level]; // WATCHOUT! Another magic here!
+        return { x: 50, y: fix };
     }
 
     Text(text: string, display: string) {
