@@ -16,7 +16,7 @@
 ## tree&#046;py
 [`tree -J`](http://mama.indstate.edu/users/ice/tree/) (tree v1.7.0+)的兼容Python实现，用于生成JSON格式的索引
 
-## yuzumash.svg
+## soyuzsoft.svg
 谜之图标。
 
 ## convert.sh
