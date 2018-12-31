@@ -26,10 +26,12 @@ export default class LayerHandler {
         const zoom = instance.CalculateZoom(cmd);
         const show = instance.CalculateShowHide(cmd);
         const zindex = instance.zindex;
+        const size = instance.CalculateSize(cmd);
         if (reload) YZLayer.Unset(name);
         const layer = YZLayer.Set(name, controlData.layer, zindex);
         layer.Move(position);
         layer.Zoom(zoom);
+        if (size) layer.SetSize(size);
         if (show === true) layer.Show();
         else if (show === false) layer.Hide();
         layer.Draw();

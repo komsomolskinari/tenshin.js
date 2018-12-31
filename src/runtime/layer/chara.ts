@@ -187,12 +187,40 @@ export default class LayerChara extends LayerBase {
             if (p.type === KAGConst.Level) this.imageLevel = parseInt(p.level);
         });
         // 35 50 75 100 120 140 bgexpand original
-        return ([1, 1, 3, 3, 3, 5, 3])[this.imageLevel];
+        // WATCHOUT! Magic here!
+        return ([1, 1, 3, 3, 5, 5, 3])[this.imageLevel];
     }
 
     CalculatePosition(cmd: KSFunc): Point {
         const level = this.RefreshImageLevel(cmd.option);
-        return super.CalculatePositionWithPZoom(cmd, 0.5);
+        const fix = [0, 100, 0, 300, 0, 500][level]; // WATCHOUT! Magic here!
+        console.log(`Center adjust ${fix}`);
+        const r = super.CalculatePositionWithPZoom(cmd, 0.5);
+        r.y = r.y || 0 + fix;
+        console.log(r);
+        return r;
+    }
+
+    CalculateSize(cmd: KSFunc): Point {
+        const option = cmd.option;
+        if (this.displayName && this.displayName !== this.name) {
+            LayerChara.GetInstance({ name: this.displayName } as KSFunc).ProcessImageCmd(option);
+        }
+        const usedVer = this.RefreshImageLevel(option);
+        const allDress = Object.keys(this.dress);
+        const dOpt = option.filter(o => allDress.includes(o))[0];
+        if (dOpt) {
+            this.dressOpt = dOpt;
+        }
+        const fOpt = option.filter(o => o.match(/^[0-9]{3}$/) !== null)[0];
+        if (fOpt) {
+            // select image
+            const mainId = fOpt.substr(0, 1);
+            if (!this.dressOpt) this.dressOpt = Object.keys(this.dress)[0];
+            const pfx = this.dress[this.dressOpt][mainId].prefix;
+            return this.coord[pfx][usedVer].undefined.size;
+        }
+        return;
     }
 
     Text(text: string, display: string) {

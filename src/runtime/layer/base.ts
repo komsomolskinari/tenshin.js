@@ -64,4 +64,7 @@ export default class LayerBase {
     CalculateZoomCenter(cmd: KSFunc): Point {
         return { x: 50, y: 50 };
     }
+    CalculateSize(cmd: KSFunc): Point {
+        return;
+    }
 }
