@@ -199,8 +199,8 @@ export default class LayerChara extends LayerBase {
 
     CalculatePosition(cmd: KSFunc): Point {
         const level = this.RefreshImageLevel(cmd.option);
-        const fix = [0, -100, 0, 200, 0, 300][level]; // WATCHOUT! Magic here!
-        console.log(`Center adjust ${fix}`);
+        // 35 50 75 100 120 140 _ _
+        const fix = [200, 200, 200, 300, 200, 200, 0, 0][this.imageLevel]; // WATCHOUT! Magic here!
         const r = super.CalculatePositionWithPZoom(cmd, 0.5);
         r.y = r.y || 0 + fix;
         console.log(r);

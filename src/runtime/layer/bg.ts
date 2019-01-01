@@ -33,7 +33,8 @@ export default class LayerBG extends LayerBase {
                 let reload = false;
                 if (this.stage.image !== this.cgName) reload = true;
                 this.cgName = this.stage.image;
-                return { name: this.channelName, layer: [{ name: this.stage.image.replace("TIME", this.daytime.prefix) }], reload };
+                const daytimePfx = this.daytime ? this.daytime.prefix : "";
+                return { name: this.channelName, layer: [{ name: this.stage.image.replace("TIME", daytimePfx) }], reload };
             case "times":
                 this.daytime = ObjectMapper.GetProperty(cmd.name);
                 return { name: this.channelName, layer: [] };

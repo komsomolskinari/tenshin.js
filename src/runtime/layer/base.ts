@@ -47,16 +47,17 @@ export default class LayerBase {
         if (option.includes("reset") || option.includes("resetpos")) return { x: 0, y: 0 };
 
         const mapped = ObjectMapper.ConvertAll(option);
-        const mapX = ((mapped.positions || [])
+        const _mapX = parseInt(((mapped.positions || [])
             .filter((p: any) => p.xpos !== undefined)
-            .map((p: any) => p.xpos)[0])
-            || undefined;
+            .map((p: any) => p.xpos)[0]));
+        const mapX = Number.isFinite(_mapX) ? _mapX : undefined;
         // type sensitive
         const paramX = (param.xpos !== undefined) ? parseInt(param.xpos as string) : undefined;
         const paramY = (param.ypos !== undefined) ? parseInt(param.ypos as string) : undefined;
-        const finalX = (parseInt(mapX) || paramX) * zoom;
+        const finalX = (mapX !== undefined ? mapX : paramX) * zoom;
+        console.log(`mapped x ${mapX} with ${_mapX}, use ${finalX} when ${paramX}`);
         const finalY = paramY * zoom;
-        return { x: isNaN(finalX) ? undefined : finalX, y: isNaN(finalY) ? undefined : finalY };
+        return { x: Number.isFinite(finalX) ? finalX : undefined, y: Number.isFinite(finalY) ? finalY : undefined };
     }
     CalculateSubLayer(cmd: KSFunc): LayerControlData {
         return undefined;
