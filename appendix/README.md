@@ -22,5 +22,5 @@
 ## convert.sh
 一键转码，需要`cwebp`,`ffmpeg`,`iconv`
 
-## testpayload.ks
+## start.ks
 测试载荷，用于手动测试————我们还没有办法把UI测试之类的工作自动化。
