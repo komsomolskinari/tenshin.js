@@ -55,7 +55,6 @@ export default class LayerBase {
         const paramX = (param.xpos !== undefined) ? parseInt(param.xpos as string) : undefined;
         const paramY = (param.ypos !== undefined) ? parseInt(param.ypos as string) : undefined;
         const finalX = (mapX !== undefined ? mapX : paramX) * zoom;
-        console.log(`mapped x ${mapX} with ${_mapX}, use ${finalX} when ${paramX}`);
         const finalY = paramY * zoom;
         return { x: Number.isFinite(finalX) ? finalX : undefined, y: Number.isFinite(finalY) ? finalY : undefined };
     }

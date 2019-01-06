@@ -203,13 +203,15 @@ export default class YZLayer {
                 const _offset = offset || { x: 0, y: 0 };
                 let _width;
                 let _height;
-                if (!size || !size.x || !size.y) { // need get size
+                if (!size || !isFinite(size.x) || !isFinite(size.y)) { // need get size
                     [_width, _height] = await this.sublayer[name].GetSize();
                 }
                 else {
                     _width = size.x;
                     _height = size.y;
                 }
+                const THERSHOLD = 16;
+                if (_width + _height <= THERSHOLD) return;
                 // calculate image draw window
                 const { x: _left, y: _top } = _offset;
                 _maxWidthArray.push(_left + _width);

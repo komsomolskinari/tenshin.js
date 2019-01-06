@@ -201,7 +201,7 @@ export default class LayerChara extends LayerBase {
         const level = this.RefreshImageLevel(cmd.option);
         const size = this.CalculateSize(cmd);
         // 35 50 75 100 120 140 _ _
-        const fix = [200, 200, 200, 300, 200, 200, 0, 0][this.imageLevel]; // WATCHOUT! Magic here!
+        const fix = [300, 400, 200, 300, 200, 200, 0, 0][this.imageLevel]; // WATCHOUT! Magic here!
         const xrate = [0.5, 0.75, 1, 1.33, 1.5, 2][this.imageLevel];    // x coord scale rate
         const r = super.CalculatePositionWithPZoom(cmd, xrate);
         r.y = r.y || 0 + fix;
