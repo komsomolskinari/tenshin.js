@@ -1,4 +1,5 @@
 import TextHTML from "../utils/texthtml";
+import * as $ from "jquery";
 
 export default class YZText {
     static nameCh: JQuery<HTMLElement>;

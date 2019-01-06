@@ -8,6 +8,7 @@ import TJSVM from "./tjsvm";
 import FilePath from "./utils/filepath";
 import KSParser from "./utils/ksparser";
 import TJSON from "./utils/tjson";
+import * as $ from "jquery";
 
 async function LoadVMData() {
     const scriptLoadSeq = Config.Boot.InitialScripts;

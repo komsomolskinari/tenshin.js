@@ -1,3 +1,4 @@
+import * as $ from "jquery";
 export default class YZCamera {
     private static camfd = $("#camera");
 

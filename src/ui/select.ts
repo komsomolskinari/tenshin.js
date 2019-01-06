@@ -1,4 +1,5 @@
 import { YZSelectData } from "../runtime/select";
+import * as $ from "jquery";
 
 export default class YZSelectUI {
     static async Select(data: YZSelectData[]) {

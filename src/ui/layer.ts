@@ -1,4 +1,5 @@
 import FilePath from "../utils/filepath";
+import * as $ from "jquery";
 
 interface YZLayerData {
     width: number;

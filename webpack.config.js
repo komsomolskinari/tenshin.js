@@ -8,7 +8,6 @@ module.exports = {
         './src/index.ts',
         './src/index.html',
         './src/index.css',
-        './node_modules/jquery/dist/jquery.min.js',
         './src/config.js'
     ],
     module: {
@@ -30,5 +29,8 @@ module.exports = {
     output: {
         filename: 'index.js',
         path: path.resolve(__dirname) + '/dist'
+    },
+    externals: {
+        jquery: 'jQuery'
     }
 };

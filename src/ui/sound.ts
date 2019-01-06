@@ -1,4 +1,5 @@
 import FilePath from "../utils/filepath";
+import * as $ from "jquery";
 
 export default class YZSound {
     static channels: {
