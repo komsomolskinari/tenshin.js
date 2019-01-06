@@ -35,10 +35,10 @@ This project is a experiment about running Galgame in modern browser, it's origi
 - [x] 视频支持    Video
 - [x] 改进的选择支    Improved Select
 ### 正在工作 WIP
-- [ ] 大修图片支持    Rebuild image support
 - [ ] 音效    Sound effect
 - [ ] 基本动画    Basic Animation
-### 近期 Soon 
+### 近期 Soon
+- [ ] 不再依赖jQuery    Remove jQuery
 - [ ] 存档    Save And Load
 - [ ] 自动播放    Auto Play
 ### 可能要鸽 Sooo......oon

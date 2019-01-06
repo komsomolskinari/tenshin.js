@@ -35,9 +35,9 @@ $(document).ready(async () => {
     await Init();
     await LoadVMData();
     $("#button_next").click(() => KSVM.Next());
-    $("#button_next_multi").click(() => {
+    $("#button_next_multi").click(async () => {
         const count = $("#input_stepcount").val();
-        for (let t = 0; t < count; t++) KSVM.Next();
+        for (let t = 0; t < count; t++) await KSVM.Next();
     });
     KSVM.RunFrom(Config.Boot.EntryTag);
     KSVM.Next();
