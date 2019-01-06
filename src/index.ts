@@ -34,7 +34,11 @@ Object.keys(Config.Boot.TJSVariable)
 $(document).ready(async () => {
     await Init();
     await LoadVMData();
-    $(document).click(() => KSVM.Next());
+    $("#button_next").click(() => KSVM.Next());
+    $("#button_next_multi").click(() => {
+        const count = $("#input_stepcount").val();
+        for (let t = 0; t < count; t++) KSVM.Next();
+    });
     KSVM.RunFrom(Config.Boot.EntryTag);
     KSVM.Next();
     // TODO: let vm cache module load other script

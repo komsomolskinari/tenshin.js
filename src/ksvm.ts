@@ -3,6 +3,7 @@
 import { VMMode } from "./const";
 import Runtime from "./runtime";
 import KSParser from "./utils/ksparser";
+import TJSVM from "./tjsvm";
 export default class KSVM {
     static mode = VMMode.Text;
     static hang = false;
@@ -161,6 +162,10 @@ export default class KSVM {
                 case "func":
                     debugCSS = "color:green";
                     cmd.trace = this.currentpos;
+                    if (cmd.param.cond) {
+                        const val = TJSVM.eval(cmd.param.cond as string);
+                        if (!val) break;
+                    }
                     const next = await Runtime.Call(cmd);
                     // Okay, comand return a new position, lets use it
                     if (next !== undefined) {
