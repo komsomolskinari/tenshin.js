@@ -4,6 +4,7 @@ import { VMMode } from "./const";
 import Runtime from "./runtime";
 import KSParser from "./utils/ksparser";
 import TJSVM from "./tjsvm";
+import { LogVMCmd } from "./debugtool";
 export default class KSVM {
     static mode = VMMode.Text;
     static hang = false;
@@ -140,7 +141,6 @@ export default class KSVM {
         if (this.runlock) return;
         this.runlock = true;
         while (!this.hang) {
-
             if (this.CurrentCmd() === undefined) {
                 // too far
                 this.hang = true;
@@ -153,44 +153,42 @@ export default class KSVM {
                 this.runlock = true;
                 debugger;
             }
-            let debugCSS = "color:grey";
-            // NOTE: macro is not implement, use native implement instead
-            switch (cmd.type) {
-                case "entry":
-                    debugCSS = "color:pink";
-                    break;
-                case "func":
-                    debugCSS = "color:green";
-                    cmd.trace = this.currentpos;
-                    if (cmd.param.cond) {
-                        const val = TJSVM.eval(cmd.param.cond as string);
-                        if (!val) break;
-                    }
-                    const next = await Runtime.Call(cmd);
-                    // Okay, comand return a new position, lets use it
-                    if (next !== undefined) {
-                        debugger;
-                        if (this.mode === VMMode.Step) this.hang = true;
-                        this.currentpos = this.LocateTag(next);
-                    }
-                    break;
-                case "text":
-                    debugCSS = "color:cyan";
-                    Runtime.Text(cmd);
-                    if ([
-                        VMMode.Auto,
-                        VMMode.Quick,
-                        VMMode.Text].includes(this.mode)
-                    ) {
-                        this.hang = true;
-                    }
-                    break;
+            const next = await this.Step(cmd);
+            LogVMCmd(cmd);
+            // Okay, comand return a new position, lets use it
+            if (next !== undefined) {
+                if (this.mode === VMMode.Step) this.hang = true;
+                this.currentpos = this.LocateTag(next);
             }
-            console.debug("%c%s", debugCSS, KSParser.stringify([cmd], true));
             if (VMMode.Step) this.hang = true;
             this.currentpos.line++;
         }
         this.runlock = false;
+    }
+
+    static async Step(cmd: KSLine): Promise<JumpDest> {
+        // NOTE: macro is not implement, use native implement instead
+        switch (cmd.type) {
+            case "entry":
+                return undefined;
+            case "func":
+                cmd.trace = this.currentpos;
+                if (cmd.param.cond) {
+                    const val = TJSVM.eval(cmd.param.cond as string);
+                    if (!val) return undefined;
+                }
+                return Runtime.Call(cmd);
+            case "text":
+                Runtime.Text(cmd);
+                if ([
+                    VMMode.Auto,
+                    VMMode.Quick,
+                    VMMode.Text].includes(this.mode)
+                ) {
+                    this.hang = true;
+                }
+                return undefined;
+        }
     }
 
     // run from *tag, used for playback

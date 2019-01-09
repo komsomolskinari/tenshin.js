@@ -264,11 +264,6 @@ export default class YZLayer {
         if (isFinite(zoom)) this.current.zoom = zoom;
     }
 
-    Trace(str: string) {
-        this.fd.attr("yz_traceinfo", str);
-    }
-
-
     static Get(name: string) {
         return this.layers[name];
     }

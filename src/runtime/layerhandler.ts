@@ -1,11 +1,11 @@
 import ObjectMapper from "../objectmapper";
 import YZLayer from "../ui/layer";
-import KSParser from "../utils/ksparser";
 import LayerBase from "./layer/base";
 import LayerBG from "./layer/bg";
 import LayerChara from "./layer/chara";
 import LayerExtra from "./layer/extra";
 import LayerEV from "./layer/ev";
+import { LogLayerCmd } from "../debugtool";
 
 export default class LayerHandler {
     static isLayer(cmd: KSLine) {
@@ -37,7 +37,7 @@ export default class LayerHandler {
         if (show === true) layer.Show();
         else if (show === false) layer.Hide();
         layer.Draw();
-        layer.Trace(KSParser.stringify([cmd]));
+        LogLayerCmd(name, cmd);
         return;
     }
 
