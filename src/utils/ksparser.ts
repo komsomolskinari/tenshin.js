@@ -265,7 +265,7 @@ export default class KSParser {
                     const ls = [line.name];
                     if (optstr) ls.push(optstr);
                     if (paramstr) ls.push(paramstr);
-                    if (!debugMode) l = `[${ls.join(" ")}]`;
+                    if (!debugMode || !line.trace) l = `[${ls.join(" ")}]`;
                     else l = `[${ls.join(" ")}] at <${line.trace.script}.ks:${line.map}=>(${line.trace.line})>`;
                     break;
                 default:

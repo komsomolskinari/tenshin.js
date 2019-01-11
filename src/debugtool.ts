@@ -1,5 +1,6 @@
 import KSParser from "./utils/ksparser";
 import KSVM from "./ksvm";
+import { HTMLEscape } from "./utils/util";
 
 let layerListElem: HTMLSelectElement;
 let layerLogElem: HTMLUListElement;
@@ -13,7 +14,9 @@ export function DebugInit() {
     lastLayerCmdElem = document.getElementById("lastlayercmd") as HTMLParagraphElement;
     ksREPLElem = document.getElementById("ksrepl") as HTMLInputElement;
     document.getElementById("execrepl").addEventListener("click", (ev) => {
-        KSVM.Step(KSParser.parse(ksREPLElem.value)[0]);
+        const line = KSParser.parse(ksREPLElem.value)[0];
+        LogVMCmd(line, true);
+        KSVM.Step(line);
     });
     layerListElem.addEventListener("change", (ev) => {
         ShowLog(layerListElem.value);
@@ -31,8 +34,9 @@ export function LogLayerCmd(name: string, cmd: KSFunc) {
         layerListElem.appendChild(o);
         layerCmdLog[name] = [];
     }
-    layerCmdLog[name].push(KSParser.stringify([cmd]));
-    lastLayerCmdElem.innerText = KSParser.stringify([cmd]);
+    const cmdstr = HTMLEscape(KSParser.stringify([cmd], true));
+    layerCmdLog[name].push(cmdstr);
+    lastLayerCmdElem.innerHTML = cmdstr;
     ShowLog(layerListElem.value);
 }
 
@@ -42,12 +46,12 @@ function ShowLog(name: string) {
     layerLogElem.innerHTML = selectedLog.reduce((p, c) => `${p}<li>${c}</li>`, "");
 }
 
-export function LogVMCmd(cmd: KSLine, repl?: boolean) {
+export function LogVMCmd(cmd: KSLine, repl = false) {
     const vCmdCSS = {
         entry: "color:grey",
         func: "color:pink",
         text: "color:grey"
     };
-    console.debug("%c%s", repl ? "color:red" : vCmdCSS[cmd.type], KSParser.stringify([cmd], true));
+    console.debug("%c%s", repl ? "color:red" : vCmdCSS[cmd.type], KSParser.stringify([cmd], !repl));
 }
 

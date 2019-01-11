@@ -46,3 +46,16 @@ export async function AJAX(url: string): Promise<string> {
     xhr.send();
     return pm as Promise<string>;
 }
+
+export function HTMLEscape(str: string): string {
+    const map: {
+        [ch: string]: string
+    } = {
+        "&": "&amp;",
+        "<": "&lt;",
+        ">": "&gt;",
+        "\"": "&quot;",
+        "'": "&#039;"
+    };
+    return str.replace(/[&<>"']/g, m => map[m]);
+}
