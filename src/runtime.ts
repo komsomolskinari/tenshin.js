@@ -6,6 +6,7 @@ import TJSVM from "./tjsvm";
 import YZSound from "./ui/sound";
 import YZText from "./ui/text";
 import YZVideo from "./ui/video";
+import SoundEffect from "./runtime/se";
 export default class Runtime {
     // Callback function map
     // Always use arrow function, or Firefox will 'this is undefined'
@@ -22,7 +23,8 @@ export default class Runtime {
             eval: cmd => { TJSVM.eval(cmd.param.exp as string); return undefined; },
             // macro, native impliement
             opmovie: async () => YZVideo.OP(),
-            edmovie: async cmd => YZVideo.ED(cmd)
+            edmovie: async cmd => YZVideo.ED(cmd),
+            se: cmd => SoundEffect.Process(cmd)
         };
 
     static Text(cmd: KSText) {
@@ -46,7 +48,7 @@ export default class Runtime {
         }
         else {
             // Jump unimpliement cmd
-            if (["msgoff", "msgon", "se", "date", "wait", "stage",
+            if (["msgoff", "msgon", "date", "wait", "stage",
                 "beginskip", "endskip", "fadepausebgm", "fadebgm",
                 "pausebgm", "resumebgm", "opmovie", "edmovie",
                 "initscene", "day_full", "ano_view", "ret_view",
