@@ -3,8 +3,15 @@ import ObjectMapper from "../../objectmapper";
 
 export default class LayerBase {
     readonly zindex: number = 10;
+    protected reload = false;
+
     static GetInstance(cmd: KSFunc): LayerBase {
         return new LayerBase();
+    }
+    CalculateReload(cmd: KSFunc): boolean {
+        const ret = this.reload;
+        this.reload = false;
+        return ret;
     }
     CalculateShowHide(cmd: KSFunc): boolean {
         const { name, option, param } = cmd;

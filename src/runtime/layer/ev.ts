@@ -67,9 +67,8 @@ export default class LayerEV extends LayerBase {
         }
         const def = this.diffdef[evs[0]];
         const layers = [];
-        let reload = false;
         if (def) {
-            if (def.base !== this.cgName) reload = true;
+            if (def.base !== this.cgName) this.reload = true;
             this.cgName = def.base;
             layers.push({ name: def.base });
             if (def.diff) {

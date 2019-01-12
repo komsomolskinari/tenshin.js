@@ -22,7 +22,7 @@ export default class LayerHandler {
         const controlData = instance.CalculateSubLayer(cmd);
         if (controlData === undefined) return;
         const name = instance.CalculateName(cmd);
-        const reload = true;
+        const reload = instance.CalculateReload(cmd);
         const position = instance.CalculatePosition(cmd);
         const zoom = instance.CalculateZoom(cmd);
         const show = instance.CalculateShowHide(cmd);
