@@ -52,14 +52,17 @@ export default class LayerEV extends LayerBase {
             });
         this.cglist = Object.keys(this.diffdef);
     }
-    CalculateSubLayer(cmd: KSFunc): LayerControlData {
+    CalculateName(cmd: KSFunc): string {
+        return this.channelName;
+    }
+    CalculateSubLayer(cmd: KSFunc): LayerInfo[] {
         const { name, option, param } = cmd;
         let evs: string[] = (option as string[]).filter((o) => this.cglist.includes(o));
         if (evs.length === 0) {
             evs = (option as string[]).filter((o) => FilePath.findMedia(o, "image"));
             if (evs.length === 0) {
                 console.warn("CG.EV: no ev", cmd);
-                return { name: this.channelName, layer: [] };
+                return [];
             }
         }
         const def = this.diffdef[evs[0]];
@@ -75,6 +78,6 @@ export default class LayerEV extends LayerBase {
         } else {
             layers.push({ name: evs[0] });
         }
-        return { name: this.channelName, layer: layers, reload };
+        return layers;
     }
 }

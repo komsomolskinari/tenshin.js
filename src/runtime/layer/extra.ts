@@ -14,7 +14,7 @@ export default class LayerExtra extends LayerBase {
     }
     private static instance: LayerExtra = undefined;
 
-    CalculateSubLayer(cmd: KSFunc): LayerControlData {
+    CalculateSubLayer(cmd: KSFunc): LayerInfo[] {
         switch (cmd.name) {
             case "newlay":
                 const { name, option, param } = cmd;
@@ -22,13 +22,30 @@ export default class LayerExtra extends LayerBase {
                 const lfile = param.file as string;
                 if (!lfile) { return; }
                 ObjectMapper.AddLayer(lname);
-                return { name: lname, layer: [{ name: lfile }] };
+                return [{ name: lfile }];
             case "dellay":
                 YZLayer.Unset(cmd.param.name as string);
                 ObjectMapper.RemoveLayer(cmd.param.name as string);
                 return undefined;
             default:
-                return { name: cmd.name, layer: [] };
+                return [];
+        }
+    }
+    CalculateName(cmd: KSFunc): string {
+        switch (cmd.name) {
+            case "newlay":
+                const { name, option, param } = cmd;
+                const lname = param.name as string;
+                const lfile = param.file as string;
+                if (!lfile) { return; }
+                ObjectMapper.AddLayer(lname);
+                return lname;
+            case "dellay":
+                YZLayer.Unset(cmd.param.name as string);
+                ObjectMapper.RemoveLayer(cmd.param.name as string);
+                return "";
+            default:
+                return cmd.name;
         }
     }
 }

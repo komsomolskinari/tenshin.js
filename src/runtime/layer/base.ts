@@ -58,7 +58,10 @@ export default class LayerBase {
         const finalY = paramY * zoom;
         return { x: Number.isFinite(finalX) ? finalX : undefined, y: Number.isFinite(finalY) ? finalY : undefined };
     }
-    CalculateSubLayer(cmd: KSFunc): LayerControlData {
+    CalculateName(cmd: KSFunc): string {
+        return "";
+    }
+    CalculateSubLayer(cmd: KSFunc): LayerInfo[] {
         return undefined;
     }
     CalculateZoomCenter(cmd: KSFunc): Point {

@@ -127,7 +127,7 @@ export default class LayerChara extends LayerBase {
      * CalculateSubLayer, had side effect
      * @param cmd command
      */
-    CalculateSubLayer(cmd: KSFunc): LayerControlData {
+    CalculateSubLayer(cmd: KSFunc): LayerInfo[] {
         const { name, option, param } = cmd;
         if (name !== this.name) return;
         // let upper runtime handle this, it's public option
@@ -146,13 +146,16 @@ export default class LayerChara extends LayerBase {
         return ret;
     }
 
+    CalculateName(cmd: KSFunc): string {
+        return this.name;
+    }
     CalculateZoom(cmd: KSFunc): number {
         this.RefreshImageLevel(cmd.option);
         const fix = [3500 / 50, 100, 7500 / 100, 100, 12000 / 140, 100][this.imageLevel];
         return fix;
     }
 
-    private ProcessImageCmd(option: string[]): LayerControlData {
+    private ProcessImageCmd(option: string[]): LayerInfo[] {
         if (this.displayName && this.displayName !== this.name) {
             LayerChara.GetInstance({ name: this.displayName } as KSFunc).ProcessImageCmd(option);
         }
@@ -184,7 +187,7 @@ export default class LayerChara extends LayerBase {
                     size: v.size,
                 }));
         }
-        return { name: this.name, layer: imgctl };
+        return imgctl;
     }
 
     private RefreshImageLevel(option: string[]) {

@@ -6,11 +6,12 @@ import LayerChara from "./layer/chara";
 import LayerExtra from "./layer/extra";
 import LayerEV from "./layer/ev";
 import { LogLayerCmd } from "../debugtool";
+import LayerCamera from "./layer/camera";
 
 export default class LayerHandler {
     static isLayer(cmd: KSLine) {
         // hack for newlay & dellay
-        if (["newlay", "dellay", "ev"].includes(cmd.name)) return true;
+        if (["newlay", "dellay", "ev", "env"].includes(cmd.name)) return true;
         return ["characters", "times", "stages", "layer"]
             .includes(ObjectMapper.TypeOf(cmd.name));
     }
@@ -20,8 +21,8 @@ export default class LayerHandler {
         const instance = this.GetLayerInstance(cmd);
         const controlData = instance.CalculateSubLayer(cmd);
         if (controlData === undefined) return;
-        const name = controlData.name;
-        const reload = controlData.reload;
+        const name = instance.CalculateName(cmd);
+        const reload = true;
         const position = instance.CalculatePosition(cmd);
         const zoom = instance.CalculateZoom(cmd);
         const show = instance.CalculateShowHide(cmd);
@@ -29,7 +30,7 @@ export default class LayerHandler {
         const size = instance.CalculateSize(cmd);
         const center = instance.CalculateZoomCenter(cmd);
         if (reload) YZLayer.Unset(name);
-        const layer = YZLayer.Set(name, controlData.layer, zindex);
+        const layer = YZLayer.Set(name, controlData, zindex);
         layer.Move(position);
         layer.Zoom(zoom);
         layer.SetZoomCenter(center);
@@ -60,6 +61,9 @@ export default class LayerHandler {
                 break;
             case "ev":
                 cb = LayerEV;
+                break;
+            case "env":
+                cb = LayerCamera;
                 break;
             default:
                 cb = LayerBase;

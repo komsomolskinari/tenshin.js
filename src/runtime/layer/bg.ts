@@ -19,7 +19,7 @@ export default class LayerBG extends LayerBase {
     private daytime: any = undefined;
     private stage: any = undefined;
 
-    CalculateSubLayer(cmd: KSFunc): LayerControlData {
+    CalculateSubLayer(cmd: KSFunc): LayerInfo[] {
         switch (ObjectMapper.TypeOf(cmd.name)) {
             case "stages":
                 const { name, option, param } = cmd;
@@ -34,11 +34,14 @@ export default class LayerBG extends LayerBase {
                 if (this.stage.image !== this.cgName) reload = true;
                 this.cgName = this.stage.image;
                 const daytimePfx = this.daytime ? this.daytime.prefix : "";
-                return { name: this.channelName, layer: [{ name: this.stage.image.replace("TIME", daytimePfx) }], reload };
+                return [{ name: this.stage.image.replace("TIME", daytimePfx) }];
             case "times":
                 this.daytime = ObjectMapper.GetProperty(cmd.name);
-                return { name: this.channelName, layer: [] };
+                return [];
         }
+    }
+    CalculateName(cmd: KSFunc): string {
+        return this.channelName;
     }
     CalculatePosition(cmd: KSFunc): Point {
         return super.CalculatePositionWithPZoom(cmd, 0.3);
