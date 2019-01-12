@@ -34,11 +34,11 @@ This project is a experiment about running Galgame in modern browser, it's origi
 - [x] 图片支持    Image
 - [x] 视频支持    Video
 - [x] 改进的选择支    Improved Select
+- [x] 音效    Sound effect
 ### 正在工作 WIP
-- [ ] 音效    Sound effect
 - [ ] 基本动画    Basic Animation
-### 近期 Soon
 - [ ] 不再依赖jQuery    Remove jQuery
+### 近期 Soon
 - [ ] 存档    Save And Load
 - [ ] 自动播放    Auto Play
 ### 可能要鸽 Sooo......oon

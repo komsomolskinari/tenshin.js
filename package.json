@@ -1,6 +1,6 @@
 {
   "name": "tenshin.js",
-  "version": "v0.4.6-2-maybework",
+  "version": "v0.5",
   "description": "天神乱漫，Javascript实现",
   "main": "index.js",
   "scripts": {
@@ -19,14 +19,14 @@
     "jquery": "^3.3.1"
   },
   "devDependencies": {
-    "@types/jest": "^23.3.10",
+    "@types/jest": "^23.3.12",
     "@types/jquery": "^3.3.29",
     "file-loader": "^2.0.0",
     "jest": "^23.6.0",
     "ts-jest": "^23.10.5",
     "ts-loader": "^5.3.1",
     "typescript": "^3.2.2",
-    "webpack": "^4.27.1",
-    "webpack-cli": "^3.1.2"
+    "webpack": "^4.28.4",
+    "webpack-cli": "^3.2.1"
   }
 }

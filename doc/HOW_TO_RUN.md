@@ -1,3 +1,5 @@
+注意：release页面里面的pre-release和stable是相对的，换句话说，其实都是萎的。本项目不稳定，所以用哪个都无所谓。
+
 # 需求 Prerequest
 - HTTP服务器
   - lighttpd
