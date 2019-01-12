@@ -1,5 +1,4 @@
 import ObjectMapper from "../objectmapper";
-import YZLayer from "../ui/layer";
 import LayerBase from "./layer/base";
 import LayerBG from "./layer/bg";
 import LayerChara from "./layer/chara";
@@ -7,6 +6,7 @@ import LayerExtra from "./layer/extra";
 import LayerEV from "./layer/ev";
 import { LogLayerCmd } from "../debugtool";
 import LayerCamera from "./layer/camera";
+import YZLayerMgr from "../ui/layermgr";
 
 export default class LayerHandler {
     static isLayer(cmd: KSLine) {
@@ -29,8 +29,8 @@ export default class LayerHandler {
         const zindex = instance.zindex;
         const size = instance.CalculateSize(cmd);
         const center = instance.CalculateZoomCenter(cmd);
-        if (reload) YZLayer.Unset(name);
-        const layer = YZLayer.Set(name, controlData, zindex);
+        if (reload) YZLayerMgr.Unset(name);
+        const layer = YZLayerMgr.Set(name, controlData, zindex);
         layer.Move(position);
         layer.Zoom(zoom);
         layer.SetZoomCenter(center);

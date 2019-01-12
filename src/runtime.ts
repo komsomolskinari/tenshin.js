@@ -1,5 +1,4 @@
 // runtime libs
-import YZCamera from "./runtime/camera";
 import LayerChara from "./runtime/layer/chara";
 import LayerHandler from "./runtime/layerhandler";
 import YZSelect from "./runtime/select";
@@ -20,7 +19,6 @@ export default class Runtime {
             seladd: cmd => YZSelect.SelectAdd(cmd),
             next: cmd => YZSelect.Next(cmd),
             bgm: cmd => YZSound.BGM(cmd),
-            env: cmd => YZCamera.ProcessEnv(cmd),
             eval: cmd => { TJSVM.eval(cmd.param.exp as string); return undefined; },
             // macro, native impliement
             opmovie: async () => YZVideo.OP(),

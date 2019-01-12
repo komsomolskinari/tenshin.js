@@ -63,15 +63,6 @@ class YZSubLayer {
 
 export default class YZLayer {
     static rootDOM: JQuery<HTMLElement>;
-    private static layers: {
-        [name: string]: YZLayer
-    } = {};
-    private static type2zindex: {
-        [type: string]: number
-    } = {
-            stages: 1,
-            characters: 5
-        };
     name: string;
 
     private previous: YZLayerData = {
@@ -90,10 +81,6 @@ export default class YZLayer {
 
     private fd: JQuery<HTMLElement>;
     private sublayer: { [name: string]: YZSubLayer } = {};
-
-    static Init() {
-        this.rootDOM = $("#camera");
-    }
 
     constructor(name: string, files: LayerInfo[], zindex?: number) {
         this.name = name;
@@ -262,30 +249,5 @@ export default class YZLayer {
 
     Zoom(zoom: number) {
         if (isFinite(zoom)) this.current.zoom = zoom;
-    }
-
-    static Get(name: string) {
-        return this.layers[name];
-    }
-    /**
-     * Set a layer (new or existed)
-     * @param name
-     * @param files
-     */
-    static Set(name: string, files: LayerInfo[], zindex?: number) {
-        if (!this.layers[name]) {
-            this.layers[name] = new YZLayer(name, files, zindex);
-        }
-        else {
-            if (files && files.length > 0) this.layers[name].SetSubLayer(files);
-        }
-        return this.layers[name];
-    }
-
-    static Unset(name: string) {
-        const t = this.layers[name];
-        if (!t) return;
-        t.Delete();
-        delete this.layers[name];
     }
 }
