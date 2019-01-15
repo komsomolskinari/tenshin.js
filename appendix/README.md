@@ -6,8 +6,8 @@
 ## kagura.js
 《神乐黎明记》的JS播放器，只能放Hscene。启发了本项目，核心思想随后被用到此项目中。
 
-## ks.g4, tjson.g4
-参考的ANTLR语法定义。本项目并没有用ANTLR生成Parser，而是参考这些定义自己手写了两个。
+## ks.g4, tjson.g4, sli.g4
+参考的ANTLR语法定义。本项目并没有用ANTLR生成Parser，而是参考这些定义自己手写了三个。
 没学过编译原理，多半不能用，看看就好。
 
 ## build_release.sh

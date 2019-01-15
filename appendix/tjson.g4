@@ -1,4 +1,4 @@
-grammar TJSON;
+grammar tjson;
 
 tjson: value;
 pair: STRING ('=>' | ':') value;

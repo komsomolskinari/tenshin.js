@@ -32,3 +32,20 @@ declare interface KSFunc {
     map?: number,
     trace?: VMPosition  // optional stack trace
 }
+
+declare type SoundLoopInfo = SLILink | SLILabel;
+declare interface SLILink {
+    type: "link",
+    from: number,
+    to: number,
+    smooth: boolean,
+    condition: string,
+    refvalue: number,
+    condvar: number
+}
+
+declare interface SLILabel {
+    type: "label",
+    position: number,
+    name: string
+}
