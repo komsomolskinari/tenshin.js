@@ -14,6 +14,7 @@ declare interface KSEntry {
     type: "entry",
     name: string,
     map?: number,
+    repl?: boolean,
 }
 
 declare interface KSText {
@@ -22,6 +23,7 @@ declare interface KSText {
     display: string,
     text: string,
     map?: number,
+    repl?: boolean,
 }
 
 declare interface KSFunc {
@@ -31,6 +33,7 @@ declare interface KSFunc {
     option: string[],   // string array, convert on demand
     map?: number,
     trace?: VMPosition  // optional stack trace
+    repl?: boolean,     // REPL flag, affected on logging
 }
 
 declare type SoundLoopInfo = SLILink | SLILabel;

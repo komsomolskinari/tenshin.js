@@ -15,6 +15,7 @@ export function DebugInit() {
     ksREPLElem = document.getElementById("ksrepl") as HTMLInputElement;
     document.getElementById("execrepl").addEventListener("click", (ev) => {
         const line = KSParser.parse(ksREPLElem.value)[0];
+        line.repl = true;
         LogVMCmd(line, true);
         KSVM.Step(line);
     });
