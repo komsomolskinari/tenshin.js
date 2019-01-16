@@ -1,19 +1,22 @@
 import { SelectData } from "../runtime/select";
-import * as $ from "jquery";
+import { getElem } from "../utils/util";
 
 export default class YZSelectUI {
     static async Select(data: SelectData[]) {
         const r: number = await new Promise((resolve, reject) => {
-            data.forEach((d: SelectData, i: number) =>
-                $("#selectlist").append(
-                    $("<li>")
-                        .attr("id", `select_option_${i}`)
-                        .text(d.text)
-                        .one("click", () => resolve(i))
-                )
-            );
+            data.forEach((d: SelectData, i: number) => {
+                const elem: HTMLLIElement = document.createElement("li");
+                elem.id = `select_option_${i}`;
+                elem.innerText = d.text;
+                const cb = () => {
+                    elem.removeEventListener("click", cb);
+                    resolve(i);
+                };
+                elem.addEventListener("click", cb);
+                getElem("#selectlist").appendChild(elem);
+            });
         });
-        $("#selectlist").html("");
+        getElem("#selectlist").innerHTML = "";
         return data[r];
     }
 

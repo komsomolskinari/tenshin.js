@@ -1,3 +1,5 @@
+import { getElem } from "../utils/util";
+
 export default class YZCamera {
     private static instance: YZCamera;
     static GetInstance(): YZCamera {
@@ -8,10 +10,10 @@ export default class YZCamera {
     }
     private zoom = 1;
     private pos = { x: 0, y: 0 };
-    private dom: JQuery<HTMLDivElement>;
+    private dom: HTMLDivElement;
     // override and ignore them
     constructor() {
-        this.dom = $("#camera") as JQuery<HTMLDivElement>;
+        this.dom = getElem("#camera") as HTMLDivElement;
     }
     SetSubLayer(files: LayerInfo[]) {
         // pass
@@ -34,10 +36,9 @@ export default class YZCamera {
 
     // do real logic here
     async Draw() {
-        this.dom
-            .css("left", this.pos.x)
-            .css("top", this.pos.y)
-            .css("transform", `scale(${this.zoom})`);
+        this.dom.style.left = this.pos.x + "px";
+        this.dom.style.top = this.pos.y + "px";
+        this.dom.style.transform = `scale(${this.zoom})`;
     }
 
     Move(pos: Point) {

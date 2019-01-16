@@ -1,10 +1,11 @@
 import FilePath from "../utils/filepath";
+import { getElem, removeThisListener } from "../utils/util";
 
 export default class YZVideo {
-    static vfd: JQuery<HTMLElement>;
+    static vfd: HTMLVideoElement;
 
     static Init() {
-        this.vfd = $("#video");
+        this.vfd = getElem("#video") as HTMLVideoElement;
     }
 
     // all HW implement
@@ -16,16 +17,18 @@ export default class YZVideo {
     }
 
     static async Play(src: string) {
-        this.vfd.attr("src", FilePath.findMedia(src, "video"));
+        this.vfd.src = FilePath.findMedia(src, "video");
 
         const pm = new Promise((resolve, reject) => {
-            this.vfd.one("ended", () => resolve());
-            $(document).one("click", () => resolve());
+            const cb = (e: Event) => {
+                removeThisListener(e, cb);
+                resolve();
+            };
+            this.vfd.addEventListener("ended", cb);
         });
-        const elm = this.vfd.get(0) as HTMLAudioElement;
-        elm.play();
+        this.vfd.play();
         await pm;
-        elm.pause();
-        this.vfd.attr("src", "");
+        this.vfd.pause();
+        this.vfd.src = "";
     }
 }

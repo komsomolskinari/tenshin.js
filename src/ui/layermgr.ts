@@ -1,5 +1,6 @@
 import YZCamera from "./camera";
 import YZLayer from "./layer";
+import { getElem } from "../utils/util";
 
 export default class YZLayerMgr {
     static layers: {
@@ -7,7 +8,7 @@ export default class YZLayerMgr {
     } = {};
 
     static Init() {
-        YZLayer.rootDOM = $("#camera");
+        YZLayer.rootDOM = getElem("#camera");
     }
 
     static Get(name: string) {

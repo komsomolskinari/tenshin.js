@@ -8,7 +8,7 @@ import TJSVM from "./tjsvm";
 import FilePath from "./utils/filepath";
 import KSParser from "./utils/ksparser";
 import TJSON from "./utils/tjson";
-import * as $ from "jquery";
+import { getElem } from "./utils/util";
 
 async function LoadVMData() {
     const scriptLoadSeq = Config.Boot.InitialScripts;
@@ -31,12 +31,12 @@ async function LoadVMData() {
 Object.keys(Config.Boot.TJSVariable)
     .forEach(k => TJSVM.addObject(k, Config.Boot.TJSVariable[k]));
 
-$(document).ready(async () => {
+document.addEventListener("DOMContentLoaded", async () => {
     await Init();
     await LoadVMData();
-    $("#button_next").click(() => KSVM.Next());
-    $("#button_next_multi").click(async () => {
-        const count = $("#input_stepcount").val();
+    getElem("#button_next").addEventListener("click", () => KSVM.Next());
+    getElem("#button_next_multi").addEventListener("click", async () => {
+        const count = parseInt((getElem("#input_stepcount") as HTMLInputElement).value);
         for (let t = 0; t < count; t++) await KSVM.Next();
     });
     KSVM.RunFrom(Config.Boot.EntryTag);

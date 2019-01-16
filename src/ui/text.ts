@@ -1,17 +1,17 @@
 import TextHTML from "../utils/texthtml";
-import * as $ from "jquery";
+import { getElem } from "../utils/util";
 
 export default class YZText {
-    static nameCh: JQuery<HTMLElement>;
-    static textCh: JQuery<HTMLElement>;
+    static nameCh: HTMLElement;
+    static textCh: HTMLElement;
     static Init() {
-        this.nameCh = $("#charname");
-        this.textCh = $("#chartxt");
+        this.nameCh = getElem("#charname");
+        this.textCh = getElem("#chartxt");
     }
 
     static Print(text: string, display: string) {
         display = display || "";
-        this.nameCh.html(display);
-        this.textCh.html(TextHTML(text));
+        this.nameCh.innerHTML = display;
+        this.textCh.innerHTML = TextHTML(text);
     }
 }

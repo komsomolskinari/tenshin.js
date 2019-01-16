@@ -1,5 +1,5 @@
 import FilePath from "../utils/filepath";
-import * as $ from "jquery";
+import { getElem, removeThisListener } from "../utils/util";
 
 interface YZLayerData {
     width: number;
@@ -13,27 +13,25 @@ interface YZLayerData {
 // Sub layer operation
 class YZSubLayer {
     name: string;
-    private fd: JQuery<HTMLElement>;
+    private fd: HTMLImageElement;
     private x: number;
     private y: number;
 
-    constructor(name: string, parent: JQuery<HTMLElement>) {
+    constructor(name: string, parent: HTMLElement) {
         this.name = name;
-        parent.append(
-            $("<img>").attr("id", `sublayer_${this.name}`)
-        );
-        this.fd = $(`#sublayer_${this.name}`);
-        this.fd
-            .css("display", "none")
-            .attr("src", FilePath.findMedia(this.name, "image"));
+        const elem = document.createElement("img");
+        elem.id = `sublayer_${this.name}`;
+        parent.appendChild(elem);
+        this.fd = elem;
+        this.fd.style.display = "none";
+        this.fd.src = FilePath.findMedia(this.name, "image");
     }
 
     Draw(offset: Point) {
         const { x: _left, y: _top } = offset;
-        this.fd
-            .css("left", _left)
-            .css("top", _top)
-            .css("display", "");
+        this.fd.style.left = _left + "px";
+        this.fd.style.top = _top + "px";
+        this.fd.style.display = "";
     }
 
     Delete() {
@@ -42,11 +40,19 @@ class YZSubLayer {
 
     async GetSize() {
         if (!this.x || !this.y) { // not cached
-            const elm = this.fd.get(0) as HTMLImageElement;
+            const elm = this.fd;
             if (!elm.complete) { // not loaded
                 await new Promise((resolve, reject) => { // wait image loaded
-                    this.fd.one("load", () => resolve());
-                    this.fd.one("error", () => reject());
+                    const cb = (e: Event) => {
+                        removeThisListener(e, cb);
+                        resolve();
+                    };
+                    this.fd.addEventListener("load", cb);
+                    const cb2 = (e: Event) => {
+                        removeThisListener(e, cb2);
+                        reject();
+                    };
+                    this.fd.addEventListener("error", cb2);
                 });
             }
             // ok,  now it's loaded
@@ -57,12 +63,12 @@ class YZSubLayer {
     }
 
     ZIndex(z: number) {
-        this.fd.css("z-index", z);
+        this.fd.style.zIndex = z.toString();
     }
 }
 
 export default class YZLayer {
-    static rootDOM: JQuery<HTMLElement>;
+    static rootDOM: HTMLElement;
     name: string;
 
     private previous: YZLayerData = {
@@ -79,7 +85,7 @@ export default class YZLayer {
     private actionSeq: any[] = [];
     private showed = true;
 
-    private fd: JQuery<HTMLElement>;
+    private fd: HTMLElement;
     private sublayer: { [name: string]: YZSubLayer } = {};
 
     constructor(name: string, files: LayerInfo[], zindex?: number) {
@@ -98,16 +104,15 @@ export default class YZLayer {
         this.transOut = [];
         this.actionSeq = [];
 
-        this.fd = $(`#layer_${this.name}`);
+        this.fd = getElem(`#layer_${this.name}`);
         this.sublayer = {};
         // generate div if not exist
-        if (this.fd.length === 0) {
-            YZLayer.rootDOM.append(
-                $("<div>")
-                    .attr("id", `layer_${this.name}`)
-                    .css("z-index", zindex || 1)
-            );
-            this.fd = $(`#layer_${this.name}`);
+        if (this.fd === null) {
+            const elem = document.createElement("div");
+            elem.id = `layer_${this.name}`;
+            elem.style.zIndex = (zindex || 1).toString();
+            YZLayer.rootDOM.appendChild(elem);
+            this.fd = elem;
         }
     }
 
@@ -129,7 +134,7 @@ export default class YZLayer {
 
     SetZoomCenter(pos: Point) {
         // TODO: is this ok? Maybe make x optional
-        this.fd.css("transform-origin", `${pos.x}% ${pos.y}%`);
+        this.fd.style.transformOrigin = `${pos.x}% ${pos.y}%`;
     }
 
     // when [begintrans] called, do not exec Draw()
@@ -137,7 +142,7 @@ export default class YZLayer {
     async Draw() {
         if (!this.showed) return;
         // cancel all animation
-        this.fd.finish();
+
         const oldLayers = this.previous.files.map(l => l.name);
         const newLayers = this.current.files.map(l => l.name);
         if (newLayers.length === 0) {
@@ -217,14 +222,13 @@ export default class YZLayer {
 
     private _DrawLayer(left: number, top: number, height: number, width: number, zoom: number) {
         const realZoom = zoom / 100;
-        this.fd
-            .css("display", "")
-            .css("top", top)
-            .css("left", left)
-            // fd height & width has unexpected influence to zoom position
-            .css("height", height)
-            .css("width", width)
-            .css("transform", `scale(${realZoom})`);
+        this.fd.style.display = "";
+        this.fd.style.top = top + "px";
+        this.fd.style.left = left + "px";
+        // fd height & width has unexpected influence to zoom position
+        this.fd.style.height = height + "px";
+        this.fd.style.width = width + "px";
+        this.fd.style.transform = `scale(${realZoom})`;
     }
 
     Show() {
@@ -233,7 +237,7 @@ export default class YZLayer {
 
     Hide() {
         this.showed = false;
-        this.fd.css("display", "none");
+        this.fd.style.display = "none";
     }
 
     Delete() { // clear DOM .etc

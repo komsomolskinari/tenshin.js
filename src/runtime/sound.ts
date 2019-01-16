@@ -1,17 +1,16 @@
-import * as $ from "jquery";
 import { LogLayerCmd } from "../debugtool";
 import FilePath from "../utils/filepath";
 import SLIParser from "../utils/sliparser";
-import { AJAX } from "../utils/util";
+import { GET, getElem } from "../utils/util";
 
 export default class Sound {
-    private static basedom: JQuery<HTMLElement>;
+    private static basedom: HTMLElement;
     static Init() {
-        this.basedom = $("#audiodiv");
-        this.channels.bgm = $("#snd_bgm");
+        this.basedom = getElem("#audiodiv");
+        this.channels.bgm = getElem("#snd_bgm") as HTMLAudioElement;
     }
     private static channels: {
-        [name: string]: JQuery<HTMLAudioElement>
+        [name: string]: HTMLAudioElement
     } = {};
     static Process(cmd: KSFunc) {
         const { name, option, param } = cmd;
@@ -30,7 +29,7 @@ export default class Sound {
                 ch = this.getChannel(name);
                 break;
         }
-        if (option.includes("stop")) ch[0].pause();
+        if (option.includes("stop")) ch.pause();
         if (param.storage) {
             let src = FilePath.findMedia(param.storage as string, "audio");
             if (!src) src = FilePath.find(param.storage as string);
@@ -41,23 +40,23 @@ export default class Sound {
             if (sli) {
                 this.parseSLI(sli);
             }
-            ch.attr("src", src);
-            ch[0].play().catch(e => { return undefined; });
+            ch.src = src;
+            ch.play().catch(e => { return undefined; });
         }
     }
 
     static getChannel(ch: string) {
         if (!this.channels[ch]) {
-            this.basedom.append(
-                $("<audio>").attr("id", `snd_${ch}`)
-            );
-            this.channels[ch] = $(`#snd_${ch}`);
+            const elem = document.createElement("audio");
+            elem.id = `snd_${ch}`;
+            this.basedom.appendChild(elem);
+            this.channels[ch] = elem;
         }
         return this.channels[ch];
     }
 
     static async parseSLI(file: string) {
-        const str = await AJAX(file);
+        const str = await GET(file);
         const data = SLIParser.parse(str);
         // TODO: Okay, apply it to real channel
     }

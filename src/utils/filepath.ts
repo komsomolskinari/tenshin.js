@@ -1,6 +1,6 @@
 // TODO: As independent module
 
-import { ParseHTML, AJAX, ParseXML } from "./util";
+import { ParseHTML, GET, ParseXML, getElem } from "./util";
 
 enum ItemType { file = "file", directory = "directory" }
 interface DirItem {
@@ -97,7 +97,7 @@ export default class FilePath {
      */
     static async read(file: string, type?: string) {
         const path = type ? this.findMedia(file, type) : this.find(file);
-        return AJAX(path);
+        return GET(path);
     }
 
     // ----- Generate index files ----- //
@@ -222,12 +222,12 @@ export default class FilePath {
         };
 
         if (!Object.keys(loaderHttpMap).includes(String(this.mode))) {
-            const text = await AJAX(url);
+            const text = await GET(url);
             return loaderFileMap[this.mode](text);
         }
 
         // get raw data, so we can parse it next
-        const ls: string = await AJAX(url);
+        const ls: string = await GET(url);
         let ret: DirItem[] = [];
         const loader = loaderHttpMap[this.mode] || this.__loader__error;
         ret = loader.call(this, ls);    // need rewrite 'this'
@@ -315,7 +315,7 @@ export default class FilePath {
         console.log("%c nginx html autoindex will truncate long file name", "color:red");
         const ret: DirItem[] = [];
         this.__loader__pre(text).forEach(l => {
-            const filename = $(l).text();
+            const filename = getElem(l).innerText;
             if (filename[0] === ".") return;
             ret.push(this.__loader__parse_filename(filename));
         });
