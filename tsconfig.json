@@ -1,5 +1,7 @@
 {
     "compilerOptions": {
+        "outDir": "dist/",
+        "rootDir": "src/",
         "noImplicitAny": true,
         "module": "es6",
         "target": "es2018",
@@ -13,6 +15,7 @@
     },
     "exclude": [
         "node_modules",
-        "*.js"
+        "*.js",
+        "**/*.test.ts"
     ]
 }
