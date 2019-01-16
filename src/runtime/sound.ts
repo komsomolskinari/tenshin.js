@@ -1,18 +1,29 @@
 import FilePath from "../utils/filepath";
 import * as $ from "jquery";
 
-export default class SoundEffect {
+export default class Sound {
     private static basedom: JQuery<HTMLElement>;
     static Init() {
         this.basedom = $("#audiodiv");
+        this.channels.bgm = $("#snd_bgm");
     }
     private static channels: {
         [name: string]: JQuery<HTMLAudioElement>
     } = {};
     static Process(cmd: KSFunc) {
         const { name, option, param } = cmd;
-        if (name !== "se") return; // for future bgm and other cmd
-        const ch = this.getChannel(param.buf as string);
+        let ch;
+        switch (name) {
+            case "se":
+                ch = this.getChannel(param.buf as string);
+                break;
+            case "bgm":
+                ch = this.getChannel("bgm");
+                break;
+            default:    // character voice pseudo command
+                ch = this.getChannel(name);
+                break;
+        }
         if (option.includes("stop")) ch[0].pause();
         if (param.storage) {
             const src = FilePath.find(param.storage as string);
@@ -25,9 +36,9 @@ export default class SoundEffect {
     static getChannel(ch: string) {
         if (!this.channels.ch) {
             this.basedom.append(
-                $("<audio>").attr("id", `se_${ch}`)
+                $("<audio>").attr("id", `snd_${ch}`)
             );
-            this.channels.ch = $(`#se_${ch}`);
+            this.channels.ch = $(`#snd_${ch}`);
         }
         return this.channels.ch;
     }

@@ -6,7 +6,7 @@ import TJSVM from "./tjsvm";
 import YZSound from "./ui/sound";
 import YZText from "./ui/text";
 import YZVideo from "./ui/video";
-import SoundEffect from "./runtime/se";
+import Sound from "./runtime/sound";
 export default class Runtime {
     // Callback function map
     // Always use arrow function, or Firefox will 'this is undefined'
@@ -24,7 +24,7 @@ export default class Runtime {
             // macro, native impliement
             opmovie: async () => YZVideo.OP(),
             edmovie: async cmd => YZVideo.ED(cmd),
-            se: cmd => SoundEffect.Process(cmd)
+            se: cmd => Sound.Process(cmd)
         };
 
     static Text(cmd: KSText) {

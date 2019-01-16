@@ -1,10 +1,10 @@
-import { YZSelectData } from "../runtime/select";
+import { SelectData } from "../runtime/select";
 import * as $ from "jquery";
 
 export default class YZSelectUI {
-    static async Select(data: YZSelectData[]) {
+    static async Select(data: SelectData[]) {
         const r: number = await new Promise((resolve, reject) => {
-            data.forEach((d: YZSelectData, i: number) =>
+            data.forEach((d: SelectData, i: number) =>
                 $("#selectlist").append(
                     $("<li>")
                         .attr("id", `select_option_${i}`)
@@ -17,7 +17,7 @@ export default class YZSelectUI {
         return data[r];
     }
 
-    static async MSelect(data: YZSelectData[]) {
+    static async MSelect(data: SelectData[]) {
         return this.Select(data);
     }
 }

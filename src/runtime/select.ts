@@ -1,7 +1,7 @@
 import TJSVM from "../tjsvm";
 import YZSelectUI from "../ui/select";
 
-export class YZSelectData {
+export class SelectData {
     text: string;
     dest: JumpDest;
     operation: string;
@@ -23,9 +23,9 @@ export class YZSelectData {
 }
 
 // all select logic here
-export default class YZSelect {
-    static mapSelectData: YZSelectData[] = [];
-    static selectData: YZSelectData[] = [];
+export default class Select {
+    static mapSelectData: SelectData[] = [];
+    static selectData: SelectData[] = [];
 
     static MapSelectInit() {
         this.mapSelectData = [];
@@ -36,7 +36,7 @@ export default class YZSelect {
     static MapSelectAdd(cmd: KSFunc) {
         const p = cmd.param;
         this.mapSelectData.push(
-            new YZSelectData(
+            new SelectData(
                 p.name as string,
                 {
                     script: p.storage as string,
@@ -58,7 +58,7 @@ export default class YZSelect {
     static SelectAdd(cmd: KSFunc) {
         const p = cmd.param;
         this.selectData.push(
-            new YZSelectData(
+            new SelectData(
                 p.text as string,
                 {
                     script: p.storage as string,

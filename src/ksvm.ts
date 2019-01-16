@@ -2,13 +2,11 @@
 
 import { VMMode } from "./const";
 import Runtime from "./runtime";
-import KSParser from "./utils/ksparser";
 import TJSVM from "./tjsvm";
 import { LogVMCmd } from "./debugtool";
 export default class KSVM {
     static mode = VMMode.Text;
     static hang = false;
-    // scripts = {name: script}
     static scripts: {
         [name: string]: KSLine[]
     } = {};
@@ -18,7 +16,6 @@ export default class KSVM {
     static tags: {
         [name: string]: VMPosition[]
     } = {};
-    // [script name, line#]
     static currentpos: VMPosition = { script: undefined, line: 1 };
     static posstack: VMPosition[] = [];
     static runlock = false;

@@ -6,7 +6,7 @@ import FilePath from "./utils/filepath";
 import { DebugInit } from "./debugtool";
 import LayerEV from "./runtime/layer/ev";
 import YZLayerMgr from "./ui/layermgr";
-import SoundEffect from "./runtime/se";
+import Sound from "./runtime/sound";
 
 export default async function Init() {
     // see: https://github.com/ant-design/ant-design/issues/13836
@@ -21,6 +21,6 @@ export default async function Init() {
     YZVideo.Init();
     YZLayerMgr.Init();
     LayerEV.Init();
-    SoundEffect.Init();
+    Sound.Init();
     DebugInit();
 }
