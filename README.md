@@ -36,6 +36,7 @@ This project is a experiment about running Galgame in modern browser, it's origi
 - [x] 改进的选择支    Improved Select
 - [x] 音效    Sound effect
 ### 正在工作 WIP
+- [ ] 时间逻辑    Timing Logic
 - [ ] 基本动画    Basic Animation
 - [ ] 不再依赖jQuery    Remove jQuery
 ### 近期 Soon
@@ -43,6 +44,7 @@ This project is a experiment about running Galgame in modern browser, it's origi
 - [ ] 自动播放    Auto Play
 ### 可能要鸽 Sooo......oon
 - [ ] 支持千恋万花    Support Senren Banka
+- [ ] 支持Bra-ban    Support Bra-ban
 - [ ] 封装成Electron程序    Pack With Electron
 - [ ] CG观赏与回想    CG And Scene Viewer
 - [ ] TJS编译器    .tjs Compiler
