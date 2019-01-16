@@ -3,7 +3,6 @@ import LayerChara from "./runtime/layer/chara";
 import LayerHandler from "./runtime/layerhandler";
 import YZSelect from "./runtime/select";
 import TJSVM from "./tjsvm";
-import YZSound from "./ui/sound";
 import YZText from "./ui/text";
 import YZVideo from "./ui/video";
 import Sound from "./runtime/sound";
@@ -19,7 +18,7 @@ export default class Runtime {
             select: async cmd => YZSelect.Select(),
             seladd: cmd => YZSelect.SelectAdd(cmd),
             next: cmd => YZSelect.Next(cmd),
-            bgm: cmd => YZSound.BGM(cmd),
+            bgm: cmd => Sound.Process(cmd),
             eval: cmd => { TJSVM.eval(cmd.param.exp as string); return undefined; },
             // macro, native impliement
             opmovie: async () => YZVideo.OP(),

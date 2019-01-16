@@ -1,10 +1,10 @@
 import ObjectMapper from "../../objectmapper";
-import YZSound from "../../ui/sound";
 import YZText from "../../ui/text";
 import FilePath from "../../utils/filepath";
 import KRCSV from "../../utils/krcsv";
 import { KAGConst } from "../../const";
 import LayerBase from "./base";
+import Sound from "../sound";
 
 interface LayerCharaDress {
     [dressname: string]: {
@@ -282,6 +282,14 @@ export default class LayerChara extends LayerBase {
         }
         // drop extension
         stxt = (stxt as string).replace(/\.[a-z0-9]{2,5}$/i, "");
-        YZSound.Voice(stxt);
+        const pseudoCmd: KSFunc = {
+            type: "func",
+            name: this.name,
+            option: [],
+            param: {
+                storage: stxt
+            },
+        };
+        Sound.Process(pseudoCmd);
     }
 }

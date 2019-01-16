@@ -1,5 +1,4 @@
 // Load all required stuff here
-import YZSound from "./ui/sound";
 import YZText from "./ui/text";
 import YZVideo from "./ui/video";
 import FilePath from "./utils/filepath";
@@ -16,7 +15,6 @@ export default async function Init() {
         alert("🐸🐸🐸");
     }
     await FilePath.Load();
-    YZSound.Init();
     YZText.Init();
     YZVideo.Init();
     YZLayerMgr.Init();
