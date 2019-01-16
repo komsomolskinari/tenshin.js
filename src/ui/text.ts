@@ -1,5 +1,5 @@
+import { getElem } from "../utils/dom";
 import TextHTML from "../utils/texthtml";
-import { getElem } from "../utils/util";
 
 export default class YZText {
     static nameCh: HTMLElement;

@@ -1,9 +1,9 @@
 /// <reference path="./public.d.ts" />
 
 import { VMMode } from "./const";
+import { LogVMCmd } from "./debugtool";
 import Runtime from "./runtime";
 import TJSVM from "./tjsvm";
-import { LogVMCmd } from "./debugtool";
 export default class KSVM {
     static mode = VMMode.Text;
     static hang = false;

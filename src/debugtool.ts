@@ -1,5 +1,6 @@
-import KSParser from "./utils/ksparser";
 import KSVM from "./ksvm";
+import KSParser from "./parser/ksparser";
+import { createElem } from "./utils/dom";
 import { HTMLEscape } from "./utils/util";
 
 let layerListElem: HTMLSelectElement;
@@ -29,7 +30,7 @@ const layerCmdLog: {
 } = {};
 export function LogLayerCmd(name: string, cmd: KSFunc) {
     if (layerCmdLog[name] === undefined) {
-        const o = document.createElement("option");
+        const o = createElem("option") as HTMLOptionElement;
         o.value = name;
         o.innerText = name;
         layerListElem.appendChild(o);

@@ -2,10 +2,10 @@
 import LayerChara from "./runtime/layer/chara";
 import LayerHandler from "./runtime/layerhandler";
 import YZSelect from "./runtime/select";
+import Sound from "./runtime/sound";
 import TJSVM from "./tjsvm";
 import YZText from "./ui/text";
 import YZVideo from "./ui/video";
-import Sound from "./runtime/sound";
 export default class Runtime {
     // Callback function map
     // Always use arrow function, or Firefox will 'this is undefined'

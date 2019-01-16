@@ -1,5 +1,5 @@
+import { createElem, getElem, removeThisListener } from "../utils/dom";
 import FilePath from "../utils/filepath";
-import { getElem, removeThisListener } from "../utils/util";
 
 interface YZLayerData {
     width: number;
@@ -19,8 +19,7 @@ class YZSubLayer {
 
     constructor(name: string, parent: HTMLElement) {
         this.name = name;
-        const elem = document.createElement("img");
-        elem.id = `sublayer_${this.name}`;
+        const elem = createElem("img", `sublayer_${this.name}`) as HTMLImageElement;
         parent.appendChild(elem);
         this.fd = elem;
         this.fd.style.display = "none";
@@ -108,8 +107,7 @@ export default class YZLayer {
         this.sublayer = {};
         // generate div if not exist
         if (this.fd === null) {
-            const elem = document.createElement("div");
-            elem.id = `layer_${this.name}`;
+            const elem = createElem("div", `layer_${this.name}`);
             elem.style.zIndex = (zindex || 1).toString();
             YZLayer.rootDOM.appendChild(elem);
             this.fd = elem;

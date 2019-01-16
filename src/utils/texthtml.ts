@@ -1,4 +1,4 @@
-import KSParser from "./ksparser";
+import KSParser from "../parser/ksparser";
 /**
  * convert text with ks format cmd to html
  * @param txt Text with KAG tag

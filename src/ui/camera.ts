@@ -1,4 +1,4 @@
-import { getElem } from "../utils/util";
+import { getElem } from "../utils/dom";
 
 export default class YZCamera {
     private static instance: YZCamera;

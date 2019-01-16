@@ -1,11 +1,11 @@
 // Load all required stuff here
+import { DebugInit } from "./debugtool";
+import LayerEV from "./runtime/layer/ev";
+import Sound from "./runtime/sound";
+import YZLayerMgr from "./ui/layermgr";
 import YZText from "./ui/text";
 import YZVideo from "./ui/video";
 import FilePath from "./utils/filepath";
-import { DebugInit } from "./debugtool";
-import LayerEV from "./runtime/layer/ev";
-import YZLayerMgr from "./ui/layermgr";
-import Sound from "./runtime/sound";
 
 export default async function Init() {
     // see: https://github.com/ant-design/ant-design/issues/13836

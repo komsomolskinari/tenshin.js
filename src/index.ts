@@ -3,12 +3,12 @@
 import Init from "./init";
 import KSVM from "./ksvm";
 import ObjectMapper from "./objectmapper";
+import KSParser from "./parser/ksparser";
+import TJSON from "./parser/tjson";
 import LayerChara from "./runtime/layer/chara";
 import TJSVM from "./tjsvm";
+import { getElem } from "./utils/dom";
 import FilePath from "./utils/filepath";
-import KSParser from "./utils/ksparser";
-import TJSON from "./utils/tjson";
-import { getElem } from "./utils/util";
 
 async function LoadVMData() {
     const scriptLoadSeq = Config.Boot.InitialScripts;

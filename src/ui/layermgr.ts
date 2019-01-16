@@ -1,6 +1,6 @@
+import { getElem } from "../utils/dom";
 import YZCamera from "./camera";
 import YZLayer from "./layer";
-import { getElem } from "../utils/util";
 
 export default class YZLayerMgr {
     static layers: {

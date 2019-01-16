@@ -1,7 +1,7 @@
 import { LogLayerCmd } from "../debugtool";
+import SLIParser from "../parser/sliparser";
+import { createElem, GET, getElem } from "../utils/dom";
 import FilePath from "../utils/filepath";
-import SLIParser from "../utils/sliparser";
-import { GET, getElem } from "../utils/util";
 
 export default class Sound {
     private static basedom: HTMLElement;
@@ -47,8 +47,7 @@ export default class Sound {
 
     static getChannel(ch: string) {
         if (!this.channels[ch]) {
-            const elem = document.createElement("audio");
-            elem.id = `snd_${ch}`;
+            const elem = createElem("audio", `snd_${ch}`) as HTMLAudioElement;
             this.basedom.appendChild(elem);
             this.channels[ch] = elem;
         }

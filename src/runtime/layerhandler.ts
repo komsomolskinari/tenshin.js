@@ -1,12 +1,12 @@
+import { LogLayerCmd } from "../debugtool";
 import ObjectMapper from "../objectmapper";
+import YZLayerMgr from "../ui/layermgr";
 import LayerBase from "./layer/base";
 import LayerBG from "./layer/bg";
-import LayerChara from "./layer/chara";
-import LayerExtra from "./layer/extra";
-import LayerEV from "./layer/ev";
-import { LogLayerCmd } from "../debugtool";
 import LayerCamera from "./layer/camera";
-import YZLayerMgr from "../ui/layermgr";
+import LayerChara from "./layer/chara";
+import LayerEV from "./layer/ev";
+import LayerExtra from "./layer/extra";
 
 export default class LayerHandler {
     static isLayer(cmd: KSLine) {

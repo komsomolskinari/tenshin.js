@@ -1,5 +1,5 @@
+import { getElem, removeThisListener } from "../utils/dom";
 import FilePath from "../utils/filepath";
-import { getElem, removeThisListener } from "../utils/util";
 
 export default class YZVideo {
     static vfd: HTMLVideoElement;
