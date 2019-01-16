@@ -1,6 +1,8 @@
-import FilePath from "../utils/filepath";
 import * as $ from "jquery";
 import { LogLayerCmd } from "../debugtool";
+import FilePath from "../utils/filepath";
+import SLIParser from "../utils/sliparser";
+import { AJAX } from "../utils/util";
 
 export default class Sound {
     private static basedom: JQuery<HTMLElement>;
@@ -33,6 +35,12 @@ export default class Sound {
             let src = FilePath.findMedia(param.storage as string, "audio");
             if (!src) src = FilePath.find(param.storage as string);
             if (!src) debugger;
+
+            const filename = src.match(/^\/?(.+\/)*(.+)/)[2];
+            const sli = FilePath.find(filename + ".sli");
+            if (sli) {
+                this.parseSLI(sli);
+            }
             ch.attr("src", src);
             ch[0].play().catch(e => { return undefined; });
         }
@@ -46,5 +54,11 @@ export default class Sound {
             this.channels[ch] = $(`#snd_${ch}`);
         }
         return this.channels[ch];
+    }
+
+    static async parseSLI(file: string) {
+        const str = await AJAX(file);
+        const data = SLIParser.parse(str);
+        // TODO: Okay, apply it to real channel
     }
 }

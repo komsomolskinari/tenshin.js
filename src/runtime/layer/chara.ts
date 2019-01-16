@@ -1,10 +1,10 @@
+import { KAGConst } from "../../const";
 import ObjectMapper from "../../objectmapper";
 import YZText from "../../ui/text";
 import FilePath from "../../utils/filepath";
 import KRCSV from "../../utils/krcsv";
-import { KAGConst } from "../../const";
-import LayerBase from "./base";
 import Sound from "../sound";
+import LayerBase from "./base";
 
 interface LayerCharaDress {
     [dressname: string]: {
@@ -285,7 +285,7 @@ export default class LayerChara extends LayerBase {
         const pseudoCmd: KSFunc = {
             type: "func",
             name: this.name,
-            option: [],
+            option: ["Voice_pseudoCMD"],
             param: {
                 storage: stxt
             },
