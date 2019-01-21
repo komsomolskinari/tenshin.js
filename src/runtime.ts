@@ -1,4 +1,5 @@
 // runtime libs
+import DelayExec from "./runtime/delayexec";
 import LayerChara from "./runtime/layer/chara";
 import LayerHandler from "./runtime/layerhandler";
 import Select from "./runtime/select";
@@ -6,7 +7,6 @@ import Sound from "./runtime/sound";
 import TJSVM from "./tjsvm";
 import TextUI from "./ui/text";
 import VideoUI from "./ui/video";
-import DelayExec from "./runtime/delayexec";
 export default class Runtime {
     // Callback function map
     // Always use arrow function, or Firefox will 'this is undefined'
@@ -39,8 +39,12 @@ export default class Runtime {
     }
 
     static async Call(cmd: KSFunc): Promise<JumpDest> {
-
-        if (cmd.param.delayrun !== undefined) DelayExec.AtSoundTag(cmd, cmd.param.delayrun);
+        if (cmd.param.delayrun !== undefined) {
+            const delay = cmd.param.delayrun;
+            delete cmd.param.delayrun;
+            DelayExec.AtSoundLabel(cmd, delay);
+            return;
+        }
         cmd.name = cmd.name.toLowerCase();
         const cb = this.callbacks[cmd.name];
         let ret;

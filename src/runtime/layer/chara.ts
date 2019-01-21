@@ -218,7 +218,6 @@ export default class LayerChara extends LayerBase {
         const xrate = [0.5, 0.75, 1, 1.33, 1.5, 2][this.imageLevel];    // x coord scale rate
         const r = super.CalculatePositionWithPZoom(cmd, xrate);
         r.y = r.y || 0 + fix;
-        console.log(r);
         return r;
     }
 

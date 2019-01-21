@@ -1,17 +1,17 @@
 import { LogLayerCmd } from "../debugtool";
 import SLIParser from "../parser/sliparser";
+import SoundUI from "../ui/sound";
 import { GET } from "../utils/dom";
 import FilePath from "../utils/filepath";
-import SoundUI from "../ui/sound";
 
 export default class Sound {
-    static Process(cmd: KSFunc) {
+    static async Process(cmd: KSFunc) {
         const { name, option, param } = cmd;
-        let ch;
+        let ch: SoundUI;
         switch (name) {
             case "se":
                 LogLayerCmd("se", cmd);
-                ch = SoundUI.Get(param.buf as string);
+                ch = SoundUI.Get(param.buf);
                 break;
             case "bgm":
                 LogLayerCmd("bgm", cmd);
@@ -19,36 +19,37 @@ export default class Sound {
                 break;
             default:    // character voice pseudo command
                 LogLayerCmd("voice", cmd);
-                ch = SoundUI.Get(name);
+                ch = SoundUI.Get(name, "voice");
                 break;
         }
         if (option.includes("stop")) ch.Stop();
         if (param.storage) {
-            let src = FilePath.findMedia(param.storage as string, "audio");
-            if (!src) src = FilePath.find(param.storage as string);
+            let src = FilePath.findMedia(param.storage, "audio");
+            if (!src) src = FilePath.find(param.storage);
             if (!src) debugger;
 
             const filename = src.match(/^\/?(.+\/)*(.+)/)[2];
             const sli = FilePath.find(filename + ".sli");
-            if (sli) {
-                this.parseSLI(sli);
-            }
             ch.Src(src);
+            if (sli) {
+
+                const str = await GET(sli);
+                const data = SLIParser.parse(str);
+                const rate = 2.23 / 100000; // I'm not sure, 2.23 works for me
+
+                data.forEach(d => {
+                    switch (d.type) {
+                        case "link":
+                            ch.Link(d.from * rate, d.to * rate);
+                            break;
+                        case "label":
+                            ch.Label(d.position * rate, d.name);
+                            break;
+                    }
+                });
+                if (param.start !== undefined) ch.StartAt(param.start);
+            }
             ch.Play();
         }
-    }
-
-    static async parseSLI(file: string) {
-        const str = await GET(file);
-        const data = SLIParser.parse(str);
-        // 100000 unit = 2.2s
-        // TODO: Okay, apply it to real channel
-    }
-
-    static setJump(channel: string, jump: SLILink) {
-        const rate = 2.2 / 100000;
-        const from = jump.from * rate;
-        const to = jump.to * rate;
-        const ch = SoundUI.Get(channel);
     }
 }

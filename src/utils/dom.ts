@@ -65,7 +65,7 @@ export function getElem(str: string): HTMLElement {
  * @param str Selector
  */
 export function getElems(str: string): HTMLElement[] {
-    return [].slice.call(undefined, document.querySelectorAll(str));
+    return [].slice.call(document.querySelectorAll(str));
 }
 
 export function createElem(

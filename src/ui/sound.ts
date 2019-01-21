@@ -1,4 +1,5 @@
-import { getElem, createElem } from "../utils/dom";
+import DelayExec from "../runtime/delayexec";
+import { createElem, getElem, getElems } from "../utils/dom";
 
 export default class SoundUI {
     private static basefd: HTMLElement;
@@ -11,13 +12,13 @@ export default class SoundUI {
         this.channels.bgm.fd.loop = true;
     }
 
-    static Create(name: string) {
-        this.channels[name] = new SoundUI(name);
+    static Create(name: string, type?: string) {
+        this.channels[name] = new SoundUI(name, type);
         return this.channels[name];
     }
 
-    static Get(name: string) {
-        if (this.channels[name] === undefined) return this.Create(name);
+    static Get(name: string, type?: string) {
+        if (this.channels[name] === undefined) return this.Create(name, type);
         return this.channels[name];
     }
 
@@ -28,33 +29,51 @@ export default class SoundUI {
 
     name: string;
     fd: HTMLAudioElement;
-
+    type: string;
     event: SoundEvent[] = [];
 
     lastTick: number; // last timeline tick
-    constructor(name: string) {
+    constructor(name: string, type?: string) {
         this.name = name;
-        this.fd = createElem("audio", `snd_${name}`) as HTMLAudioElement;
+        this.type = type;
+        this.fd = createElem("audio", `snd_${name}`, type ? [`sndtype_${type}`] : undefined) as HTMLAudioElement;
         SoundUI.basefd.appendChild(this.fd);
 
         this.fd.addEventListener("timeupdate", () => {
             const cur = this.fd.currentTime;
+            let jumped = false;
             if (this.lastTick !== undefined) {
                 // calculate event to exec
                 this.event
-                    .map(ev => ev.time < cur && ev.time > this.lastTick)
-                    .forEach(ev => console.debug(ev));
+                    .filter(ev => ev.time < cur && ev.time > this.lastTick)
+                    .forEach(ev => {
+                        switch (ev.type) {
+                            case "link":
+                                if (jumped) break;
+                                this.fd.currentTime = ev.data as number;
+                                jumped = true;
+                                break;
+                            case "label":
+                                DelayExec.RecieveLabel(ev.data as string);
+                                break;
+                        }
+                    });
             }
-            console.debug("tick!");
             this.lastTick = cur;
         });
     }
 
     Src(url: string) {
+        this.fd.currentTime = 0;
         this.fd.src = url;
+        this.event = [];
     }
 
     Play() {
+        if (this.type === "voice") {
+            getElems(`.sndtype_${this.type}`)
+                .forEach((elm: HTMLAudioElement) => elm.pause());
+        }
         this.fd.play().catch(() => undefined);
     }
 
@@ -64,5 +83,25 @@ export default class SoundUI {
 
     Remove() {
         this.fd.remove();
+    }
+
+    Link(from: number, to: number) {
+        this.event.push({
+            time: from,
+            type: "link",
+            data: to,
+        } as SoundEvent);
+    }
+
+    Label(time: number, name: string) {
+        this.event.push({
+            time,
+            type: "label",
+            data: name,
+        } as SoundEvent);
+    }
+
+    StartAt(tag: string) {
+        this.fd.currentTime = this.event.filter(t => t.data === tag)[0].time;
     }
 }
