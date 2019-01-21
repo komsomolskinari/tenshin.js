@@ -179,7 +179,7 @@ export default class KSVM {
             case "func":
                 cmd.trace = this.currentpos;
                 if (cmd.param.cond) {
-                    const val = TJSVM.eval(cmd.param.cond as string);
+                    const val = TJSVM.eval(cmd.param.cond);
                     if (!val) return undefined;
                 }
                 return Runtime.Call(cmd);

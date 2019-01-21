@@ -13,7 +13,7 @@ export default class VideoUI {
         await this.Play(Config.Display.OPFile);
     }
     static async ED(cmd: KSFunc) {
-        await this.Play(cmd.param.file as string);
+        await this.Play(cmd.param.file);
     }
 
     static async Play(src: string) {

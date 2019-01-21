@@ -144,11 +144,11 @@ export default class LayerChara extends LayerBase {
         if (param.delayrun) return;
         // first, voice option:
         if (param.voice) {
-            if (!isNaN(parseInt(param.voice as string))) {
-                this.currentVoice = parseInt(param.voice as string);
+            if (!isNaN(parseInt(param.voice))) {
+                this.currentVoice = parseInt(param.voice);
             }
             else {
-                this.nextVoice = param.voice as string;
+                this.nextVoice = param.voice;
             }
         }
         const ret = this.ProcessImageCmd(cmd.option); // LayerChara.ProcessImage(cmd);

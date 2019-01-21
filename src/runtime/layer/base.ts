@@ -50,7 +50,7 @@ export default class LayerBase {
             .map((p: any) => p.level)[0])
             || undefined;
         const mapZoom = (mapZoomLevel === undefined) ? undefined : ObjectMapper.innerobj.levels[mapZoomLevel].imgzoom;
-        const paramZoom = (param.zoom !== undefined) ? parseInt(param.zoom as string) : undefined;
+        const paramZoom = (param.zoom !== undefined) ? parseInt(param.zoom) : undefined;
         const finalZoom = parseInt(mapZoom) || paramZoom;
         return finalZoom;
     }
@@ -69,8 +69,8 @@ export default class LayerBase {
             .map((p: any) => p.xpos)[0]));
         const mapX = Number.isFinite(_mapX) ? _mapX : undefined;
         // type sensitive
-        const paramX = (param.xpos !== undefined) ? parseInt(param.xpos as string) : undefined;
-        const paramY = (param.ypos !== undefined) ? parseInt(param.ypos as string) : undefined;
+        const paramX = (param.xpos !== undefined) ? parseInt(param.xpos) : undefined;
+        const paramY = (param.ypos !== undefined) ? parseInt(param.ypos) : undefined;
         const finalX = (mapX !== undefined ? mapX : paramX) * zoom;
         const finalY = paramY * zoom;
         return { x: Number.isFinite(finalX) ? finalX : undefined, y: Number.isFinite(finalY) ? finalY : undefined };

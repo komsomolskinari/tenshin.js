@@ -37,12 +37,12 @@ export default class Select {
         const p = cmd.param;
         this.mapSelectData.push(
             new SelectData(
-                p.name as string,
+                p.name,
                 {
-                    script: p.storage as string,
-                    target: p.target as string
+                    script: p.storage,
+                    target: p.target
                 },
-                p.cond as string,
+                p.cond,
                 p.place)
         );
     }
@@ -59,12 +59,12 @@ export default class Select {
         const p = cmd.param;
         this.selectData.push(
             new SelectData(
-                p.text as string,
+                p.text,
                 {
-                    script: p.storage as string,
-                    target: p.target as string
+                    script: p.storage,
+                    target: p.target,
                 },
-                p.exp as string,
+                p.exp,
                 p.storage)
         );
     }
@@ -81,10 +81,10 @@ export default class Select {
     static Next(cmd: KSFunc): JumpDest {
         const { name, param, option } = cmd;
         if (param.eval !== undefined) {
-            const r = TJSVM.eval(cmd.param.eval as string);
+            const r = TJSVM.eval(cmd.param.eval);
             // cancel jump
             if (!r) return undefined;
         }
-        return { script: param.storage as string, target: param.target as string };
+        return { script: param.storage, target: param.target };
     }
 }

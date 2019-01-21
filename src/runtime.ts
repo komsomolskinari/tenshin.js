@@ -6,6 +6,7 @@ import Sound from "./runtime/sound";
 import TJSVM from "./tjsvm";
 import TextUI from "./ui/text";
 import VideoUI from "./ui/video";
+import DelayExec from "./runtime/delayexec";
 export default class Runtime {
     // Callback function map
     // Always use arrow function, or Firefox will 'this is undefined'
@@ -19,7 +20,7 @@ export default class Runtime {
             seladd: cmd => Select.SelectAdd(cmd),
             next: cmd => Select.Next(cmd),
             bgm: cmd => Sound.Process(cmd),
-            eval: cmd => { TJSVM.eval(cmd.param.exp as string); return undefined; },
+            eval: cmd => { TJSVM.eval(cmd.param.exp); return undefined; },
             // macro, native impliement
             opmovie: async () => VideoUI.OP(),
             edmovie: async cmd => VideoUI.ED(cmd),
@@ -38,6 +39,8 @@ export default class Runtime {
     }
 
     static async Call(cmd: KSFunc): Promise<JumpDest> {
+
+        if (cmd.param.delayrun !== undefined) DelayExec.AtSoundTag(cmd, cmd.param.delayrun);
         cmd.name = cmd.name.toLowerCase();
         const cb = this.callbacks[cmd.name];
         let ret;

@@ -11,7 +11,7 @@ export default class LayerCamera extends LayerBase {
     CalculateZoom(cmd: KSFunc): number {
         const { name, option, param } = cmd;
         if (option.includes("resetcamera")) return 100;
-        return (param.camerazoom !== undefined) ? parseInt(param.camerazoom as string) : undefined;
+        return (param.camerazoom !== undefined) ? parseInt(param.camerazoom) : undefined;
     }
     CalculateName(cmd: KSFunc): string {
         return "camera";
@@ -28,8 +28,8 @@ export default class LayerCamera extends LayerBase {
         // direct reset
         if (option.includes("resetcamera")) return { x: 0, y: 0 };
         // type sensitive
-        const paramX = (param.camerax !== undefined) ? parseInt(param.camerax as string) : undefined;
-        const paramY = (param.cameray !== undefined) ? parseInt(param.cameray as string) : undefined;
+        const paramX = (param.camerax !== undefined) ? parseInt(param.camerax) : undefined;
+        const paramY = (param.cameray !== undefined) ? parseInt(param.cameray) : undefined;
         const finalX = paramX * zoom;
         const finalY = paramY * zoom;
         return { x: Number.isFinite(finalX) ? -finalX : undefined, y: Number.isFinite(finalY) ? finalY : undefined };

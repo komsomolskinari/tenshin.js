@@ -26,7 +26,7 @@ export default class LayerBG extends LayerBase {
                 this.stage = ObjectMapper.GetProperty(name);
 
                 // inline time
-                const inlineTime = (option.filter(o => ObjectMapper.TypeOf(o as string) === "times") || [])[0];
+                const inlineTime = (option.filter(o => ObjectMapper.TypeOf(o) === "times") || [])[0];
                 if (inlineTime) {
                     this.daytime = ObjectMapper.GetProperty(inlineTime);
                 }

@@ -57,9 +57,9 @@ export default class LayerEV extends LayerBase {
     }
     CalculateSubLayer(cmd: KSFunc): LayerInfo[] {
         const { name, option, param } = cmd;
-        let evs: string[] = (option as string[]).filter((o) => this.cglist.includes(o));
+        let evs: string[] = (option).filter((o) => this.cglist.includes(o));
         if (evs.length === 0) {
-            evs = (option as string[]).filter((o) => FilePath.findMedia(o, "image"));
+            evs = (option).filter((o) => FilePath.findMedia(o, "image"));
             if (evs.length === 0) {
                 console.warn("CG.EV: no ev", cmd);
                 return [];

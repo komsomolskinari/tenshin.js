@@ -18,14 +18,14 @@ export default class LayerExtra extends LayerBase {
         switch (cmd.name) {
             case "newlay":
                 const { name, option, param } = cmd;
-                const lname = param.name as string;
-                const lfile = param.file as string;
+                const lname = param.name;
+                const lfile = param.file;
                 if (!lfile) { return; }
                 ObjectMapper.AddLayer(lname);
                 return [{ name: lfile }];
             case "dellay":
-                LayerUIMgr.Unset(cmd.param.name as string);
-                ObjectMapper.RemoveLayer(cmd.param.name as string);
+                LayerUIMgr.Unset(cmd.param.name);
+                ObjectMapper.RemoveLayer(cmd.param.name);
                 return undefined;
             default:
                 return [];
@@ -35,14 +35,14 @@ export default class LayerExtra extends LayerBase {
         switch (cmd.name) {
             case "newlay":
                 const { name, option, param } = cmd;
-                const lname = param.name as string;
-                const lfile = param.file as string;
+                const lname = param.name;
+                const lfile = param.file;
                 if (!lfile) { return; }
                 ObjectMapper.AddLayer(lname);
                 return lname;
             case "dellay":
-                LayerUIMgr.Unset(cmd.param.name as string);
-                ObjectMapper.RemoveLayer(cmd.param.name as string);
+                LayerUIMgr.Unset(cmd.param.name);
+                ObjectMapper.RemoveLayer(cmd.param.name);
                 return "";
             default:
                 return cmd.name;
