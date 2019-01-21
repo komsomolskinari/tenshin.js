@@ -14,7 +14,7 @@ test("func option", () => {
 });
 test("func param", () => {
     expect(KSParser.parse("[f opt=101]"))
-        .toMatchObject([{ type: "func", name: "f", option: [], param: { opt: 101 } }]);
+        .toMatchObject([{ type: "func", name: "f", option: [], param: { opt: "101" } }]);
 });
 test("mix func", () => {
     expect(KSParser.parse("[f opt param=poi]"))
@@ -96,11 +96,11 @@ test("parse real script", () => {
             { type: "entry", name: "0408" },
             { type: "func", name: "initscene", option: [], param: {} },
             { type: "func", name: "eval", option: [], param: { exp: "f.voiceBase=\"001\"" } },
-            { type: "func", name: "神様", option: ["50%"], param: { voice: -1 } },
+            { type: "func", name: "神様", option: ["50%"], param: { voice: "-1" } },
             { type: "func", name: "date", option: ["0408", "hide"], param: {} },
             { type: "text", name: undefined, text: "キス　【ｋｉｓｓ】", display: undefined },
             { type: "func", name: "bgm", option: [], param: { storage: "bgm13" } },
             { type: "text", name: "神様", text: "「んっ……んっ」", display: "？？？" },
-            { type: "func", name: "街角", option: [], param: { zoom: 115, xpos: 230, ypos: 80, blur: 0 } },
+            { type: "func", name: "街角", option: [], param: { zoom: "115", xpos: "230", ypos: "80", blur: "0" } },
         ]);
 });

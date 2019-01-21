@@ -1,11 +1,9 @@
-declare type JSONObject = PrimitiveObject | Array<any> | string | number | boolean | null
-declare type PrimitiveType = string | number | boolean | null | undefined
 declare interface KeyValuePair {
     key: string,
-    value: JSONObject,
+    value: string,
 }
-declare interface PrimitiveObject {
-    [key: string]: JSONObject
+declare interface ParamObject {
+    [key: string]: string
 }
 
 declare type KSLine = KSEntry | KSText | KSFunc
@@ -29,7 +27,7 @@ declare interface KSText {
 declare interface KSFunc {
     type: "func",
     name: string,
-    param: PrimitiveObject,
+    param: ParamObject,
     option: string[],   // string array, convert on demand
     map?: number,
     trace?: VMPosition  // optional stack trace

@@ -94,7 +94,7 @@ export default class KSParser {
             function keyvalue() {
                 const ret: {
                     key: string,
-                    value: JSONObject,
+                    value: string,
                     haveValue: boolean
                 } = {
                     key: undefined,
@@ -106,18 +106,17 @@ export default class KSParser {
                 white();
                 if (currentChar === "=") {
                     ret.haveValue = true;
-                    let r;
                     if (next() <= " ") white();
                     switch (currentChar as string) {
                         case "\"":
                         case "'":
-                            r = str();
+                            ret.value = str();
                             break;
                         default:
-                            r = ident();
+                            ret.value = ident();
                             break;
                     }
-                    ret.value = AutoType(r);
+                    if (!ret.value) ret.value = undefined;
                 }
                 return ret;
             }
