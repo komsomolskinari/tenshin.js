@@ -1,6 +1,6 @@
 import { LogLayerCmd } from "../debugtool";
 import ObjectMapper from "../objectmapper";
-import YZLayerMgr from "../ui/layermgr";
+import LayerUIMgr from "../ui/layermgr";
 import LayerBase from "./layer/base";
 import LayerBG from "./layer/bg";
 import LayerCamera from "./layer/camera";
@@ -29,8 +29,8 @@ export default class LayerHandler {
         const zindex = instance.zindex;
         const size = instance.CalculateSize(cmd);
         const center = instance.CalculateZoomCenter(cmd);
-        if (reload) YZLayerMgr.Unset(name);
-        const layer = YZLayerMgr.Set(name, controlData, zindex);
+        if (reload) LayerUIMgr.Unset(name);
+        const layer = LayerUIMgr.Set(name, controlData, zindex);
         layer.Move(position);
         layer.Zoom(zoom);
         layer.SetZoomCenter(center);

@@ -1,11 +1,11 @@
 // Load all required stuff here
 import { DebugInit } from "./debugtool";
 import LayerEV from "./runtime/layer/ev";
-import Sound from "./runtime/sound";
-import YZLayerMgr from "./ui/layermgr";
-import YZText from "./ui/text";
-import YZVideo from "./ui/video";
+import LayerUIMgr from "./ui/layermgr";
+import TextUI from "./ui/text";
+import VideoUI from "./ui/video";
 import FilePath from "./utils/filepath";
+import SoundUI from "./ui/sound";
 
 export default async function Init() {
     // see: https://github.com/ant-design/ant-design/issues/13836
@@ -15,10 +15,10 @@ export default async function Init() {
         alert("🐸🐸🐸");
     }
     await FilePath.Load();
-    YZText.Init();
-    YZVideo.Init();
-    YZLayerMgr.Init();
+    TextUI.Init();
+    VideoUI.Init();
+    LayerUIMgr.Init();
     LayerEV.Init();
-    Sound.Init();
+    SoundUI.Init();
     DebugInit();
 }

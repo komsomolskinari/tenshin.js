@@ -1,7 +1,7 @@
 import { SelectData } from "../runtime/select";
 import { createElem, getElem } from "../utils/dom";
 
-export default class YZSelectUI {
+export default class SelectUI {
     static async Select(data: SelectData[]) {
         const r: number = await new Promise((resolve, reject) => {
             data.forEach((d: SelectData, i: number) => {

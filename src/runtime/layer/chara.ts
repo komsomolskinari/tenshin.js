@@ -1,10 +1,20 @@
-import { KAGConst } from "../../const";
 import ObjectMapper from "../../objectmapper";
-import YZText from "../../ui/text";
+import TextUI from "../../ui/text";
 import FilePath from "../../utils/filepath";
 import KRCSV from "../../utils/krcsv";
 import Sound from "../sound";
 import LayerBase from "./base";
+
+enum KAGConst {
+    Both = "KAGEnvImage.BOTH",
+    BU = "KAGEnvImage.BU",
+    Clear = "KAGEnvImage.CLEAR",
+    Face = "KAGEnvImage.FACE",
+    Invisible = "KAGEnvImage.INVISIBLE",
+    DispPosition = "KAGEnvironment.DISPPOSITION",
+    XPosition = "KAGEnvironment.XPOSITION",
+    Level = "KAGEnvironment.LEVEL"
+}
 
 interface LayerCharaDress {
     [dressname: string]: {
@@ -249,7 +259,7 @@ export default class LayerChara extends LayerBase {
             else display = this.name;
         }
         this.Voice();
-        YZText.Print(text, display);
+        TextUI.Print(text, display);
     }
 
     /**

@@ -1,10 +1,10 @@
 import { getElem } from "../utils/dom";
 
-export default class YZCamera {
-    private static instance: YZCamera;
-    static GetInstance(): YZCamera {
+export default class CameraUI {
+    private static instance: CameraUI;
+    static GetInstance(): CameraUI {
         if (this.instance === undefined) {
-            this.instance = new YZCamera();
+            this.instance = new CameraUI();
         }
         return this.instance;
     }

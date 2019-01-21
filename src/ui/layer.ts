@@ -1,7 +1,7 @@
 import { createElem, getElem, removeThisListener } from "../utils/dom";
 import FilePath from "../utils/filepath";
 
-interface YZLayerData {
+interface LayerData {
     width: number;
     height: number;
     left: number;
@@ -11,7 +11,7 @@ interface YZLayerData {
 }
 
 // Sub layer operation
-class YZSubLayer {
+class SubLayerUI {
     name: string;
     private fd: HTMLImageElement;
     private x: number;
@@ -66,11 +66,11 @@ class YZSubLayer {
     }
 }
 
-export default class YZLayer {
+export default class LayerUI {
     static rootDOM: HTMLElement;
     name: string;
 
-    private previous: YZLayerData = {
+    private previous: LayerData = {
         width: 0,
         height: 0,
         left: 0,    // relative offset with center
@@ -78,14 +78,14 @@ export default class YZLayer {
         zoom: 100,
         files: [],
     };
-    private current: YZLayerData;
+    private current: LayerData;
     private transIn: any[] = [];
     private transOut: any[] = [];
     private actionSeq: any[] = [];
     private showed = true;
 
     private fd: HTMLElement;
-    private sublayer: { [name: string]: YZSubLayer } = {};
+    private sublayer: { [name: string]: SubLayerUI } = {};
 
     constructor(name: string, files: LayerInfo[], zindex?: number) {
         this.name = name;
@@ -109,7 +109,7 @@ export default class YZLayer {
         if (this.fd === null) {
             const elem = createElem("div", `layer_${this.name}`);
             elem.style.zIndex = (zindex || 1).toString();
-            YZLayer.rootDOM.appendChild(elem);
+            LayerUI.rootDOM.appendChild(elem);
             this.fd = elem;
         }
     }
@@ -150,7 +150,7 @@ export default class YZLayer {
         const deleted = onScreenlayer.filter(l => !newLayers.includes(l));
         const added = newLayers.filter(l => !onScreenlayer.includes(l));
         // oldLayers.forEach(f => this.subfd[f].finish());
-        added.forEach(f => this.sublayer[f] = new YZSubLayer(f, this.fd));
+        added.forEach(f => this.sublayer[f] = new SubLayerUI(f, this.fd));
 
         // execute transOut
         // Apply for all missing layer

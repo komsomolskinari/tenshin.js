@@ -1,7 +1,7 @@
 import { getElem } from "../utils/dom";
 import TextHTML from "../utils/texthtml";
 
-export default class YZText {
+export default class TextUI {
     static nameCh: HTMLElement;
     static textCh: HTMLElement;
     static Init() {

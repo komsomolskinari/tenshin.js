@@ -1,9 +1,17 @@
 /// <reference path="./public.d.ts" />
 
-import { VMMode } from "./const";
 import { LogVMCmd } from "./debugtool";
 import Runtime from "./runtime";
 import TJSVM from "./tjsvm";
+
+enum VMMode {
+    Step,   // stop per step
+    Text,   // stop per text
+    Auto,   // stop per text, wait all async operation, and continue
+    Quick,  // stop per text, continue after 20 ms?
+    Select, // stop when jump occured, shutdown ui
+}
+
 export default class KSVM {
     static mode = VMMode.Text;
     static hang = false;

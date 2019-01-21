@@ -1,14 +1,14 @@
 import { getElem } from "../utils/dom";
-import YZCamera from "./camera";
-import YZLayer from "./layer";
+import CameraUI from "./camera";
+import LayerUI from "./layer";
 
-export default class YZLayerMgr {
+export default class LayerUIMgr {
     static layers: {
-        [name: string]: YZLayer
+        [name: string]: LayerUI
     } = {};
 
     static Init() {
-        YZLayer.rootDOM = getElem("#camera");
+        LayerUI.rootDOM = getElem("#camera");
     }
 
     static Get(name: string) {
@@ -20,9 +20,9 @@ export default class YZLayerMgr {
      * @param files
      */
     static Set(name: string, files: LayerInfo[], zindex?: number) {
-        if (name === "camera") return YZCamera.GetInstance();
+        if (name === "camera") return CameraUI.GetInstance();
         if (!this.layers[name]) {
-            this.layers[name] = new YZLayer(name, files, zindex);
+            this.layers[name] = new LayerUI(name, files, zindex);
         }
         else {
             if (files && files.length > 0) this.layers[name].SetSubLayer(files);

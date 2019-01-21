@@ -1,5 +1,15 @@
-import { KAGConst } from "../../const";
 import ObjectMapper from "../../objectmapper";
+
+enum KAGConst {
+    Both = "KAGEnvImage.BOTH",
+    BU = "KAGEnvImage.BU",
+    Clear = "KAGEnvImage.CLEAR",
+    Face = "KAGEnvImage.FACE",
+    Invisible = "KAGEnvImage.INVISIBLE",
+    DispPosition = "KAGEnvironment.DISPPOSITION",
+    XPosition = "KAGEnvironment.XPOSITION",
+    Level = "KAGEnvironment.LEVEL"
+}
 
 export default class LayerBase {
     readonly zindex: number = 10;

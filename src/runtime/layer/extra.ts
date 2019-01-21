@@ -1,6 +1,6 @@
 import LayerBase from "./base";
 import ObjectMapper from "../../objectmapper";
-import YZLayerMgr from "../../ui/layermgr";
+import LayerUIMgr from "../../ui/layermgr";
 export default class LayerExtra extends LayerBase {
     readonly zindex = 17;
     public static Init() {
@@ -24,7 +24,7 @@ export default class LayerExtra extends LayerBase {
                 ObjectMapper.AddLayer(lname);
                 return [{ name: lfile }];
             case "dellay":
-                YZLayerMgr.Unset(cmd.param.name as string);
+                LayerUIMgr.Unset(cmd.param.name as string);
                 ObjectMapper.RemoveLayer(cmd.param.name as string);
                 return undefined;
             default:
@@ -41,7 +41,7 @@ export default class LayerExtra extends LayerBase {
                 ObjectMapper.AddLayer(lname);
                 return lname;
             case "dellay":
-                YZLayerMgr.Unset(cmd.param.name as string);
+                LayerUIMgr.Unset(cmd.param.name as string);
                 ObjectMapper.RemoveLayer(cmd.param.name as string);
                 return "";
             default:

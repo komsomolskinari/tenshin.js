@@ -1,5 +1,5 @@
 import TJSVM from "../tjsvm";
-import YZSelectUI from "../ui/select";
+import SelectUI from "../ui/select";
 
 export class SelectData {
     text: string;
@@ -49,7 +49,7 @@ export default class Select {
 
     // raise a map select
     static async MapSelect() {
-        const ro = await YZSelectUI.MSelect(this.mapSelectData);
+        const ro = await SelectUI.MSelect(this.mapSelectData);
         this.mapSelectData = [];
         if (!ro.dest) return undefined;
         return ro.dest;
@@ -71,7 +71,7 @@ export default class Select {
 
     // raise a normal select
     static async Select() {
-        const ro = await YZSelectUI.Select(this.selectData);
+        const ro = await SelectUI.Select(this.selectData);
         if (ro.operation) TJSVM.eval(ro.operation);
         this.selectData = [];
         if (!ro.dest) return undefined;
