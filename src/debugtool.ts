@@ -1,7 +1,6 @@
 import KSVM from "./ksvm";
 import KSParser from "./parser/ksparser";
-import { createElem } from "./utils/dom";
-import { HTMLEscape } from "./utils/util";
+import { createElem, HTMLEscape } from "./utils/dom";
 
 let layerListElem: HTMLSelectElement;
 let layerLogElem: HTMLUListElement;

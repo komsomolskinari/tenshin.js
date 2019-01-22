@@ -1,7 +1,7 @@
 import ObjectMapper from "../../objectmapper";
 import TextUI from "../../ui/text";
 import FilePath from "../../utils/filepath";
-import KRCSV from "../../utils/krcsv";
+import KRCSV from "../../parser/krcsv";
 import Sound from "../sound";
 import LayerBase from "./base";
 

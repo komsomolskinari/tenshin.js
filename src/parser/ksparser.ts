@@ -1,7 +1,6 @@
 /// <reference path="./parser.d.ts" />
 // TODO: kirikiri-parser module?
 // KAG Script parser
-import { AutoType } from "../utils/util";
 
 /**
  * @class KSParser

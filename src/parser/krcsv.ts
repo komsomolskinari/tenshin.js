@@ -1,6 +1,22 @@
 // csv & tab-seprate txt parser
 // TODO: How about https://github.com/adaltas/node-csv-parse
-import { AutoType } from "./util";
+/**
+ * Auto convert data type from string
+ * @param str
+ */
+export function AutoType(str: string): string | number {
+    const rStr: string = str + "";
+    // try int
+    const rInt = parseInt(rStr);
+    if (!isNaN(rInt)) {
+        if ((rInt + "") === str) return rInt;
+    }
+    // try float
+    if (!isNaN(parseFloat(rStr))) return parseFloat(rStr);
+    if (rStr === "") return undefined;
+    // or keep string
+    return rStr;
+}
 
 export default class KRCSV {
     /**

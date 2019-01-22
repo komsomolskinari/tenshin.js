@@ -84,3 +84,30 @@ export function createElem(
 export function removeThisListener(e: Event, f: (e?: Event) => void) {
     e.target.removeEventListener(e.type, f);
 }
+
+// some tools
+export function ParseHTML(str: string): HTMLElement {
+    return new DOMParser()
+        .parseFromString(str, "text/html")
+        .body;
+}
+
+export function ParseXML(str: string): Element {
+    return new DOMParser()
+        .parseFromString(str, "text/xml")
+        .children[0];
+}
+
+
+export function HTMLEscape(str: string): string {
+    const map: {
+        [ch: string]: string
+    } = {
+        "&": "&amp;",
+        "<": "&lt;",
+        ">": "&gt;",
+        "\"": "&quot;",
+        "'": "&#039;"
+    };
+    return str.replace(/[&<>"']/g, m => map[m]);
+}

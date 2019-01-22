@@ -1,7 +1,6 @@
 // TODO: As independent module
 
-import { GET, getElem } from "./dom";
-import { ParseHTML, ParseXML } from "./util";
+import { GET, getElem, ParseHTML, ParseXML } from "./dom";
 
 enum ItemType { file = "file", directory = "directory" }
 interface DirItem {

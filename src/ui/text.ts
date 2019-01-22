@@ -1,5 +1,5 @@
 import { getElem } from "../utils/dom";
-import TextHTML from "../utils/texthtml";
+import TextHTML from "../parser/texthtml";
 
 export default class TextUI {
     static nameCh: HTMLElement;
