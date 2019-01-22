@@ -4,9 +4,7 @@
 ![图文无关](doc/神社娘.webp)
 *图文无关*
 ## 这是什么 What's this
-本项目是在当代浏览器上面跑Galgame的一点尝试，本来的目标是在浏览器中运行[Kirikiri2引擎](https://github.com/krkrz/krkr2)的Galgame，目前尚属早期阶段，仅有基本功能。
-
-This project is a experiment about running Galgame in modern browser, it's original task is running full [krkr2 engine](https://github.com/krkrz/krkr2) in browser. It's still in early state, basic functions only.
+本项目是在当代浏览器上面跑Galgame的一点尝试，本来的目标是在浏览器中运行[Kirikiri2引擎](https://github.com/krkrz/krkr2)的Galgame，结果因为不会写编译器变成了针对《天神乱漫》设计的解释器。目前勉勉强强可以用，基本功能从原理上来说是基本正常的。
 
 ### 项目目的
 1. 照顾没模拟器用的iOS用户
@@ -33,15 +31,14 @@ This project is a experiment about running Galgame in modern browser, it's origi
 - [x] 文件系统    File System
 - [x] 图片支持    Image
 - [x] 视频支持    Video
-- [x] 改进的选择支    Improved Select
 - [x] 音效    Sound effect
 ### 正在工作 WIP
 - [ ] 时间逻辑    Timing Logic
 - [ ] 基本动画    Basic Animation
-- [ ] 不再依赖jQuery    Remove jQuery
 ### 近期 Soon
 - [ ] 存档    Save And Load
 - [ ] 自动播放    Auto Play
+- [ ] 预加载    Preload
 ### 可能要鸽 Sooo......oon
 - [ ] 支持千恋万花    Support Senren Banka
 - [ ] 支持Bra-ban    Support Bra-ban

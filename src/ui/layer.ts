@@ -183,6 +183,7 @@ export default class LayerUI {
     }
 
     private async _DrawAndCalculateSubLayer() {
+        // TODO: not 'thread safe'
         const _maxHeightArray: number[] = [];
         const _maxWidthArray: number[] = [];
         const _minHeightArray: number[] = [];
