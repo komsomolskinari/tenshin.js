@@ -1,16 +1,5 @@
 import ObjectMapper from "../../objectmapper";
 
-enum KAGConst {
-    Both = "KAGEnvImage.BOTH",
-    BU = "KAGEnvImage.BU",
-    Clear = "KAGEnvImage.CLEAR",
-    Face = "KAGEnvImage.FACE",
-    Invisible = "KAGEnvImage.INVISIBLE",
-    DispPosition = "KAGEnvironment.DISPPOSITION",
-    XPosition = "KAGEnvironment.XPOSITION",
-    Level = "KAGEnvironment.LEVEL"
-}
-
 export default class LayerBase {
     readonly zindex: number = 10;
     protected reload = false;
@@ -28,17 +17,6 @@ export default class LayerBase {
         let needShow;
         if (option.includes("show")) needShow = true;
         if (option.includes("hide")) needShow = false;
-        const mapped = ObjectMapper.ConvertAll(option);
-        const mapShowOpt = ((mapped.positions || [])
-            .filter((p: any) => p.disp !== undefined)
-            .map((p: any) => p.disp)[0])
-            || undefined;
-        let mapShow;
-        if (mapShowOpt !== undefined) {
-            if ([KAGConst.Both, KAGConst.BU].includes(mapShowOpt)) mapShow = true;
-            else mapShow = false;
-        }
-        needShow = (needShow === undefined) ? mapShow : needShow;
         return needShow;
     }
     CalculateZoom(cmd: KSFunc): number {

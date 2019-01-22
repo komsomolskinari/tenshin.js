@@ -7,6 +7,7 @@ Tenshin.js engine test
 [seladd text="Text" target="*test_text"]
 [seladd text="Character xpos" target="*test_xpos"]
 [seladd text="Character zoom and align" target="*test_ypos"]
+[seladd text="Character show hide" target="*test_show_hide"]
 [seladd text="System" target="*test_end"]
 [select]
 *test_end|
@@ -222,4 +223,51 @@ clear
 [老竹 消]
 [春樹 消]
 [眞一郎 消]
+[next target="*test_menu"]
+
+*test_show_hide
+;we need more test for 消
+SOH
+[佐奈 制服春 出 中 75% 101]
+出->立
+[佐奈 立 中 75% 101]
+立->消
+[佐奈 消 101]
+消->顔
+[佐奈 顔 101]
+顔->無
+[佐奈 無 101]
+無->出
+[佐奈 出 101]
+出->消
+[佐奈 消 101]
+消->無
+[佐奈 無 101]
+無->立
+[佐奈 立 101]
+立->顔
+[佐奈 顔 101]
+顔->出
+[佐奈 出 101]
+出->顔
+[佐奈 顔 101]
+顔->立
+[佐奈 立 101]
+立->無
+[佐奈 無 101]
+無->消
+[佐奈 消 101]
+消->出
+[佐奈 出 101]
+出->無
+[佐奈 無 101]
+無->顔
+[佐奈 顔 101]
+顔->消
+[佐奈 消 101]
+消->立
+[佐奈 立 101]
+立->出
+[佐奈 出 101]
+EOF
 [next target="*test_menu"]

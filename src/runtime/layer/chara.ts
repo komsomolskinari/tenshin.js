@@ -6,11 +6,11 @@ import Sound from "../sound";
 import LayerBase from "./base";
 
 enum KAGConst {
-    Both = "KAGEnvImage.BOTH",
-    BU = "KAGEnvImage.BU",
-    Clear = "KAGEnvImage.CLEAR",
-    Face = "KAGEnvImage.FACE",
-    Invisible = "KAGEnvImage.INVISIBLE",
+    Both = "KAGEnvImage.BOTH",      // 出
+    BU = "KAGEnvImage.BU",          // 立
+    Clear = "KAGEnvImage.CLEAR",    // 消
+    Face = "KAGEnvImage.FACE",      // 顔
+    Invisible = "KAGEnvImage.INVISIBLE",    // 無 (unused)
     DispPosition = "KAGEnvironment.DISPPOSITION",
     XPosition = "KAGEnvironment.XPOSITION",
     Level = "KAGEnvironment.LEVEL"
@@ -29,7 +29,6 @@ interface LayerCharaFace {
         [faceid: string]: string[];
     };
 }
-
 interface LayerCharaCoord {
     [variant: string]: {
         [subvariant: string]: {
@@ -154,6 +153,32 @@ export default class LayerChara extends LayerBase {
         const ret = this.ProcessImageCmd(cmd.option); // LayerChara.ProcessImage(cmd);
         if (!ret) debugger;
         return ret;
+    }
+
+    CalculateShowHide(cmd: KSFunc): boolean {
+        const { name, option, param } = cmd;
+        let needShow = super.CalculateShowHide(cmd);
+        const mapped = ObjectMapper.ConvertAll(option);
+        const mapShowOpt = ((mapped.positions || [])
+            .filter((p: any) => p.disp !== undefined)
+            .map((p: any) => p.disp)[0])
+            || undefined;
+
+        let mapShow;
+        if (mapShowOpt !== undefined) {
+            if ([KAGConst.Both, KAGConst.BU].includes(mapShowOpt)) mapShow = true;
+            else if (mapShowOpt === KAGConst.Clear) {
+                // not so clear
+                if (this.dispPos === KAGConst.Clear) mapShow = true;
+                else mapShow = false; // should = !lastState
+            }
+            else mapShow = false;
+            this.dispPos = mapShowOpt;
+        }
+        needShow = (mapShow !== undefined) ? mapShow : needShow;
+        if (needShow === undefined) needShow = this.showedInDom;
+        else this.showedInDom = needShow;
+        return needShow;
     }
 
     CalculateName(cmd: KSFunc): string {
