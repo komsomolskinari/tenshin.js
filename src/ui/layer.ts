@@ -1,6 +1,6 @@
 import { createElem, getElem, removeThisListener } from "../utils/dom";
 import FilePath from "../utils/filepath";
-import LayersToBlob from "../utils/canvas";
+import { LayersToBlob, GetLayerSize } from "../utils/canvas";
 
 interface LayerData {
     width: number;
@@ -9,63 +9,6 @@ interface LayerData {
     top: number;
     zoom: number;
     files: LayerInfo[];
-}
-
-// Sub layer operation
-// we wont need them anymore
-class SubLayerUI {
-    name: string;
-    private fd: HTMLImageElement;
-    private x: number;
-    private y: number;
-
-    constructor(name: string, parent: HTMLElement) {
-        this.name = name;
-        const elem = createElem("img", `sublayer_${this.name}`) as HTMLImageElement;
-        parent.appendChild(elem);
-        this.fd = elem;
-        this.fd.style.display = "none";
-        this.fd.src = FilePath.findByType(this.name, "image");
-    }
-
-    Draw(offset: Point) {
-        const { x: _left, y: _top } = offset;
-        this.fd.style.left = _left + "px";
-        this.fd.style.top = _top + "px";
-        this.fd.style.display = "";
-    }
-
-    Delete() {
-        this.fd.remove();
-    }
-
-    async GetSize() {
-        if (!this.x || !this.y) { // not cached
-            const elm = this.fd;
-            if (!elm.complete) { // not loaded
-                await new Promise((resolve, reject) => { // wait image loaded
-                    const cb = (e: Event) => {
-                        removeThisListener(e, cb);
-                        resolve();
-                    };
-                    this.fd.addEventListener("load", cb);
-                    const cb2 = (e: Event) => {
-                        removeThisListener(e, cb2);
-                        reject();
-                    };
-                    this.fd.addEventListener("error", cb2);
-                });
-            }
-            // ok,  now it's loaded
-            this.x = elm.naturalWidth;
-            this.y = elm.naturalHeight;
-        }
-        return [this.x, this.y];
-    }
-
-    ZIndex(z: number) {
-        this.fd.style.zIndex = z.toString();
-    }
 }
 
 export default class LayerUI {
@@ -83,8 +26,7 @@ export default class LayerUI {
     private current: LayerData;
     private showed = true;
 
-    private fd: HTMLElement;
-    private sublayer: { [name: string]: SubLayerUI } = {};
+    private fd: HTMLImageElement;
 
     constructor(name: string, files: LayerInfo[], zindex?: number) {
         this.name = name;
@@ -99,11 +41,11 @@ export default class LayerUI {
         this.current = JSON.parse(JSON.stringify(this.previous));
         this.current.files = files || [];
 
-        this.fd = getElem(`#layer_${this.name}`);
-        this.sublayer = {};
+        this.fd = getElem(`#layer_${this.name}`) as HTMLImageElement;
+
         // generate div if not exist
         if (this.fd === null) {
-            const elem = createElem("div", `layer_${this.name}`);
+            const elem = createElem("img", `layer_${this.name}`) as HTMLImageElement;
             elem.style.zIndex = (zindex || 1).toString();
             LayerUI.rootDOM.appendChild(elem);
             this.fd = elem;
@@ -114,11 +56,6 @@ export default class LayerUI {
         if (!files || files.length <= 0) return;
         // maybe diff here
         this.current.files = files || [];
-        const newLayers = this.current.files.map(l => l.name);
-        const onScreenlayer = Object.keys(this.sublayer);
-        const deleted = onScreenlayer.filter(l => !newLayers.includes(l));
-        const added = newLayers.filter(l => !onScreenlayer.includes(l));
-        if (deleted.length > 0 || added.length > 0) this.showed = true;
     }
 
     SetSize(size: Point) {
@@ -135,42 +72,23 @@ export default class LayerUI {
     // when [endtrans %TRANS%] called, set trans, then Draw()
     // rewrite to use canvas layer manipulate
     async Draw() {
+        if (!this.showed) return;
+        // cancel all animation
+        // fadeout and drop old img? for character
+        // for bg, just slide them
         const b = await LayersToBlob(this.current.files, {
             y: this.current.height,
             x: this.current.width
         });
         const u = URL.createObjectURL(b);
-        const i = new Image();
-        i.src = u;
-        debugger;
-        if (!this.showed) return;
-        // cancel all animation
-        // fadeout and drop old img? for character
-        // for bg, just slide them
+        URL.revokeObjectURL(this.fd.src);
+        this.fd.src = u;
 
-        const oldLayers = this.previous.files.map(l => l.name);
         const newLayers = this.current.files.map(l => l.name);
         if (newLayers.length === 0) {
             this.current.files = this.previous.files;
         }
-        const onScreenlayer = Object.keys(this.sublayer);
-        const deleted = onScreenlayer.filter(l => !newLayers.includes(l));
-        const added = newLayers.filter(l => !onScreenlayer.includes(l));
-        // oldLayers.forEach(f => this.subfd[f].finish());
-        added.forEach(f => this.sublayer[f] = new SubLayerUI(f, this.fd));
 
-        // execute transOut
-        // Apply for all missing layer
-        // in fact not executed here now...
-        deleted.forEach(f => {
-            this.sublayer[f].Delete();
-            delete this.sublayer[f];
-        });
-
-        // fix z-index
-        newLayers.forEach((f, i) => {
-            this.sublayer[f].ZIndex(i);
-        });
         // execute transIn
         // Apply for all added layer
         const [_winW, _winH] = Config.Display.WindowSize;
@@ -203,7 +121,9 @@ export default class LayerUI {
                 let _width;
                 let _height;
                 if (!size || !isFinite(size.x) || !isFinite(size.y)) { // need get size
-                    [_width, _height] = await this.sublayer[name].GetSize();
+                    const t = await GetLayerSize(name);
+                    _width = t.x;
+                    _height = t.y;
                 }
                 else {
                     _width = size.x;
@@ -217,7 +137,6 @@ export default class LayerUI {
                 _maxHeightArray.push(_top + _height);
                 _minWidthArray.push(_left);
                 _minHeightArray.push(_top);
-                this.sublayer[name].Draw(_offset);
             })() // Run in IIFE, it returns a Promise
         ));  // and Promise wait all... );})())); :-)
         const _maxHeight = _maxHeightArray.reduce((p, c) => p > c ? p : c, Number.MIN_SAFE_INTEGER);

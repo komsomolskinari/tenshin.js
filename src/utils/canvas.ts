@@ -1,17 +1,17 @@
 import FilePath from "./filepath";
 import { createElem } from "./dom";
 
-export default async function LayersToBlob(layers: LayerInfo[], size?: Point): Promise<Blob> {
+export async function LayersToBlob(layers: LayerInfo[], size?: Point): Promise<Blob> {
     let maxW = Number.MIN_SAFE_INTEGER;
     let maxH = Number.MIN_SAFE_INTEGER;
     let minW = Number.MAX_SAFE_INTEGER;
     let minH = Number.MAX_SAFE_INTEGER;
-    const layerByArea: Map<number, LayerInfo> = new Map();
 
+    const layerByArea: Map<number, LayerInfo> = new Map();
     await Promise.all(layers.map(l =>
         (async () => {
             const size = await GetLayerSize(l.name);
-            const offset = l.offset || GetLayerOffset(l.name);
+            const offset = l.offset || GetLayerOffset(l.name) || { x: 0, y: 0 };
             UpdateLayer(l.name, size, offset);
             layerByArea.set(size.x * size.y + Math.random(), { name: l.name, size, offset });
             minW = minW < offset.x ? minW : offset.x;
@@ -22,9 +22,13 @@ export default async function LayersToBlob(layers: LayerInfo[], size?: Point): P
     ));
 
     const realLayers: LayerInfo[] = [
-        ...new Map([...layerByArea.entries()].sort((s1, s2) => s2[0] - s1[0])).values()];
+        ...new Map([
+            ...layerByArea.entries()
+        ].sort((s1, s2) => s2[0] - s1[0])
+        ).values()
+    ];
 
-    if (!size || !isFinite(size.x) || !isFinite(size.y)) {
+    if (!size || !isFinite(size.x) || !isFinite(size.y) || size.x === 0 || size.y === 0) {
         size = { x: maxW, y: maxH };
     }
     const canvas = createElem("canvas") as HTMLCanvasElement;
@@ -42,7 +46,7 @@ export default async function LayersToBlob(layers: LayerInfo[], size?: Point): P
     return p;
 }
 
-async function GetLayerSize(layerName: string): Promise<Point> {
+export async function GetLayerSize(layerName: string): Promise<Point> {
     const info = layerMetrics.get(layerName);
     if (info !== undefined && info.size !== undefined) return info.size;
     let loadResolve, loadReject;
@@ -54,22 +58,21 @@ async function GetLayerSize(layerName: string): Promise<Point> {
     img.src = FilePath.findByType(layerName, "image");
     img.onload = loadResolve;
     img.onerror = loadReject;
-    await loadPromise;
     layerFD.set(layerName, img);
-    if (img.naturalWidth === img.naturalHeight) debugger;
+    await loadPromise;
     return {
         x: img.naturalWidth,
         y: img.naturalHeight,
     };
 }
 
-function GetLayerOffset(layerName: string): Point {
+export function GetLayerOffset(layerName: string): Point {
     const info = layerMetrics.get(layerName);
     if (info !== undefined && info.offset !== undefined) return info.offset;
     else return undefined;
 }
 
-function UpdateLayer(layerName: string, size: Point, offset: Point) {
+export function UpdateLayer(layerName: string, size: Point, offset: Point) {
     layerMetrics.set(layerName, { name: layerName, size, offset });
 }
 

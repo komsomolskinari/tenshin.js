@@ -8,6 +8,7 @@ Tenshin.js engine test
 [seladd text="Character xpos" target="*test_xpos"]
 [seladd text="Character zoom and align" target="*test_ypos"]
 [seladd text="Character show hide" target="*test_show_hide"]
+[seladd text="EV, BG, newlay" target="*test_ev_bg_newlay"]
 [seladd text="System" target="*test_end"]
 [select]
 *test_end|
@@ -269,5 +270,25 @@ SOH
 [佐奈 立 101]
 立->出
 [佐奈 出 101]
+EOF
+[next target="*test_menu"]
+
+*test_ev_bg_newlay
+[date 0408 hide]
+[昼]
+[暗転 normal msgoff]
+date 0408 hide[r]昼[r]暗転 normal msgoff
+[EV EV0102F normal msgoff]
+[bgm storage="bgm13"]
+EV EV0102F normal msgoff[r]bgm storage="bgm13"
+
+[newlay name=effect file=name_千歳佐奈  xpos=330 ypos=75 level=1 hide]
+[effect show show_lef sync]
+
+一歩近づいて、取り出したハンカチで濡れた顔を拭おうとする我が妹、千歳佐奈。
+背伸びして手を伸ばす女の子と、その正面に立つ俺。
+
+[effect hide show_rig sync]
+[dellay name=effect]
 EOF
 [next target="*test_menu"]
