@@ -49,6 +49,8 @@ export default class SoundUI {
                     .forEach(ev => {
                         switch (ev.type) {
                             case "link":
+                                // TODO: set lastTick to undefined
+                                // avoid multiple jump
                                 if (jumped) break;
                                 this.fd.currentTime = ev.data as number;
                                 jumped = true;

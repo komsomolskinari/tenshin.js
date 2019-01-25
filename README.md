@@ -11,6 +11,7 @@
 2. 照顾没模拟器用的主机用户
 3. 照顾没虚拟机用的ARM/MIPS/Alpha/M68K... Linux/Unix用户
 4. 证明*凡是能用JS重写的必将用JS重写*
+5. 顺便探讨一下浏览器的可能性和Kirikiri引擎的可能性
 
 ### 注意
 1. 暂不严肃考虑在广域网上运行，虽然实际上可以
@@ -32,13 +33,13 @@
 - [x] 图片支持    Image
 - [x] 视频支持    Video
 - [x] 音效    Sound effect
+- [x] 时间逻辑    Timing Logic
 ### 正在工作 WIP
-- [ ] 时间逻辑    Timing Logic
 - [ ] 基本动画    Basic Animation
+- [ ] 预加载    Preload
 ### 近期 Soon
 - [ ] 存档    Save And Load
 - [ ] 自动播放    Auto Play
-- [ ] 预加载    Preload
 ### 可能要鸽 Sooo......oon
 - [ ] 支持千恋万花    Support Senren Banka
 - [ ] 支持Bra-ban    Support Bra-ban

@@ -21,6 +21,7 @@ export async function LayersToBlob(layers: LayerInfo[], size?: Point): Promise<B
         })()
     ));
 
+    // sort by area, based on these assertion: base image is always larger than diff image
     const realLayers: LayerInfo[] = [
         ...new Map([
             ...layerByArea.entries()
@@ -28,6 +29,7 @@ export async function LayersToBlob(layers: LayerInfo[], size?: Point): Promise<B
         ).values()
     ];
 
+    // size is not provided
     if (!size || !isFinite(size.x) || !isFinite(size.y) || size.x === 0 || size.y === 0) {
         size = { x: maxW, y: maxH };
     }
@@ -36,7 +38,6 @@ export async function LayersToBlob(layers: LayerInfo[], size?: Point): Promise<B
     canvas.height = size.y;
     const ctx = canvas.getContext("2d");
     realLayers.forEach(l => {
-        const img = layerFD.get(l.name);
         ctx.drawImage(layerFD.get(l.name), l.offset.x, l.offset.y);
     });
 
@@ -47,8 +48,12 @@ export async function LayersToBlob(layers: LayerInfo[], size?: Point): Promise<B
 }
 
 export async function GetLayerSize(layerName: string): Promise<Point> {
+    // try to get from cache
     const info = layerMetrics.get(layerName);
     if (info !== undefined && info.size !== undefined) return info.size;
+
+    // miss, load it
+    // "callback to promise"
     let loadResolve, loadReject;
     const loadPromise = new Promise((resolve, reject) => {
         loadResolve = resolve;
@@ -58,8 +63,11 @@ export async function GetLayerSize(layerName: string): Promise<Point> {
     img.src = FilePath.findByType(layerName, "image");
     img.onload = loadResolve;
     img.onerror = loadReject;
+    // add image fd to fd list
     layerFD.set(layerName, img);
+    // wait for load
     await loadPromise;
+    // so we can get correct size
     return {
         x: img.naturalWidth,
         y: img.naturalHeight,

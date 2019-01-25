@@ -1,12 +1,8 @@
 {
   "name": "tenshin.js",
-  "version": "v0.5.1",
+  "version": "v0.5.1-1",
   "description": "天神乱漫，Javascript实现",
   "main": "index.js",
-  "scripts": {
-    "start": "webpack && http-server dist",
-    "test": "jest"
-  },
   "keywords": [
     "galgame",
     "yuzusoft",
