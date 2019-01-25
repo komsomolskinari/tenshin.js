@@ -1,5 +1,6 @@
 import { createElem, getElem, removeThisListener } from "../utils/dom";
 import FilePath from "../utils/filepath";
+import LayersToBlob from "../utils/canvas";
 
 interface LayerData {
     width: number;
@@ -134,6 +135,11 @@ export default class LayerUI {
     // when [endtrans %TRANS%] called, set trans, then Draw()
     // rewrite to use canvas layer manipulate
     async Draw() {
+        const b = await LayersToBlob(this.current.files);
+        const u = URL.createObjectURL(b);
+        const i = new Image();
+        i.src = u;
+        debugger;
         if (!this.showed) return;
         // cancel all animation
         // fadeout and drop old img? for character
