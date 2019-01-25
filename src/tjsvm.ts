@@ -7,10 +7,10 @@ export default class TJSVM {
 
     /**
      * evaluate a tjs function
-     * @param str
+     * @param codeStr
      */
-    public static eval(str: string): any {
-        const func = new Function(...this.params, "'use strict;'; return " + str);
+    public static eval(codeStr: string): any {
+        const func = new Function(...this.params, "'use strict;'; return " + codeStr);
         // manually bind params
         const funcWithParam = this.params.reduce((f, p) => f.bind(undefined, this.objs[p]), func);
         return funcWithParam();
@@ -18,21 +18,21 @@ export default class TJSVM {
 
     /**
      * Add TJSVM variable
-     * @param name Object name
-     * @param obj Initial value, default = {}
+     * @param objectName Object name
+     * @param object Initial value, default = {}
      */
-    public static addObject(name: string, obj: { [prop: string]: any }) {
-        this.objs[name] = (obj || {});
-        this.params.push(name);
+    public static addObject(objectName: string, object: { [prop: string]: any }) {
+        this.objs[objectName] = (object || {});
+        this.params.push(objectName);
     }
 
     /**
      * Get variable
-     * @param name variable
+     * @param varName variable
      * @example TJSVM.get('f.voiceBase');
      */
-    public static get(name: string): any {
-        return name
+    public static get(varName: string): any {
+        return varName
             .split(".")
             .reduce((p, c) => p === undefined ? undefined : p[c], this.objs);
     }

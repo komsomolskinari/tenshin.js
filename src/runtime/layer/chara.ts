@@ -17,26 +17,22 @@ enum KAGConst {
 }
 
 interface LayerCharaDress {
-    [dressname: string]: {
-        [subvariant: string]: {
-            name: string;
-            prefix: string;
+    [dressname: string]: {          // 制服春
+        [subvariant: string]: {     // 1
+            name: string;           // 制服春ポーズＡ（腕差分）
+            prefix: string;         // ポーズa
         }
     };
 }
 interface LayerCharaFace {
-    [variant: string]: {
-        [faceid: string]: string[];
+    [variant: string]: {            // ポーズa
+        [faceid: string]: string[]; // 51 -> [通常１,頬染め]
     };
 }
 interface LayerCharaCoord {
-    [variant: string]: {
-        [subvariant: string]: {
-            [layername: string]: {
-                name: string;
-                offset: Point;
-                size: Point;
-            }
+    [variant: string]: {                    // ポーズa
+        [subvariant: string]: {             // 1
+            [layername: string]: LayerInfo  // 顔領域
         }
     };
 }
@@ -82,15 +78,15 @@ export default class LayerChara extends LayerBase {
         if (fgLs !== undefined) this.__LoadImageInfo(fgLs);
     }
 
-    async __LoadImageInfo(list: IndexItem) {
-        const files = Object.keys(list);
+    async __LoadImageInfo(fileList: IndexItem) {
+        const files = Object.keys(fileList);
         // load all data, limit rate here, or it will block pipe
         files.filter(f => f.match(/info\.txt$/)).forEach(f => this.__LoadChunk(f));
         files.filter(f => f.match(/[0-9]\.txt$/)).forEach(f => this.__LoadCoord(f));
     }
-    async __LoadChunk(filename: string) {
-        const chunkDefs = KRCSV.parse(await FilePath.read(filename), "\t", false);
-        const _fsp = filename.split("_");
+    async __LoadChunk(chunkFileName: string) {
+        const chunkDefs = KRCSV.parse(await FilePath.read(chunkFileName), "\t", false);
+        const _fsp = chunkFileName.split("_");
         const pfx = _fsp.slice(0, _fsp.length - 1).join("_");
         if (this.face[pfx] === undefined) {
             this.face[pfx] = {};
@@ -110,10 +106,10 @@ export default class LayerChara extends LayerBase {
             this.face[pfx][fno].push(fvstr);
         });
     }
-    async __LoadCoord(filename: string) {
-        const coordDefs = KRCSV.parse(await FilePath.read(filename), "\t");
-        const fvar = filename.match(/_([0-9])\./)[1];
-        const _fsp = filename.split("_");
+    async __LoadCoord(coordFileName: string) {
+        const coordDefs = KRCSV.parse(await FilePath.read(coordFileName), "\t");
+        const fvar = coordFileName.match(/_([0-9])\./)[1];
+        const _fsp = coordFileName.split("_");
         const pfx = _fsp.slice(0, _fsp.length - 1).join("_");
         if (this.coord[pfx] === undefined) {
             this.coord[pfx] = {};
@@ -150,7 +146,7 @@ export default class LayerChara extends LayerBase {
                 this.nextVoice = param.voice;
             }
         }
-        const ret = this.ProcessImageCmd(cmd.option); // LayerChara.ProcessImage(cmd);
+        const ret = this.ProcessImageCmd(cmd.option);
         if (!ret) debugger;
         return ret;
     }
@@ -276,14 +272,14 @@ export default class LayerChara extends LayerBase {
         return { x: 50, y: fix };
     }
 
-    Text(text: string, display: string) {
+    Text(text: string, displayName: string) {
         // display name haven't been rewrite, need set
-        if (!display) {
-            if (this.displayName) display = this.displayName;
-            else display = this.name;
+        if (!displayName) {
+            if (this.displayName) displayName = this.displayName;
+            else displayName = this.name;
         }
         this.Voice();
-        TextUI.Print(text, display);
+        TextUI.Print(text, displayName);
     }
 
     /**

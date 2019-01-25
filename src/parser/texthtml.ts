@@ -31,7 +31,7 @@ export default function TextHTML(txt: string) {
         ret += rawString.substr(_pos, pos - _pos);
         _pos = pos;
         switch (func.name) {
-            case "ruby": // [ruby text='text']c
+            case "ruby": // [ruby text='text']c -> <ruby>c<rt>text</rt></ruby>
                 ret += "<ruby>";
                 ret += rawString[_pos];
                 _pos++;
@@ -39,7 +39,7 @@ export default function TextHTML(txt: string) {
                 ret += func.param.text;
                 ret += "</rt></ruby>";
                 break;
-            case "r":  // [r]
+            case "r":  // [r] -> <br />
                 ret += "<br />";
                 break;
             default:

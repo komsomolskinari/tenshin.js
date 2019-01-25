@@ -85,7 +85,7 @@ export default class FilePath {
      * @param type file type
      * @param relative return path without root directory
      */
-    static findMedia(file: string, type: string, relative?: boolean): string {
+    static findByType(file: string, type: string, relative?: boolean): string {
         const realname = this.mediatree[type][file.toLowerCase()];
         return this.find(realname, relative);
     }
@@ -96,7 +96,7 @@ export default class FilePath {
      * @param  type file type, if undefined, file is with ext
      */
     static async read(file: string, type?: string) {
-        const path = type ? this.findMedia(file, type) : this.find(file);
+        const path = type ? this.findByType(file, type) : this.find(file);
         return GET(path);
     }
 

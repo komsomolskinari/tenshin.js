@@ -59,7 +59,7 @@ export default class LayerEV extends LayerBase {
         const { name, option, param } = cmd;
         let evs: string[] = (option).filter((o) => this.cglist.includes(o));
         if (evs.length === 0) {
-            evs = (option).filter((o) => FilePath.findMedia(o, "image"));
+            evs = (option).filter((o) => FilePath.findByType(o, "image"));
             if (evs.length === 0) {
                 console.warn("CG.EV: no ev", cmd);
                 return [];

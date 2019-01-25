@@ -16,7 +16,6 @@ export default class LayerHandler {
             .includes(ObjectMapper.TypeOf(cmd.name));
     }
 
-    // layerhandler
     static Process(cmd: KSFunc) {
         const instance = this.GetLayerInstance(cmd);
         const controlData = instance.CalculateSubLayer(cmd);

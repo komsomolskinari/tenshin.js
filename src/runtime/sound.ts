@@ -24,7 +24,7 @@ export default class Sound {
         }
         if (option.includes("stop")) ch.Stop();
         if (param.storage) {
-            let src = FilePath.findMedia(param.storage, "audio");
+            let src = FilePath.findByType(param.storage, "audio");
             if (!src) src = FilePath.find(param.storage);
             if (!src) debugger;
 

@@ -8,37 +8,37 @@ export default class ObjectMapper {
     static odatacache = {};
 
 
-    static LoadObject(obj: any) {
-        this.innerobj = obj;
+    static LoadObject(object: any) {
+        this.innerobj = object;
         for (const i of ["times", "stages", "positions", "actions", "transitions", "characters", "emotions"]) {
-            Object.keys(obj[i]).forEach(k => this.name2type[k] = i);
+            Object.keys(object[i]).forEach(k => this.name2type[k] = i);
         }
         this.objs = Object.keys(this.name2type);
     }
 
-    static AddLayer(layer: string) {
-        this.name2type[layer] = "layer";
+    static AddLayer(layerName: string) {
+        this.name2type[layerName] = "layer";
     }
 
-    static RemoveLayer(layer: string) {
-        delete this.name2type[layer];
+    static RemoveLayer(layerName: string) {
+        delete this.name2type[layerName];
     }
 
-    static GetProperty(str: string) {
-        if (!this.IsProperty(str)) return undefined;
-        const t = this.TypeOf(str);
-        return this.innerobj[t][str];
+    static GetProperty(propName: string) {
+        if (!this.IsProperty(propName)) return undefined;
+        const t = this.TypeOf(propName);
+        return this.innerobj[t][propName];
     }
 
-    static IsProperty(str: string) {
-        return this.objs.includes(str);
+    static IsProperty(propName: string) {
+        return this.objs.includes(propName);
     }
 
-    static TypeOf(str: string) {
-        return this.name2type[str];
+    static TypeOf(name: string) {
+        return this.name2type[name];
     }
 
-    static ConvertAll(option: any[]) {
+    static ConvertAll(option: string[]) {
         const mapped: {
             [key: string]: any
         } = {};

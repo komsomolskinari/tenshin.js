@@ -1,11 +1,3 @@
-declare interface KeyValuePair {
-    key: string,
-    value: string,
-}
-declare interface ParamObject {
-    [key: string]: string
-}
-
 declare type KSLine = KSEntry | KSText | KSFunc
 
 declare interface KSEntry {
@@ -27,7 +19,9 @@ declare interface KSText {
 declare interface KSFunc {
     type: "func",
     name: string,
-    param: ParamObject,
+    param: {
+        [key: string]: string
+    },
     option: string[],   // string array, convert on demand
     map?: number,
     trace?: VMPosition  // optional stack trace

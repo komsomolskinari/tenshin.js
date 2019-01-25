@@ -9,9 +9,9 @@ export default class TextUI {
         this.textCh = getElem("#chartxt");
     }
 
-    static Print(text: string, display: string) {
-        display = display || "";
-        this.nameCh.innerHTML = display;
+    static Print(text: string, displayName: string) {
+        displayName = displayName || "";
+        this.nameCh.innerHTML = displayName;
         this.textCh.innerHTML = TextHTML(text);
     }
 }

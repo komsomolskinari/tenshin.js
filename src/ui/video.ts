@@ -16,8 +16,8 @@ export default class VideoUI {
         await this.Play(cmd.param.file);
     }
 
-    static async Play(src: string) {
-        this.vfd.src = FilePath.findMedia(src, "video");
+    static async Play(url: string) {
+        this.vfd.src = FilePath.findByType(url, "video");
 
         const pm = new Promise((resolve, reject) => {
             const cb = (e: Event) => {

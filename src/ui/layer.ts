@@ -11,6 +11,7 @@ interface LayerData {
 }
 
 // Sub layer operation
+// we wont need them anymore
 class SubLayerUI {
     name: string;
     private fd: HTMLImageElement;
@@ -23,7 +24,7 @@ class SubLayerUI {
         parent.appendChild(elem);
         this.fd = elem;
         this.fd.style.display = "none";
-        this.fd.src = FilePath.findMedia(this.name, "image");
+        this.fd.src = FilePath.findByType(this.name, "image");
     }
 
     Draw(offset: Point) {
@@ -79,9 +80,6 @@ export default class LayerUI {
         files: [],
     };
     private current: LayerData;
-    private transIn: any[] = [];
-    private transOut: any[] = [];
-    private actionSeq: any[] = [];
     private showed = true;
 
     private fd: HTMLElement;
@@ -99,9 +97,6 @@ export default class LayerUI {
         };
         this.current = JSON.parse(JSON.stringify(this.previous));
         this.current.files = files || [];
-        this.transIn = [];
-        this.transOut = [];
-        this.actionSeq = [];
 
         this.fd = getElem(`#layer_${this.name}`);
         this.sublayer = {};
@@ -137,9 +132,12 @@ export default class LayerUI {
 
     // when [begintrans] called, do not exec Draw()
     // when [endtrans %TRANS%] called, set trans, then Draw()
+    // rewrite to use canvas layer manipulate
     async Draw() {
         if (!this.showed) return;
         // cancel all animation
+        // fadeout and drop old img? for character
+        // for bg, just slide them
 
         const oldLayers = this.previous.files.map(l => l.name);
         const newLayers = this.current.files.map(l => l.name);
@@ -182,6 +180,7 @@ export default class LayerUI {
         this.previous = JSON.parse(JSON.stringify(this.current));
     }
 
+    // going to remove this
     private async _DrawAndCalculateSubLayer() {
         // TODO: not 'thread safe'
         const _maxHeightArray: number[] = [];

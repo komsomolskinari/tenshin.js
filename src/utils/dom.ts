@@ -62,19 +62,19 @@ export function getElem(str: string): HTMLElement {
 
 /**
  * Shortened querySelectorAll
- * @param str Selector
+ * @param selector Selector
  */
-export function getElems(str: string): HTMLElement[] {
-    return [].slice.call(document.querySelectorAll(str));
+export function getElems(selector: string): HTMLElement[] {
+    return [].slice.call(document.querySelectorAll(selector));
 }
 
 export function createElem(
-    tag: string,
+    tagName: string,
     id?: string,
     klass?: string[],
     attr: { [key: string]: string } = {}
 ): HTMLElement {
-    const ret = document.createElement(tag);
+    const ret = document.createElement(tagName);
     if (id) ret.id = id;
     if (klass) ret.className = klass.join(" ");
     Object.keys(attr).forEach(c => ret.setAttribute(c, attr[c]));

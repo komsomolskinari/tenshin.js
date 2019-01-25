@@ -18,6 +18,7 @@ export function AutoType(str: string): string | number {
     return rStr;
 }
 
+// TODO: simplify
 export default class KRCSV {
     /**
      * Krirkiri specified CSV and tab table parser

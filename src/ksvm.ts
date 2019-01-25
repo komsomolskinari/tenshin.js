@@ -32,15 +32,15 @@ export default class KSVM {
 
     /**
      * Add a script file to VM
-     * @param name file name, without extension
+     * @param scriptName file name, without extension
      * @param script compiled script
      */
-    static AddScript(name: string, script: KSLine[]) {
-        if (Object.keys(this.scripts).includes(name)) {
-            console.debug("%c AddScript: duplicate script %s", "color:grey", name);
+    static AddScript(scriptName: string, script: KSLine[]) {
+        if (Object.keys(this.scripts).includes(scriptName)) {
+            console.debug("%c AddScript: duplicate script %s", "color:grey", scriptName);
             return;
         }
-        this.scripts[name] = script;
+        this.scripts[scriptName] = script;
         // scan tags
         script
             .map((l, i) => {
@@ -51,7 +51,7 @@ export default class KSVM {
                 });
             })
             .filter(l => l.type === "entry")
-            .forEach(l => this.AddTag(l.name, name, l.line));
+            .forEach(l => this.AddTag(l.name, scriptName, l.line));
         // scan macros
         let inMacro = false;
         let currentMacro = [];
@@ -80,24 +80,24 @@ export default class KSVM {
         }
     }
 
-    static AddTag(name: string, script: string, line: number) {
-        if (this.tags[name] === undefined) this.tags[name] = [];
-        this.tags[name].push({
-            script,
+    static AddTag(tagName: string, scriptName: string, line: number) {
+        if (this.tags[tagName] === undefined) this.tags[tagName] = [];
+        this.tags[tagName].push({
+            script: scriptName,
             line
         });
     }
 
-    static AddMacro(name: string, script: KSLine[]) {
-        this.macros[name] = script;
+    static AddMacro(scriptName: string, script: KSLine[]) {
+        this.macros[scriptName] = script;
     }
 
-    static AddBreakPoint(script: string, line: number) {
-        this.breakPoints.push({ script, line });
+    static AddBreakPoint(scriptName: string, line: number) {
+        this.breakPoints.push({ script: scriptName, line });
     }
 
-    static RemoveBreakPoint(script: string, line: number) {
-        this.breakPoints = this.breakPoints.filter(l => l.script !== script || l.line !== line);
+    static RemoveBreakPoint(scriptName: string, line: number) {
+        this.breakPoints = this.breakPoints.filter(l => l.script !== scriptName || l.line !== line);
     }
 
     /**
@@ -131,7 +131,7 @@ export default class KSVM {
         return this.scripts[this.currentpos.script][this.currentpos.line];
     }
 
-    static HitBreakPoint(position: VMPosition) {
+    static CheckBreakPoint(position: VMPosition) {
         // let bpeq = (p1, p2) => ((p1.script === p2.script) && (p1.line === p2.line));
         if (this.breakPoints.length === 0) return false;
         const cur = this.breakPoints
@@ -153,7 +153,7 @@ export default class KSVM {
                 return;
             }
             const cmd = this.CurrentCmd();
-            if (this.HitBreakPoint(this.currentpos)) {
+            if (this.CheckBreakPoint(this.currentpos)) {
                 this.hang = true;
                 this.runlock = true;
                 debugger;

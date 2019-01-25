@@ -27,22 +27,22 @@ export function DebugInit() {
 const layerCmdLog: {
     [key: string]: string[]
 } = {};
-export function LogLayerCmd(name: string, cmd: KSFunc) {
-    if (layerCmdLog[name] === undefined) {
+export function LogLayerCmd(layerName: string, cmd: KSFunc) {
+    if (layerCmdLog[layerName] === undefined) {
         const o = createElem("option") as HTMLOptionElement;
-        o.value = name;
-        o.innerText = name;
+        o.value = layerName;
+        o.innerText = layerName;
         layerListElem.appendChild(o);
-        layerCmdLog[name] = [];
+        layerCmdLog[layerName] = [];
     }
     const cmdstr = HTMLEscape(KSParser.stringify([cmd], true));
-    layerCmdLog[name].push(cmdstr);
+    layerCmdLog[layerName].push(cmdstr);
     lastLayerCmdElem.innerHTML = cmdstr;
     ShowLog(layerListElem.value);
 }
 
-function ShowLog(name: string) {
-    const layerLog = layerCmdLog[name];
+function ShowLog(layerName: string) {
+    const layerLog = layerCmdLog[layerName];
     const selectedLog = layerLog === undefined ? [] : layerLog.slice(-layerLogCountElem.value);
     layerLogElem.innerHTML = selectedLog.reduce((p, c) => `${p}<li>${c}</li>`, "");
 }
