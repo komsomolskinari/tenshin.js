@@ -16,18 +16,17 @@ export default async function LayersToBlob(layers: LayerInfo[], size?: Point): P
             layerByArea.set(size.x * size.y + Math.random(), { name: l.name, size, offset });
             minW = minW < offset.x ? minW : offset.x;
             minH = minH < offset.y ? minH : offset.y;
-            maxW = maxW > (size.x + offset.x) ? maxW : size.x + offset.x;
-            maxH = maxH > (size.y + offset.y) ? maxW : size.y + offset.y;
+            maxW = maxW > (size.x + offset.x) ? maxW : (size.x + offset.x);
+            maxH = maxH > (size.y + offset.y) ? maxH : (size.y + offset.y);
         })()
     ));
 
-    const realLayers: LayerInfo[] = [...new Map([...layerByArea.entries()].sort()).values()].reverse();
+    const realLayers: LayerInfo[] = [
+        ...new Map([...layerByArea.entries()].sort((s1, s2) => s2[0] - s1[0])).values()];
 
     if (!size || !isFinite(size.x) || !isFinite(size.y)) {
         size = { x: maxW, y: maxH };
     }
-    console.log("Use canvas size", size);
-    console.dir(realLayers);
     const canvas = createElem("canvas") as HTMLCanvasElement;
     canvas.width = size.x;
     canvas.height = size.y;
@@ -57,6 +56,7 @@ async function GetLayerSize(layerName: string): Promise<Point> {
     img.onerror = loadReject;
     await loadPromise;
     layerFD.set(layerName, img);
+    if (img.naturalWidth === img.naturalHeight) debugger;
     return {
         x: img.naturalWidth,
         y: img.naturalHeight,

@@ -135,7 +135,10 @@ export default class LayerUI {
     // when [endtrans %TRANS%] called, set trans, then Draw()
     // rewrite to use canvas layer manipulate
     async Draw() {
-        const b = await LayersToBlob(this.current.files);
+        const b = await LayersToBlob(this.current.files, {
+            y: this.current.height,
+            x: this.current.width
+        });
         const u = URL.createObjectURL(b);
         const i = new Image();
         i.src = u;
