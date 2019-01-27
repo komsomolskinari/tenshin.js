@@ -163,11 +163,11 @@ export default class LayerChara extends LayerBase {
         let mapShow;
         if (mapShowOpt !== undefined) {
             if ([KAGConst.Both, KAGConst.BU].includes(mapShowOpt)) mapShow = true;
-            else if (mapShowOpt === KAGConst.Clear) {
+            /* else if (mapShowOpt === KAGConst.Clear) {
                 // not so clear
-                if (this.dispPos === KAGConst.Clear) mapShow = true;
+                if (this.dispPos === KAGConst.Both) mapShow = true;
                 else mapShow = false; // should = !lastState
-            }
+            } */
             else mapShow = false;
             this.dispPos = mapShowOpt;
         }

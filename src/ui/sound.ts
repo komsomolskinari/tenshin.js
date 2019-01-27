@@ -66,6 +66,7 @@ export default class SoundUI {
     }
 
     Src(url: string) {
+        this.fd.pause();
         this.fd.currentTime = 0;
         this.fd.src = url;
         this.event = [];

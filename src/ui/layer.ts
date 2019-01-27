@@ -1,36 +1,25 @@
-import { createElem, getElem, removeThisListener } from "../utils/dom";
-import FilePath from "../utils/filepath";
-import { LayersToBlob, GetLayerSize } from "../utils/canvas";
-
-interface LayerData {
-    width: number;
-    height: number;
-    left: number;
-    top: number;
-    zoom: number;
-    files: LayerInfo[];
-}
+import { GetLayerSize, LayersToBlob } from "../utils/canvas";
+import { createElem, getElem } from "../utils/dom";
 
 export default class LayerUI {
     static rootDOM: HTMLElement;
     name: string;
 
-    private previous: LayerData = {
-        width: 0,
-        height: 0,
-        left: 0,    // relative offset with center
-        top: 0,     // ......
-        zoom: 100,
-        files: [],
+    private state: {
+        width: number;
+        height: number;
+        left: number;
+        top: number;
+        zoom: number;
+        files: LayerInfo[];
     };
-    private current: LayerData;
     private showed = true;
 
     private fd: HTMLImageElement;
 
     constructor(name: string, files: LayerInfo[], zindex?: number) {
         this.name = name;
-        this.previous = {
+        this.state = {
             width: 0,
             height: 0,
             left: 0,    // relative offset with center
@@ -38,8 +27,7 @@ export default class LayerUI {
             zoom: 100,
             files: [],
         };
-        this.current = JSON.parse(JSON.stringify(this.previous));
-        this.current.files = files || [];
+        this.state.files = files || [];
 
         this.fd = getElem(`#layer_${this.name}`) as HTMLImageElement;
 
@@ -54,13 +42,12 @@ export default class LayerUI {
 
     SetSubLayer(files: LayerInfo[]) {
         if (!files || files.length <= 0) return;
-        // maybe diff here
-        this.current.files = files || [];
+        this.state.files = files || [];
     }
 
     SetSize(size: Point) {
-        this.current.height = size.y;
-        this.current.width = size.x;
+        this.state.height = size.y;
+        this.state.width = size.x;
     }
 
     SetZoomCenter(pos: Point) {
@@ -73,48 +60,37 @@ export default class LayerUI {
     // rewrite to use canvas layer manipulate
     async Draw() {
         if (!this.showed) return;
-        // cancel all animation
         // fadeout and drop old img? for character
         // for bg, just slide them
-        const b = await LayersToBlob(this.current.files, {
-            y: this.current.height,
-            x: this.current.width
-        });
-        const u = URL.createObjectURL(b);
-        URL.revokeObjectURL(this.fd.src);
-        this.fd.src = u;
-
-        const newLayers = this.current.files.map(l => l.name);
-        if (newLayers.length === 0) {
-            this.current.files = this.previous.files;
-        }
-
-        // execute transIn
-        // Apply for all added layer
         const [_winW, _winH] = Config.Display.WindowSize;
         const [_maxHeight, _maxWidth, _minHeight, _minWidth] = await this._DrawAndCalculateSubLayer();
         const [_divWidth, _divHeight] = [_maxWidth + _minWidth, _maxHeight + _minHeight];
-        // when all draw complete
-        // start animation
         const [_drawWidth, _drawHeight] = [_maxWidth - _minWidth, _maxHeight - _minHeight];
         const [_divLeft, _divTop] = [
-            (_winW - _drawWidth) / 2 - _minWidth + this.current.left,
-            (_winH - _drawHeight) / 2 - _minHeight + this.current.top
+            (_winW - _drawWidth) / 2 - _minWidth + this.state.left,
+            (_winH - _drawHeight) / 2 - _minHeight + this.state.top
         ];
-        this.current.height = this.current.height || _divHeight;
-        this.current.width = this.current.width || _divWidth;
-        this._DrawLayer(_divLeft, _divTop, this.current.height, this.current.width, this.current.zoom);
-        this.previous = JSON.parse(JSON.stringify(this.current));
+        this.state.height = this.state.height || _divHeight;
+        this.state.width = this.state.width || _divWidth;
+        this._SetCSS(_divLeft, _divTop, this.state.height, this.state.width, this.state.zoom);
+
+        const blob = await LayersToBlob(this.state.files, {
+            y: this.state.height,
+            x: this.state.width
+        });
+        const url = URL.createObjectURL(blob);
+        URL.revokeObjectURL(this.fd.src);
+        this.fd.src = url; // here, image is on screen
+
     }
 
     // going to remove this
     private async _DrawAndCalculateSubLayer() {
-        // TODO: not 'thread safe'
         const _maxHeightArray: number[] = [];
         const _maxWidthArray: number[] = [];
         const _minHeightArray: number[] = [];
         const _minWidthArray: number[] = [];
-        await Promise.all(this.current.files.map(f =>
+        await Promise.all(this.state.files.map(f =>
             (async () => {
                 const { name, offset, size } = f;
                 const _offset = offset || { x: 0, y: 0 };
@@ -131,7 +107,6 @@ export default class LayerUI {
                 }
                 const THERSHOLD = 16;
                 if (_width + _height <= THERSHOLD) return;
-                // calculate image draw window
                 const { x: _left, y: _top } = _offset;
                 _maxWidthArray.push(_left + _width);
                 _maxHeightArray.push(_top + _height);
@@ -146,9 +121,10 @@ export default class LayerUI {
         return [_maxHeight, _maxWidth, _minHeight, _minWidth];
     }
 
-    private _DrawLayer(left: number, top: number, height: number, width: number, zoom: number) {
+    private _SetCSS(left: number, top: number, height: number, width: number, zoom: number) {
         const realZoom = zoom / 100;
-        this.fd.style.display = "";
+        // a final check, if showed change to false when async
+        this.fd.style.display = this.showed ? "" : "none";
         this.fd.style.top = top + "px";
         this.fd.style.left = left + "px";
         // fd height & width has unexpected influence to zoom position
@@ -163,7 +139,7 @@ export default class LayerUI {
 
     Hide() {
         this.showed = false;
-        this.fd.style.display = "none";
+        this.fd.style.display = "none"; // another hide logic
     }
 
     Delete() { // clear DOM .etc
@@ -173,11 +149,11 @@ export default class LayerUI {
     }
 
     Move(pos: Point) {
-        if (isFinite(pos.x)) this.current.left = pos.x;
-        if (isFinite(pos.y)) this.current.top = pos.y;
+        if (isFinite(pos.x)) this.state.left = pos.x;
+        if (isFinite(pos.y)) this.state.top = pos.y;
     }
 
     Zoom(zoom: number) {
-        if (isFinite(zoom)) this.current.zoom = zoom;
+        if (isFinite(zoom)) this.state.zoom = zoom;
     }
 }

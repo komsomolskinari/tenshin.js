@@ -36,8 +36,9 @@ export default class LayerHandler {
         if (size) layer.SetSize(size);
         if (show === true) layer.Show();
         else if (show === false) layer.Hide();
-        layer.Draw();
         LogLayerCmd(name, cmd);
+        // TODO: execute real draw command later?
+        layer.Draw();
         return;
     }
 

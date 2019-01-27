@@ -276,18 +276,19 @@ EOF
 *test_ev_bg_newlay
 [date 0408 hide]
 [昼]
-[暗転 normal msgoff]
-date 0408 hide[r]昼[r]暗転 normal msgoff
+[街角 zoom=115 xpos=230 ypos=80]
+date 0408 hide[r]昼[r]街角 zoom=115 xpos=230 ypos=80
+[街角 zoom=115 xpos=0 ypos=80 time=100]
+x to 0
 [EV EV0102F normal msgoff]
-[bgm storage="bgm13"]
 EV EV0102F normal msgoff[r]bgm storage="bgm13"
-
+[EV hide]
+[街角 zoom=115 xpos=230 ypos=80]
 [newlay name=effect file=name_千歳佐奈  xpos=330 ypos=75 level=1 hide]
 [effect show show_lef sync]
-
-一歩近づいて、取り出したハンカチで濡れた顔を拭おうとする我が妹、千歳佐奈。
-背伸びして手を伸ばす女の子と、その正面に立つ俺。
-
+effect  xpos=330 ypos=75 level=1
+[effect xpos=0]
+changing effect position to xpos = 0
 [effect hide show_rig sync]
 [dellay name=effect]
 EOF
