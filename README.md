@@ -46,3 +46,9 @@
 - [ ] 封装成Electron程序    Pack With Electron
 - [ ] CG观赏与回想    CG And Scene Viewer
 - [ ] TJS编译器    .tjs Compiler
+
+## 注意
+
+作者正在搞一个C#版本解释器以解决API缺乏文档的问题——自己设计API就有文档了。
+
+参见：[某闭源项目](http://almight.jp)
